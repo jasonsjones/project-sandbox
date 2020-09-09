@@ -1,0 +1,32 @@
+{
+    "name": "side-project",
+    "private": true,
+    "workspaces": {
+        "packages": [
+            "packages/*"
+        ]
+    },
+    "scripts": {
+        "bootstrap": "lerna bootstrap",
+        "clean": "lerna clean --yes && rm -rf node_modules",
+        "postinstall": "yarn bootstrap"
+    },
+    "devDependencies": {
+        "eslint": "7.8.1",
+        "husky": "4.2.5",
+        "lerna": "3.22.1",
+        "lint-staged": "10.3.0",
+        "prettier": "2.1.1"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "lint-staged": {
+        "*.{js,ts}": [
+            "eslint --fix"
+        ]
+    },
+    "license": "MIT"
+}
