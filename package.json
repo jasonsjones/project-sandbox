@@ -9,14 +9,21 @@
     "scripts": {
         "bootstrap": "lerna bootstrap",
         "clean": "lerna clean --yes && rm -rf node_modules",
-        "postinstall": "yarn bootstrap"
+        "dev": "lerna run dev --stream",
+        "postinstall": "yarn bootstrap",
+        "prettier:verify": "prettier --list-different \"**/*.{css,html,js,json,md,ts,yaml,yml}\"",
+        "test": "lerna run test --stream"
     },
     "devDependencies": {
+        "babel-eslint": "10.1.0",
         "eslint": "7.8.1",
+        "eslint-config-prettier": "6.11.0",
+        "eslint-plugin-prettier": "3.1.4",
         "husky": "4.2.5",
         "lerna": "3.22.1",
         "lint-staged": "10.3.0",
-        "prettier": "2.1.1"
+        "prettier": "2.1.1",
+        "typescript": "4.0.2"
     },
     "husky": {
         "hooks": {

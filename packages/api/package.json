@@ -1,0 +1,29 @@
+{
+    "name": "@orion/api",
+    "version": "1.0.0",
+    "description": "Graphql server written in Typescript backed by a Postgres data store",
+    "author": "Jason S. Jones <jsjones96@gmail.com>",
+    "homepage": "https://github.com/jasonsjones/side-project#readme",
+    "license": "MIT",
+    "directories": {},
+    "files": [],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/jasonsjones/side-project.git"
+    },
+    "scripts": {
+        "build": "tsc",
+        "clean": "rm -rf dist",
+        "dev": "NODE_ENV=development ts-node-dev src/index.ts",
+        "test": "NODE_ENV=testing jest --color --runInBand"
+    },
+    "devDependencies": {
+        "jest": "26.4.2",
+        "ts-jest": "26.3.0",
+        "ts-node": "9.0.0",
+        "ts-node-dev": "1.0.0-pre.62"
+    },
+    "jest": {
+        "preset": "ts-jest"
+    }
+}
