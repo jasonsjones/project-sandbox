@@ -1,9 +1,16 @@
-import { start } from '../index';
+import request from 'supertest';
+import app from '../config/app';
 
-it('Displays a message', () => {
-    expect(start('starting app')).toContain('starting app');
-});
+it('GET /api returns simple json payload', (): Promise<void> => {
+    return request(app)
+        .get('/api')
+        .then((res): void => {
+            const json = res.body;
 
-it('Displays the environment ', () => {
-    expect(start('starting app')).toContain('env: testing');
+            expect(res.status).toBe(200);
+            expect(json).toMatchObject({
+                success: true,
+                message: expect.any(String)
+            });
+        });
 });

@@ -1,8 +1,11 @@
-export function start(message: string): string {
-    const output = `[env: ${process.env.NODE_ENV}] ${message}`;
-    return output;
+import app from './config/app';
+
+const PORT = process.env.PORT || 3000;
+
+function start() {
+    app.listen(PORT, () => {
+        console.log(`Express server started at localhost:${PORT}`);
+    });
 }
 
-if (process.env.NODE_ENV !== 'testing') {
-    console.log(start('Starting the API...'));
-}
+start();
