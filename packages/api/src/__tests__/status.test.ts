@@ -1,5 +1,12 @@
-import app from '../config/app';
+import Express from 'express';
+import getApp from '../config/app';
 import { makeGraphQLCall } from '../testutils';
+
+let app: Express.Application;
+
+beforeAll(async () => {
+    app = await getApp();
+});
 
 describe('query to verify server status', () => {
     it('it works', () => {

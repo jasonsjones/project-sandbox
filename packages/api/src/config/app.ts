@@ -1,38 +1,29 @@
+import 'reflect-metadata';
 import express, { Request, Response } from 'express';
-import { ApolloServer, gql } from 'apollo-server-express';
+import { ApolloServer } from 'apollo-server-express';
+import { buildSchema } from 'type-graphql';
+import StatusResolver from '../modules/status/StatusResolver';
 
-function configureApp() {
+function handleRootAPIRoute(_: Request, res: Response): Response {
+    return res.json({
+        success: true,
+        message: 'side project api'
+    });
+}
+
+async function getApp() {
     const app = express();
-    const typeDefs = gql`
-        type Query {
-            status: String
-        }
-    `;
-
-    const resolvers = {
-        Query: {
-            status: () => 'Graphql api is working'
-        }
-    };
+    const schema = await buildSchema({ resolvers: [StatusResolver] });
 
     const server = new ApolloServer({
-        typeDefs,
-        resolvers
+        schema
     });
 
-    app.get(
-        '/api',
-        (_: Request, res: Response): Response => {
-            return res.json({
-                success: true,
-                message: 'side project api'
-            });
-        }
-    );
+    app.get('/api', handleRootAPIRoute);
 
     server.applyMiddleware({ app });
 
     return app;
 }
 
-export default configureApp();
+export default getApp;
