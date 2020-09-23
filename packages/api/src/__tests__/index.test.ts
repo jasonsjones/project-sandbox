@@ -1,11 +1,11 @@
-import Express from 'express';
+import { Application } from 'express';
 import request from 'supertest';
-import getApp from '../config/app';
+import createApp from '../config/app';
 
-let app: Express.Application;
+let app: Application;
 
 beforeAll(async () => {
-    app = await getApp();
+    app = await createApp();
 });
 
 it('GET /api returns simple json payload', (): Promise<void> => {

@@ -1,9 +1,5 @@
-import 'reflect-metadata';
-import express, { Request, Response } from 'express';
-import { ApolloServer } from 'apollo-server-express';
-import { buildSchema } from 'type-graphql';
-import StatusResolver from '../modules/status/StatusResolver';
-import StatusDataSource from '../modules/status/StatusDataSource';
+import express, { Application, Request, Response } from 'express';
+import { createGraphqlServer } from './graphqlServer';
 
 function handleRootAPIRoute(_: Request, res: Response): Response {
     return res.json({
@@ -12,18 +8,9 @@ function handleRootAPIRoute(_: Request, res: Response): Response {
     });
 }
 
-async function getApp() {
+async function createApp(): Promise<Application> {
     const app = express();
-    const schema = await buildSchema({ resolvers: [StatusResolver] });
-
-    const server = new ApolloServer({
-        schema,
-        dataSources: () => {
-            return {
-                statusDataSource: new StatusDataSource()
-            };
-        }
-    });
+    const server = await createGraphqlServer();
 
     app.get('/api', handleRootAPIRoute);
 
@@ -32,4 +19,4 @@ async function getApp() {
     return app;
 }
 
-export default getApp;
+export default createApp;
