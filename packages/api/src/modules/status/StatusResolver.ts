@@ -1,18 +1,11 @@
 import { Ctx, Query, Resolver } from 'type-graphql';
-import StatusDataSource from './StatusDataSource';
-
-interface AppDataSource {
-    statusDataSource: StatusDataSource;
-}
-interface AppContext {
-    dataSources: AppDataSource;
-}
+import { AppContext } from '../../types';
 
 @Resolver()
 class StatusResolver {
     @Query(() => String)
-    status(@Ctx() ctx: AppContext): string {
-        return ctx.dataSources.statusDataSource.getStatusMessage();
+    status(@Ctx() { dataSources }: AppContext): string {
+        return dataSources.statusService.getStatusMessage();
     }
 }
 

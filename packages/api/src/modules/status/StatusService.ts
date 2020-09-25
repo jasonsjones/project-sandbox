@@ -1,6 +1,6 @@
 import { DataSource } from 'apollo-datasource';
 
-class StatusDataSource extends DataSource {
+class StatusService extends DataSource {
     constructor() {
         super();
     }
@@ -10,4 +10,4 @@ class StatusDataSource extends DataSource {
     }
 }
 
-export default StatusDataSource;
+export default StatusService;
