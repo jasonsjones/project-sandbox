@@ -2,9 +2,12 @@ import { DataSource } from 'apollo-datasource';
 import { v4 } from 'uuid';
 import User from './User';
 
-class UserService extends DataSource {
-    private users: User[] = [];
+// Temp in-memory user list to hold all created/registered users.
+// Moved reference outside of UserService to enable the list to be
+// mutated and/or referenced by multiple UserService instances.
+let users: User[] = [];
 
+class UserService extends DataSource {
     constructor() {
         super();
     }
@@ -16,20 +19,20 @@ class UserService extends DataSource {
             password
         };
 
-        this.users = [...this.users, newUser];
+        users = [...users, newUser];
         return newUser;
     }
 
     getAllUsers(): User[] {
-        return this.users;
+        return users;
     }
 
     getUserById(id: string): User | undefined {
-        return this.users.find((user) => user.id === id);
+        return users.find((user) => user.id === id);
     }
 
     removeAllUsers(): void {
-        this.users = [];
+        users = [];
     }
 }
 
