@@ -1,10 +1,16 @@
 import UserService from '../UserService';
 
 describe('User service', () => {
+    const userService: UserService = new UserService();
+
+    afterEach(() => {
+        userService?.cleanUsers();
+    });
+
     describe('createUser()', () => {
         it('creates a new user', () => {
-            const userService = new UserService();
-            const result = userService.createUser('oliver@qc.com', 'secret');
+            // const userService = new UserService();
+            const result = userService?.createUser('oliver@qc.com', 'secret');
 
             expect(result).toEqual(
                 expect.objectContaining({
@@ -17,9 +23,7 @@ describe('User service', () => {
     });
 
     describe('getAllUsers()', () => {
-        let userService: UserService;
         beforeAll(() => {
-            userService = new UserService();
             userService.createUser('barry@starlabs.com', 'theflash');
         });
 
@@ -29,11 +33,9 @@ describe('User service', () => {
     });
 
     describe('getUserById()', () => {
-        let userService: UserService;
         let userId: string;
 
         beforeAll(() => {
-            userService = new UserService();
             userService.createUser('barry@starlabs.com', 'theflash');
 
             const vibe = userService.createUser('cisco@starlabs.com', 'thevibe');
@@ -43,6 +45,19 @@ describe('User service', () => {
         it('fetches users with the given id', () => {
             const user = userService.getUserById(userId);
             expect(user?.email).toEqual('cisco@starlabs.com');
+        });
+    });
+
+    describe('cleanUsers()', () => {
+        beforeAll(() => {
+            userService.createUser('barry@starlabs.com', 'theflash');
+            userService.createUser('cisco@starlabs.com', 'thevibe');
+        });
+
+        it('clears all users', () => {
+            expect(userService.getAllUsers()).toHaveLength(2);
+            userService.cleanUsers();
+            expect(userService.getAllUsers()).toHaveLength(0);
         });
     });
 });

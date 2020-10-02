@@ -1,11 +1,6 @@
 import { DataSource } from 'apollo-datasource';
 import { v4 } from 'uuid';
-
-interface User {
-    id: string;
-    email: string;
-    password: string;
-}
+import User from './User';
 
 class UserService extends DataSource {
     private users: User[] = [];
@@ -31,6 +26,10 @@ class UserService extends DataSource {
 
     getUserById(id: string): User | undefined {
         return this.users.find((user) => user.id === id);
+    }
+
+    cleanUsers(): void {
+        this.users = [];
     }
 }
 
