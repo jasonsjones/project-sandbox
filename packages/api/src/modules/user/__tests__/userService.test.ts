@@ -12,9 +12,8 @@ describe('User service', () => {
     });
 
     describe('createUser()', () => {
-        it('creates a new user', () => {
-            // const userService = new UserService();
-            const result = userService?.createUser('oliver@qc.com', 'secret');
+        it('creates a new user', async () => {
+            const result = await userService?.createUser('oliver@qc.com', 'secret');
 
             expect(result).toEqual(
                 expect.objectContaining({
@@ -27,41 +26,42 @@ describe('User service', () => {
     });
 
     describe('getAllUsers()', () => {
-        beforeAll(() => {
-            userService.createUser('barry@starlabs.com', 'theflash');
+        beforeAll(async () => {
+            await userService.createUser('barry@starlabs.com', 'theflash');
         });
 
-        it('fetches all users', () => {
-            expect(userService.getAllUsers()).toHaveLength(1);
+        it('fetches all users', async () => {
+            const users = await userService.getAllUsers();
+            expect(users).toHaveLength(1);
         });
     });
 
     describe('getUserById()', () => {
         let userId: string;
 
-        beforeAll(() => {
-            userService.createUser('barry@starlabs.com', 'theflash');
+        beforeAll(async () => {
+            await userService.createUser('barry@starlabs.com', 'theflash');
 
-            const vibe = userService.createUser('cisco@starlabs.com', 'thevibe');
+            const vibe = await userService.createUser('cisco@starlabs.com', 'thevibe');
             userId = vibe.id;
         });
 
-        it('fetches users with the given id', () => {
-            const user = userService.getUserById(userId);
+        it('fetches users with the given id', async () => {
+            const user = await userService.getUserById(userId);
             expect(user?.email).toEqual('cisco@starlabs.com');
         });
     });
 
     describe('removeAllUsers()', () => {
-        beforeAll(() => {
-            userService.createUser('barry@starlabs.com', 'theflash');
-            userService.createUser('cisco@starlabs.com', 'thevibe');
+        beforeAll(async () => {
+            await userService.createUser('barry@starlabs.com', 'theflash');
+            await userService.createUser('cisco@starlabs.com', 'thevibe');
         });
 
-        it('clears all users', () => {
-            expect(userService.getAllUsers()).toHaveLength(2);
-            userService.removeAllUsers();
-            expect(userService.getAllUsers()).toHaveLength(0);
+        it('clears all users', async () => {
+            expect(await userService.getAllUsers()).toHaveLength(2);
+            await userService.removeAllUsers();
+            expect(await userService.getAllUsers()).toHaveLength(0);
         });
     });
 });
