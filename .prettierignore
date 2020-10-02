@@ -1,2 +1,5 @@
 # dist folder
 packages/api/dist
+coverage/
+node_modules/
+
