@@ -53,9 +53,9 @@ describe('User resolver', () => {
         });
 
         describe('users query', () => {
-            beforeAll(() => {
-                userService.createUser('barry@starlabs.com', '123456');
-                userService.createUser('diggle@qc.com', '123456');
+            beforeAll(async () => {
+                await userService.createUser('barry@starlabs.com', '123456');
+                await userService.createUser('diggle@qc.com', '123456');
             });
 
             it('fetches all the users', () => {
@@ -89,8 +89,8 @@ describe('User resolver', () => {
         describe('user query', () => {
             let userId: string;
 
-            beforeAll(() => {
-                const cisco = userService.createUser('cisco@starlabs.com', '123456');
+            beforeAll(async () => {
+                const cisco = await userService.createUser('cisco@starlabs.com', '123456');
                 userId = cisco.id;
             });
 

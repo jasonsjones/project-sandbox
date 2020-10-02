@@ -12,7 +12,7 @@ class UserService extends DataSource {
         super();
     }
 
-    createUser(email: string, password: string): User {
+    createUser(email: string, password: string): Promise<User> {
         const newUser = {
             id: v4(),
             email,
@@ -20,19 +20,21 @@ class UserService extends DataSource {
         };
 
         users = [...users, newUser];
-        return newUser;
+        return Promise.resolve(newUser);
     }
 
-    getAllUsers(): User[] {
-        return users;
+    getAllUsers(): Promise<User[]> {
+        return Promise.resolve(users);
     }
 
-    getUserById(id: string): User | undefined {
-        return users.find((user) => user.id === id);
+    getUserById(id: string): Promise<User | undefined> {
+        const foundUser = users.find((user) => user.id === id);
+        return Promise.resolve(foundUser);
     }
 
-    removeAllUsers(): void {
+    removeAllUsers(): Promise<void> {
         users = [];
+        return Promise.resolve();
     }
 }
 

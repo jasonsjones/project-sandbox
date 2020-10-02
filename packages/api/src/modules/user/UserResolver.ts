@@ -44,21 +44,21 @@ class RegisterUserInput {
 @Resolver()
 class UserResolver {
     @Query(() => [User])
-    users(@Ctx() { dataSources }: AppContext): User[] {
+    users(@Ctx() { dataSources }: AppContext): Promise<User[]> {
         return dataSources.userService.getAllUsers();
     }
 
     @Query(() => User, { nullable: true })
-    user(@Arg('id') id: string, @Ctx() { dataSources }: AppContext): User | undefined {
+    user(@Arg('id') id: string, @Ctx() { dataSources }: AppContext): Promise<User | undefined> {
         return dataSources.userService.getUserById(id);
     }
 
     @Mutation(() => RegisterUserPayload)
-    registerUser(
+    async registerUser(
         @Arg('userData') userData: RegisterUserInput,
         @Ctx() { dataSources }: AppContext
-    ): RegisterUserPayload {
-        const newUser = dataSources.userService.createUser(userData.email, userData.password);
+    ): Promise<RegisterUserPayload> {
+        const newUser = await dataSources.userService.createUser(userData.email, userData.password);
         return { user: newUser };
     }
 }
