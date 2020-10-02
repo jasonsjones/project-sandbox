@@ -1,10 +1,14 @@
 import UserService from '../UserService';
 
 describe('User service', () => {
-    const userService: UserService = new UserService();
+    let userService: UserService;
+
+    beforeAll(() => {
+        userService = new UserService();
+    });
 
     afterEach(() => {
-        userService?.cleanUsers();
+        userService.removeAllUsers();
     });
 
     describe('createUser()', () => {
@@ -48,7 +52,7 @@ describe('User service', () => {
         });
     });
 
-    describe('cleanUsers()', () => {
+    describe('removeAllUsers()', () => {
         beforeAll(() => {
             userService.createUser('barry@starlabs.com', 'theflash');
             userService.createUser('cisco@starlabs.com', 'thevibe');
@@ -56,7 +60,7 @@ describe('User service', () => {
 
         it('clears all users', () => {
             expect(userService.getAllUsers()).toHaveLength(2);
-            userService.cleanUsers();
+            userService.removeAllUsers();
             expect(userService.getAllUsers()).toHaveLength(0);
         });
     });

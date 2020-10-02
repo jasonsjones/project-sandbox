@@ -28,7 +28,7 @@ class UserService extends DataSource {
         return this.users.find((user) => user.id === id);
     }
 
-    cleanUsers(): void {
+    removeAllUsers(): void {
         this.users = [];
     }
 }
