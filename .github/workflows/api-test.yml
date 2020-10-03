@@ -50,6 +50,7 @@ jobs:
             - name: Install dependencies
               run: npm install
 
-            - name: Run API tests
+            # - name: Run API tests
             #   run: npm run test:api-p
-               run: npm run test
+            - name: Run API tests
+              run: npm run test
