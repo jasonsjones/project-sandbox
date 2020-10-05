@@ -12,7 +12,7 @@
         "url": "git+https://github.com/jasonsjones/side-project.git"
     },
     "scripts": {
-        "build": "tsc",
+        "build": "tsc --build tsconfig.json",
         "clean": "rm -rf dist",
         "dev": "NODE_ENV=development ts-node-dev src/index.ts",
         "test": "NODE_ENV=testing jest --color --runInBand"
