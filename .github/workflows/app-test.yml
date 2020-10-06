@@ -1,0 +1,34 @@
+name: App tests
+
+on:
+    push:
+        branches:
+            - master
+        paths:
+            - 'packages/app/**'
+
+    pull_request:
+        branches:
+            - master
+        paths:
+            - 'packages/app/**'
+
+jobs:
+    runner-job:
+        name: App test
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: Install node
+              uses: actions/setup-node@v1
+              with:
+                  node-version: '12'
+
+            - name: Install dependencies
+              run: npm install
+
+            - name: Run App tests
+              run: npm run test
