@@ -3,13 +3,13 @@ name: App tests
 on:
     push:
         branches:
-            - master
+            - main
         paths:
             - 'packages/app/**'
 
     pull_request:
         branches:
-            - master
+            - main
         paths:
             - 'packages/app/**'
 

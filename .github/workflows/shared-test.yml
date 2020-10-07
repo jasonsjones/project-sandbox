@@ -3,13 +3,13 @@ name: Shared lib tests
 on:
     push:
         branches:
-            - master
+            - main
         paths:
             - 'packages/shared/**'
 
     pull_request:
         branches:
-            - master
+            - main
         paths:
             - 'packages/shared/**'
 
