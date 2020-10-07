@@ -13,6 +13,8 @@
         "postinstall": "yarn bootstrap",
         "prettier:verify": "prettier --list-different \"**/*.{css,html,js,json,md,ts,yaml,yml}\"",
         "test": "lerna run test --stream",
+        "test:api": "lerna run test --stream --scope @orion/api",
+        "test:app": "lerna run test --stream --scope @orion/app",
         "test:shared": "lerna run test --stream --scope @orion/shared"
     },
     "dependencies": {

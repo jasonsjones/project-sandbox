@@ -25,7 +25,8 @@
         "dev": "PORT=4200 CI=true react-scripts start",
         "start": "PORT=4200 react-scripts start",
         "build": "react-scripts build",
-        "test": "react-scripts test --color",
+        "test": "react-scripts test --color --watchAll=false --runInBand",
+        "test:watch": "react-scripts test --color",
         "eject": "react-scripts eject"
     },
     "eslintConfig": {

@@ -53,4 +53,4 @@ jobs:
             # - name: Run API tests
             #   run: npm run test:api-p
             - name: Run API tests
-              run: npm run test
+              run: npm run test:api
