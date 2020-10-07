@@ -1,6 +1,7 @@
 import { Application } from 'express';
 import createApp from '../config/app';
 import { makeGraphQLCall } from '../testutils';
+import { statusQuery } from '@orion/shared';
 
 let app: Application;
 
@@ -10,9 +11,7 @@ beforeAll(async () => {
 
 describe('query to verify server status', () => {
     it('it works', () => {
-        const query = `query { status }`;
-
-        return makeGraphQLCall(app, query).then((res) => {
+        return makeGraphQLCall(app, statusQuery).then((res) => {
             expect(res.body.data).toHaveProperty('status');
             expect(res.body.data.status).toEqual('Graphql api is working');
         });
