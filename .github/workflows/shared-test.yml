@@ -1,0 +1,34 @@
+name: Shared lib tests
+
+on:
+    push:
+        branches:
+            - master
+        paths:
+            - 'packages/shared/**'
+
+    pull_request:
+        branches:
+            - master
+        paths:
+            - 'packages/shared/**'
+
+jobs:
+    runner-job:
+        name: Shared lib test
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: Install node
+              uses: actions/setup-node@v1
+              with:
+                  node-version: '12'
+
+            - name: Install dependencies
+              run: npm install
+
+            - name: Run lib tests
+              run: npm run test:shared

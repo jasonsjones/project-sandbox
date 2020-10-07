@@ -7,12 +7,13 @@
         ]
     },
     "scripts": {
-        "bootstrap": "lerna bootstrap",
-        "clean": "lerna clean --yes && rm -rf node_modules",
+        "bootstrap": "yarn workspace @orion/shared build && lerna bootstrap",
+        "clean": "lerna run clean --stream && lerna clean --yes && rm -rf node_modules",
         "dev": "lerna run dev --stream",
         "postinstall": "yarn bootstrap",
         "prettier:verify": "prettier --list-different \"**/*.{css,html,js,json,md,ts,yaml,yml}\"",
-        "test": "lerna run test --stream"
+        "test": "lerna run test --stream",
+        "test:shared": "lerna run test --stream --scope @orion/shared"
     },
     "dependencies": {
         "lerna": "3.22.1"
@@ -25,7 +26,6 @@
         "eslint-config-prettier": "6.11.0",
         "eslint-plugin-prettier": "3.1.4",
         "husky": "4.2.5",
-        "jest": "24.9.0",
         "lint-staged": "10.3.0",
         "prettier": "2.1.1",
         "typescript": "4.0.2"
