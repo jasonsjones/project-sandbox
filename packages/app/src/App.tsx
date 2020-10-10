@@ -10,13 +10,13 @@ function App(): JSX.Element {
             body: JSON.stringify({ query: `query { status }` })
         })
             .then((res) => res.json())
-            .then((data) => {
+            .then(({ data }) => {
                 setStatus(!!data);
                 setIsLoading(false);
             });
     }, []);
 
-    // if (isLoading) return <p></p>;
+    if (isLoading) return <p></p>;
 
     return (
         <>
