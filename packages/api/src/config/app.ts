@@ -10,6 +10,21 @@ function cors(_: Request, res: Response, next: NextFunction): void {
     next();
 }
 
+function logger(req: Request, _: Response, next: NextFunction): void {
+    const hasBody = Object.keys(req.body).length !== 0;
+    const methodAndPath = `${req.method}  ${req.path}`;
+
+    let payload = '';
+    if (hasBody && req.body.operationName === 'IntrospectionQuery') {
+        payload = 'graphql playground query';
+    } else if (hasBody) {
+        payload = JSON.stringify(req.body);
+    }
+
+    console.log(`${methodAndPath} - ${payload}`);
+    next();
+}
+
 function handleRootAPIRoute(_: Request, res: Response): Response {
     return res.json({
         success: true,
@@ -21,7 +36,10 @@ async function createApp(): Promise<Application> {
     const app = express();
     const server = await createGraphqlServer();
 
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
     app.use(cors);
+    app.use(logger);
 
     app.get('/api', handleRootAPIRoute);
 
