@@ -1,4 +1,5 @@
 import express, { Application, NextFunction, Request, Response } from 'express';
+import chalk from 'chalk';
 import { createGraphqlServer } from './graphqlServer';
 
 const clientUrls = ['http://localhost:4200'];
@@ -11,18 +12,26 @@ function cors(_: Request, res: Response, next: NextFunction): void {
 }
 
 function logger(req: Request, _: Response, next: NextFunction): void {
+    if (process.env.NODE_ENV !== 'development') {
+        return next();
+    }
     const hasBody = Object.keys(req.body).length !== 0;
-    const methodAndPath = `${req.method}  ${req.path}`;
+    const methodAndPath = `${chalk.green(req.method)}  ${chalk.white(req.path)}`;
 
-    let payload = '';
+    let query = '';
+    let variables = '';
     if (hasBody && req.body.operationName === 'IntrospectionQuery') {
-        payload = 'graphql playground query';
-    } else if (hasBody) {
-        payload = JSON.stringify(req.body);
+        query = 'graphql playground query';
+    } else if (hasBody && Object.keys(req.body).includes('query')) {
+        query = req.body.query;
+        variables = req.body.variables;
+        console.log(`${methodAndPath} - ${chalk.cyan.italic(query.trim())}
+      ${chalk.magenta('variables')}: ${chalk.magenta(JSON.stringify(variables))}`);
+    } else {
+        console.log(`${methodAndPath}`);
     }
 
-    console.log(`${methodAndPath} - ${payload}`);
-    next();
+    return next();
 }
 
 function handleRootAPIRoute(_: Request, res: Response): Response {
