@@ -94,7 +94,7 @@ function UserRegisterForm({ className }: UserRegisterFormProps): JSX.Element {
                         type="submit"
                         className="text-gray-900 border-2 border-purple-800 bg-purple-200 rounded-md py-2 px-4 my-4"
                     >
-                        Submit
+                        Register
                     </button>
                 </div>
             </form>
@@ -115,22 +115,26 @@ function UserList({ className }: UserListProps): JSX.Element {
         <div className={className}>
             <h2 className="text-3xl text-gray-600 text-center border-b-2">User List</h2>
 
-            <div className="p-4">
-                {data?.data?.users.length > 0 ? (
+            <div className="px-8 py-4 md:p-4">
+                {data?.data?.users?.length > 0 ? (
                     <div className="flex text-gray-500 text-lg">
-                        <span className="w-1/2">Id</span>
-                        <span className="w-1/2">Email</span>
+                        <span className="w-1/2 px-2">Id</span>
+                        <span className="w-1/2 px-2">Email</span>
                     </div>
                 ) : (
                     <p className="mt-4 text-gray-800"> No users currently registered </p>
                 )}
 
                 {data &&
-                    data.data?.users.map((user: { id: string; email: string }) => {
+                    data.data?.users?.map((user: { id: string; email: string }) => {
                         return (
                             <div key={user.id} className="flex mb-2">
-                                <span className="w-1/2 text-purple-900">{user.id}</span>
-                                <span className="w-1/2 text-gray-800">{user.email}</span>
+                                <span className="w-1/2 px-2 text-sm text-purple-900 md:text-base">
+                                    {user.id}
+                                </span>
+                                <span className="w-1/2 px-2 text-sm text-gray-800 md:text-base">
+                                    {user.email}
+                                </span>
                             </div>
                         );
                     })}
@@ -146,10 +150,20 @@ function UserList({ className }: UserListProps): JSX.Element {
 function Spinner(): JSX.Element {
     return (
         <div className="fixed top-0 right-0 h-screen w-screen z-50 flex justify-center items-center">
-            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
+            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-purple-900"></div>
         </div>
     );
 }
+
+/*
+function SmallSpinner(): JSX.Element {
+    return (
+        <div className="relative z-50 flex justify-center items-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-purple-900"></div>
+        </div>
+    );
+}
+*/
 
 // #endregion
 
@@ -183,14 +197,14 @@ function App(): JSX.Element {
                     GraphQL server status:
                     <svg
                         className={`w-6 h-6 ml-2 inline-block stroke-current ${
-                            status ? 'text-green-500' : 'text-red-600'
+                            status?.data ? 'text-green-500' : 'text-red-600'
                         }`}
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
                         xmlns="http://www.w3.org/2000/svg"
                     >
-                        {status ? (
+                        {status?.data ? (
                             <path
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
@@ -206,7 +220,7 @@ function App(): JSX.Element {
                             ></path>
                         )}
                     </svg>
-                    {status ? 'All Good!' : 'Ah snap... 😔 '}
+                    {status?.data ? 'All Good!' : 'Ah snap... 😔 '}
                 </div>
             )}
             <div className="w-full mx-auto mt-12 px-8 bg-gray-100">
@@ -249,8 +263,8 @@ function App(): JSX.Element {
                     </div>
                 </div>
             </div>
-            <UserRegisterForm className="w-1/3 mx-auto mt-12" />
-            <UserList className="w-3/4 mx-auto mt-12" />
+            <UserRegisterForm className="w-3/4 mx-auto mt-12 md:w-1/3" />
+            <UserList className="w-full mx-auto mt-12 py-6 md:w-3/4 md:py-0" />
 
             <ReactQueryDevtools initialIsOpen />
         </>
