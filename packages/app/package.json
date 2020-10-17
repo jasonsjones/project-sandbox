@@ -5,7 +5,8 @@
         "react": "16.13.1",
         "react-dom": "16.13.1",
         "react-query": "2.23.1",
-        "react-scripts": "3.4.3"
+        "react-scripts": "3.4.3",
+        "serve": "11.3.2"
     },
     "devDependencies": {
         "@orion/shared": "1.0.0",
@@ -24,10 +25,11 @@
         "typescript": "3.7.2"
     },
     "scripts": {
-        "build:css": "postcss src/styles/tailwind.css -o src/styles/main.css",
-        "dev": "PORT=4200 CI=true react-scripts start",
-        "start": "PORT=4200 react-scripts start",
         "build": "react-scripts build",
+        "build:css": "postcss src/styles/tailwind.css -o src/styles/main.css",
+        "clean": "rm -rf build",
+        "dev": "PORT=4200 CI=true react-scripts start",
+        "start": "PORT=4200 serve -s build",
         "test": "react-scripts test --color --watchAll=false --runInBand --env=jest-environment-jsdom-sixteen",
         "test:watch": "react-scripts test --color",
         "eject": "react-scripts eject"
