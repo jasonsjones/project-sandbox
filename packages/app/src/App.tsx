@@ -1,9 +1,17 @@
 import React, { useState } from 'react';
-import { useMutation, useQuery } from 'react-query';
+import {
+    QueryCache,
+    ReactQueryCacheProvider,
+    useMutation,
+    useQuery,
+    useQueryCache
+} from 'react-query';
 import { ReactQueryDevtools } from 'react-query-devtools';
 import { makeGraphQLQuery, makeGraphQLMutation } from './dataservice';
 import secureLogo from './assets/secure.svg';
 import innovativeLogo from './assets/innovative.svg';
+
+const queryCache = new QueryCache();
 
 // #region User Registration Form *******
 
@@ -19,6 +27,8 @@ function UserRegisterForm({ className }: UserRegisterFormProps): JSX.Element {
                         }
                     }
                 }`;
+
+    const cache = useQueryCache();
     const [formValues, setFormValues] = useState({ email: '', password: '' });
     const [mutate] = useMutation(makeGraphQLMutation);
 
@@ -46,7 +56,15 @@ function UserRegisterForm({ className }: UserRegisterFormProps): JSX.Element {
         if (formValues.email.length > 0 && formValues.password.length > 0) {
             console.log('submitting form...');
             try {
-                await mutate({ query: registerUserOp, variables: { userData: formValues } });
+                await mutate(
+                    { query: registerUserOp, variables: { userData: formValues } },
+                    {
+                        onSuccess: () => {
+                            cache.invalidateQueries('users');
+                        }
+                    }
+                );
+
                 clearForm();
             } catch (error) {
                 console.log(error);
@@ -291,7 +309,7 @@ function Features(): JSX.Element {
 
 function App(): JSX.Element {
     return (
-        <>
+        <ReactQueryCacheProvider queryCache={queryCache}>
             <div className="mt-8 mx-12">
                 <HeroBanner />
             </div>
@@ -305,7 +323,7 @@ function App(): JSX.Element {
             <UserList className="w-full mx-auto mt-12 py-6 md:w-3/4 md:py-0" />
 
             <ReactQueryDevtools initialIsOpen />
-        </>
+        </ReactQueryCacheProvider>
     );
 }
 
