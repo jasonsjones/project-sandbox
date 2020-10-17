@@ -167,9 +167,30 @@ function SmallSpinner(): JSX.Element {
 
 // #endregion
 
-// #region App *******
+// #region Hero Banner *******
 
-function App(): JSX.Element {
+function HeroBanner(): JSX.Element {
+    return (
+        <div className="flex flex-col justify-center text-center border-2 rounded-lg shadow-md px-4 py-6">
+            <h1 className="text-4xl text-purple-900">Hello React!</h1>
+            <p className="text-lg text-gray-600">
+                A simple React app built with Typescript and Tailwind CSS
+            </p>
+            <a
+                className="mx-auto text-gray-900 border-2 border-purple-800 bg-purple-200 rounded-md py-2 px-4 my-4"
+                href="https://github.com/jasonsjones/side-project"
+            >
+                View Source
+            </a>
+        </div>
+    );
+}
+
+// #endregion
+
+// #region Server Status *******
+
+function ServerStatus(): JSX.Element {
     const statusQuery = 'query { status }';
     const { data: status, isLoading } = useQuery(
         ['status', { query: statusQuery }],
@@ -180,20 +201,8 @@ function App(): JSX.Element {
 
     return (
         <>
-            <div className="mt-8 mx-12 flex flex-col justify-center text-center border-2 rounded-lg shadow-md px-4 py-6">
-                <h1 className="text-4xl text-purple-900">Hello React!</h1>
-                <p className="text-lg text-gray-600">
-                    A simple React app built with Typescript and Tailwind CSS
-                </p>
-                <a
-                    className="mx-auto text-gray-900 border-2 border-purple-800 bg-purple-200 rounded-md py-2 px-4 my-4"
-                    href="https://github.com/jasonsjones/side-project"
-                >
-                    View Source
-                </a>
-            </div>
             {!isLoading && (
-                <div className="mt-12 max-w-md mx-auto text-lg text-gray-600 border-2 border-gray-600 rounded-md py-2 text-center">
+                <div className="text-lg text-gray-600 border-2 border-gray-600 rounded-md py-2 text-center">
                     GraphQL server status:
                     <svg
                         className={`w-6 h-6 ml-2 inline-block stroke-current ${
@@ -223,46 +232,75 @@ function App(): JSX.Element {
                     {status?.data ? 'All Good!' : 'Ah snap... 😔 '}
                 </div>
             )}
-            <div className="w-full mx-auto mt-12 px-8 bg-gray-100">
-                <h2 className="text-3xl text-purple-900 text-center py-6">Features</h2>
-                <div className="flex flex-col justify-around pb-6 lg:flex-row">
-                    <div className="flex flex-col justify-center lg:w-1/2">
-                        <h3 className="text-2xl text-gray-800 text-center">Secure</h3>
-                        <div className="flex flex-col p-4 lg:flex-row">
-                            <img
-                                src={secureLogo}
-                                width="200"
-                                alt="secure illustration"
-                                className="self-center lg:self-start"
-                            />
-                            <p className="mt-6 text-gray-600 lg:ml-4 lg:mt-0">
-                                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Adipisci
-                                illum laborum libero maxime mollitia, amet consequuntur odit id?
-                                Neque quo quaerat numquam minima blanditiis? Inventore, et quos?
-                                Optio, nesciunt maiores.
-                            </p>
-                        </div>
-                    </div>
+        </>
+    );
+}
 
-                    <div className="flex flex-col justify-center mt-8 lg:mt-0 lg:w-1/2">
-                        <h3 className="text-2xl text-gray-800 text-center">Innovative</h3>
-                        <div className="flex flex-col p-4 lg:flex-row">
-                            <img
-                                src={innovativeLogo}
-                                width="200"
-                                alt="innovative illustration"
-                                className="self-center lg:self-start"
-                            />
-                            <p className="mt-6 text-gray-600 lg:ml-4 lg:mt-0">
-                                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Adipisci
-                                illum laborum libero maxime mollitia, amet consequuntur odit id?
-                                Neque quo quaerat numquam minima blanditiis? Inventore, et quos?
-                                Optio, nesciunt maiores.
-                            </p>
-                        </div>
+// #endregion
+
+// #region Features Section ********
+
+function Features(): JSX.Element {
+    return (
+        <div className="w-full mx-auto mt-12 px-8 bg-gray-100">
+            <h2 className="text-3xl text-purple-900 text-center py-6">Features</h2>
+            <div className="flex flex-col justify-around pb-6 lg:flex-row">
+                <div className="flex flex-col justify-center lg:w-1/2">
+                    <h3 className="text-2xl text-gray-800 text-center">Secure</h3>
+                    <div className="flex flex-col p-4 lg:flex-row">
+                        <img
+                            src={secureLogo}
+                            width="200"
+                            alt="secure illustration"
+                            className="self-center lg:self-start"
+                        />
+                        <p className="mt-6 text-gray-600 lg:ml-4 lg:mt-0">
+                            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Adipisci illum
+                            laborum libero maxime mollitia, amet consequuntur odit id? Neque quo
+                            quaerat numquam minima blanditiis? Inventore, et quos? Optio, nesciunt
+                            maiores.
+                        </p>
+                    </div>
+                </div>
+
+                <div className="flex flex-col justify-center mt-8 lg:mt-0 lg:w-1/2">
+                    <h3 className="text-2xl text-gray-800 text-center">Innovative</h3>
+                    <div className="flex flex-col p-4 lg:flex-row">
+                        <img
+                            src={innovativeLogo}
+                            width="200"
+                            alt="innovative illustration"
+                            className="self-center lg:self-start"
+                        />
+                        <p className="mt-6 text-gray-600 lg:ml-4 lg:mt-0">
+                            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Adipisci illum
+                            laborum libero maxime mollitia, amet consequuntur odit id? Neque quo
+                            quaerat numquam minima blanditiis? Inventore, et quos? Optio, nesciunt
+                            maiores.
+                        </p>
                     </div>
                 </div>
             </div>
+        </div>
+    );
+}
+
+// #endregion
+
+// #region App *******
+
+function App(): JSX.Element {
+    return (
+        <>
+            <div className="mt-8 mx-12">
+                <HeroBanner />
+            </div>
+            <div className="mt-12 max-w-md mx-auto">
+                <ServerStatus />
+            </div>
+
+            <Features />
+
             <UserRegisterForm className="w-3/4 mx-auto mt-12 md:w-1/3" />
             <UserList className="w-full mx-auto mt-12 py-6 md:w-3/4 md:py-0" />
 
