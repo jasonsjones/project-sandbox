@@ -13,6 +13,42 @@ import innovativeLogo from './assets/innovative.svg';
 
 const queryCache = new QueryCache();
 
+// #region Button ********
+
+interface ButtonProps {
+    children: React.ReactNode;
+    type?: 'button' | 'submit';
+    className?: string;
+    variant?: 'secondary' | 'primary';
+    clickAction?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+}
+
+function Button({
+    children,
+    type = 'button',
+    className = '',
+    variant = 'primary',
+    clickAction
+}: ButtonProps): JSX.Element {
+    const commonClasses = 'border-2 rounded-md py-2 px-4';
+    const secondaryClasses = 'text-purple-800 border-purple-800 bg-gray-100';
+    const primaryClasses = 'text-gray-900 border-purple-800 bg-purple-200';
+
+    const variantClasses = variant === 'secondary' ? secondaryClasses : primaryClasses;
+
+    return (
+        <button
+            type={type}
+            className={`${className} ${commonClasses} ${variantClasses}`}
+            onClick={clickAction}
+        >
+            {children}
+        </button>
+    );
+}
+
+// #endregion
+
 // #region User Registration Form *******
 
 type UserRegisterFormProps = { className: string };
@@ -101,19 +137,12 @@ function UserRegisterForm({ className }: UserRegisterFormProps): JSX.Element {
                     />
                 </div>
                 <div className="flex justify-end">
-                    <button
-                        type="button"
-                        className="mr-6 text-gray-900 border-2 border-purple-800 bg-gray-100 rounded-md py-2 px-4 my-4"
-                        onClick={handleCancel}
-                    >
+                    <Button className="my-4 mr-6" variant="secondary" clickAction={handleCancel}>
                         Cancel
-                    </button>
-                    <button
-                        type="submit"
-                        className="text-gray-900 border-2 border-purple-800 bg-purple-200 rounded-md py-2 px-4 my-4"
-                    >
+                    </Button>
+                    <Button type="submit" className="my-4" variant="primary">
                         Register
-                    </button>
+                    </Button>
                 </div>
             </form>
         </div>
@@ -313,6 +342,7 @@ function App(): JSX.Element {
             <div className="mt-8 mx-12">
                 <HeroBanner />
             </div>
+
             <div className="mt-12 max-w-md mx-auto">
                 <ServerStatus />
             </div>
