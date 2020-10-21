@@ -9,7 +9,7 @@ interface ButtonProps {
 }
 
 function Button({
-    children = 'No Label',
+    children,
     type = 'button',
     className = '',
     variant = 'primary',
@@ -24,7 +24,7 @@ function Button({
     return (
         <button
             type={type}
-            className={`${className} ${commonClasses} ${variantClasses}`}
+            className={`${className} ${commonClasses} ${variantClasses}`.trim()}
             onClick={clickAction}
         >
             {children}
