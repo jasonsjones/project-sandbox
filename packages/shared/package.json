@@ -20,7 +20,6 @@
     "scripts": {
         "build": "tsc --build tsconfig.json",
         "clean": "rm -rf dist",
-        "pretest":"yarn build",
         "test": "NODE_ENV=testing jest --color --runInBand"
     },
     "bugs": {
