@@ -34,6 +34,12 @@ class RegisterUserPayload {
 @InputType()
 class RegisterUserInput {
     @Field()
+    firstName!: string;
+
+    @Field()
+    lastName!: string;
+
+    @Field()
     @IsEmail()
     email!: string;
 
@@ -41,7 +47,7 @@ class RegisterUserInput {
     password!: string;
 }
 
-@Resolver()
+@Resolver((of) => User)
 class UserResolver {
     @Query(() => [User])
     users(@Ctx() { dataSources }: AppContext): Promise<User[]> {
@@ -58,7 +64,12 @@ class UserResolver {
         @Arg('userData') userData: RegisterUserInput,
         @Ctx() { dataSources }: AppContext
     ): Promise<RegisterUserPayload> {
-        const newUser = await dataSources.userService.createUser(userData.email, userData.password);
+        const newUser = await dataSources.userService.createUser(
+            userData.firstName,
+            userData.lastName,
+            userData.email,
+            userData.password
+        );
         return { user: newUser };
     }
 }

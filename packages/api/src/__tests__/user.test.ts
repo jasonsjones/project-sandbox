@@ -1,6 +1,15 @@
 import { Application } from 'express';
 import createApp from '../config/app';
-import { makeGraphQLCall } from '../testutils';
+import {
+    makeGraphQLCall,
+    oliver,
+    dig,
+    barry,
+    cisco,
+    GetUserOp,
+    RegisterUserOp,
+    UserQuery
+} from '../testutils';
 import UserService from '../modules/user/UserService';
 
 let app: Application;
@@ -22,30 +31,25 @@ describe('User resolver', () => {
 
     describe('register user mutation', () => {
         it('creates a new user', () => {
-            const registerUserOp = `
-                mutation RegisterUser($userData: RegisterUserInput!) {
-                    registerUser(userData: $userData) {
-                        user {
-                            id
-                            email
-                        }
-                    }
-                }`;
-
             const queryVariables = {
                 userData: {
-                    email: 'oliver@qc.com',
-                    password: '123456'
+                    firstName: oliver.firstName,
+                    lastName: oliver.lastName,
+                    email: oliver.email,
+                    password: oliver.password
                 }
             };
 
-            return makeGraphQLCall(app, registerUserOp, queryVariables).then((res) => {
+            return makeGraphQLCall(app, RegisterUserOp, queryVariables).then((res) => {
                 const { registerUser } = res.body.data;
                 expect(registerUser).toEqual(
                     expect.objectContaining({
                         user: expect.objectContaining({
                             id: expect.any(String),
-                            email: 'oliver@qc.com'
+                            firstName: oliver.firstName,
+                            lastName: oliver.lastName,
+                            displayName: `${oliver.firstName} ${oliver.lastName}`,
+                            email: oliver.email
                         })
                     })
                 );
@@ -54,31 +58,34 @@ describe('User resolver', () => {
 
         describe('users query', () => {
             beforeAll(async () => {
-                await userService.createUser('barry@starlabs.com', '123456');
-                await userService.createUser('diggle@qc.com', '123456');
+                await userService.createUser(
+                    barry.firstName,
+                    barry.lastName,
+                    barry.email,
+                    barry.password
+                );
+                await userService.createUser(dig.firstName, dig.lastName, dig.email, dig.password);
             });
 
             it('fetches all the users', () => {
-                const usersQuery = `
-                query {
-                    users {
-                        id
-                        email
-                    }
-                }`;
-
-                return makeGraphQLCall(app, usersQuery).then((res) => {
+                return makeGraphQLCall(app, UserQuery).then((res) => {
                     const { users } = res.body.data;
                     expect(users).toHaveLength(2);
                     expect(users).toEqual(
                         expect.arrayContaining([
                             expect.objectContaining({
                                 id: expect.any(String),
-                                email: 'barry@starlabs.com'
+                                firstName: barry.firstName,
+                                lastName: barry.lastName,
+                                displayName: `${barry.firstName} ${barry.lastName}`,
+                                email: barry.email
                             }),
                             expect.objectContaining({
                                 id: expect.any(String),
-                                email: 'diggle@qc.com'
+                                firstName: dig.firstName,
+                                lastName: dig.lastName,
+                                displayName: `${dig.firstName} ${dig.lastName}`,
+                                email: dig.email
                             })
                         ])
                     );
@@ -90,29 +97,29 @@ describe('User resolver', () => {
             let userId: string;
 
             beforeAll(async () => {
-                const cisco = await userService.createUser('cisco@starlabs.com', '123456');
-                userId = cisco.id;
+                const ciscoUser = await userService.createUser(
+                    cisco.firstName,
+                    cisco.lastName,
+                    cisco.email,
+                    cisco.password
+                );
+                userId = ciscoUser.id;
             });
 
             it('fetches the user with the given id', () => {
-                const userQueryOp = `
-                query GetUser($id: String!){
-                    user(id: $id) {
-                        id
-                        email
-                    }
-                }`;
-
                 const queryVariables = {
                     id: userId
                 };
 
-                return makeGraphQLCall(app, userQueryOp, queryVariables).then((res) => {
+                return makeGraphQLCall(app, GetUserOp, queryVariables).then((res) => {
                     const { user } = res.body.data;
                     expect(user).toEqual(
                         expect.objectContaining({
                             id: expect.any(String),
-                            email: 'cisco@starlabs.com'
+                            firstName: cisco.firstName,
+                            lastName: cisco.lastName,
+                            displayName: `${cisco.firstName} ${cisco.lastName}`,
+                            email: cisco.email
                         })
                     );
                 });

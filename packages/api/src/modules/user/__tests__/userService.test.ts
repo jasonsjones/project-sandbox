@@ -13,7 +13,12 @@ describe('User service', () => {
 
     describe('createUser()', () => {
         it('creates a new user', async () => {
-            const result = await userService?.createUser('oliver@qc.com', 'secret');
+            const result = await userService?.createUser(
+                'Oliver',
+                'Queen',
+                'oliver@qc.com',
+                'secret'
+            );
 
             expect(result).toEqual(
                 expect.objectContaining({
@@ -27,7 +32,7 @@ describe('User service', () => {
 
     describe('getAllUsers()', () => {
         beforeAll(async () => {
-            await userService.createUser('barry@starlabs.com', 'theflash');
+            await userService.createUser('Barry', 'Allen', 'barry@starlabs.com', 'theflash');
         });
 
         it('fetches all users', async () => {
@@ -40,9 +45,14 @@ describe('User service', () => {
         let userId: string;
 
         beforeAll(async () => {
-            await userService.createUser('barry@starlabs.com', 'theflash');
+            await userService.createUser('Barry', 'Allen', 'barry@starlabs.com', 'theflash');
 
-            const vibe = await userService.createUser('cisco@starlabs.com', 'thevibe');
+            const vibe = await userService.createUser(
+                'Cisco',
+                'Ramon',
+                'cisco@starlabs.com',
+                'thevibe'
+            );
             userId = vibe.id;
         });
 
@@ -54,8 +64,8 @@ describe('User service', () => {
 
     describe('removeAllUsers()', () => {
         beforeAll(async () => {
-            await userService.createUser('barry@starlabs.com', 'theflash');
-            await userService.createUser('cisco@starlabs.com', 'thevibe');
+            await userService.createUser('Barry', 'Allen', 'barry@starlabs.com', 'theflash');
+            await userService.createUser('Cisco', 'Ramon', 'cisco@starlabs.com', 'thevibe');
         });
 
         it('clears all users', async () => {
