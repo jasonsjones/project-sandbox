@@ -12,12 +12,19 @@ class UserService extends DataSource {
         super();
     }
 
-    createUser(email: string, password: string): Promise<User> {
-        const newUser = {
-            id: v4(),
-            email,
-            password
-        };
+    createUser(
+        firstName: string,
+        lastName: string,
+        email: string,
+        password: string
+    ): Promise<User> {
+        const newUser = new User();
+
+        newUser.id = v4();
+        newUser.firstName = firstName;
+        newUser.lastName = lastName;
+        newUser.email = email;
+        newUser.password = password;
 
         users = [...users, newUser];
         return Promise.resolve(newUser);
