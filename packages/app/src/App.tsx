@@ -24,17 +24,27 @@ function UserRegisterForm({ className }: UserRegisterFormProps): JSX.Element {
                     registerUser(userData: $userData) {
                         user {
                             id
+                            firstName
+                            lastName
+                            displayName
                             email
                         }
                     }
                 }`;
 
     const cache = useQueryCache();
-    const [formValues, setFormValues] = useState({ email: '', password: '' });
+    const [formValues, setFormValues] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: ''
+    });
     const [mutate] = useMutation(makeGraphQLMutation);
 
     const clearForm = () => {
         setFormValues({
+            firstName: '',
+            lastName: '',
             email: '',
             password: ''
         });
@@ -54,7 +64,12 @@ function UserRegisterForm({ className }: UserRegisterFormProps): JSX.Element {
     const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
         e.preventDefault();
         console.log(formValues);
-        if (formValues.email.length > 0 && formValues.password.length > 0) {
+        if (
+            formValues.firstName.length > 0 &&
+            formValues.lastName.length > 0 &&
+            formValues.email.length > 0 &&
+            formValues.password.length > 0
+        ) {
             console.log('submitting form...');
             try {
                 await mutate(
@@ -75,10 +90,34 @@ function UserRegisterForm({ className }: UserRegisterFormProps): JSX.Element {
 
     return (
         <div className={className}>
-            <h2 className="text-3xl text-gray-600 text-center">Register for Account</h2>
+            <h2 className="mb-4 text-3xl text-gray-600 text-center">Register for Account</h2>
             <form onSubmit={handleSubmit}>
-                <div className="flex flex-col">
-                    <label htmlFor="email" className="mb-2 text-gray-700">
+                <div className="flex flex-col px-4 pb-4">
+                    <label htmlFor="firstname" className="mb-1 text-gray-500">
+                        First Name
+                    </label>
+                    <input
+                        type="text"
+                        id="firstName"
+                        className="px-4 text-gray-700 border-2 border-gray-300 h-12 rounded-lg"
+                        value={formValues.firstName}
+                        onChange={updateField}
+                    />
+                </div>
+                <div className="flex flex-col px-4 pb-4">
+                    <label htmlFor="lastName" className="mb-1 text-gray-500">
+                        Last Name
+                    </label>
+                    <input
+                        type="text"
+                        id="lastName"
+                        className="px-4 text-gray-700 border-2 border-gray-300 h-12 rounded-lg"
+                        value={formValues.lastName}
+                        onChange={updateField}
+                    />
+                </div>
+                <div className="flex flex-col px-4 pb-4">
+                    <label htmlFor="email" className="mb-1 text-gray-500">
                         Email
                     </label>
                     <input
@@ -89,8 +128,8 @@ function UserRegisterForm({ className }: UserRegisterFormProps): JSX.Element {
                         onChange={updateField}
                     />
                 </div>
-                <div className="flex flex-col mt-4">
-                    <label htmlFor="password" className="mb-2 text-gray-700">
+                <div className="flex flex-col px-4 pb-4">
+                    <label htmlFor="password" className="mb-1 text-gray-500">
                         Password
                     </label>
                     <input
@@ -120,7 +159,7 @@ function UserRegisterForm({ className }: UserRegisterFormProps): JSX.Element {
 type UserListProps = { className: string };
 
 function UserList({ className }: UserListProps): JSX.Element {
-    const statusQuery = 'query { users { id email } }';
+    const statusQuery = 'query { users { id displayName email } }';
     const { data, isLoading } = useQuery(['users', { query: statusQuery }], makeGraphQLQuery);
     if (isLoading) return <Spinner />;
     return (
@@ -131,6 +170,7 @@ function UserList({ className }: UserListProps): JSX.Element {
                 {data?.data?.users?.length > 0 ? (
                     <div className="flex text-gray-500 text-lg">
                         <span className="w-1/2 px-2">Id</span>
+                        <span className="w-1/2 px-2">Name</span>
                         <span className="w-1/2 px-2">Email</span>
                     </div>
                 ) : (
@@ -138,18 +178,23 @@ function UserList({ className }: UserListProps): JSX.Element {
                 )}
 
                 {data &&
-                    data.data?.users?.map((user: { id: string; email: string }) => {
-                        return (
-                            <div key={user.id} className="flex mb-2">
-                                <span className="w-1/2 px-2 text-sm text-purple-900 md:text-base">
-                                    {user.id}
-                                </span>
-                                <span className="w-1/2 px-2 text-sm text-gray-800 md:text-base">
-                                    {user.email}
-                                </span>
-                            </div>
-                        );
-                    })}
+                    data.data?.users?.map(
+                        (user: { id: string; displayName: string; email: string }) => {
+                            return (
+                                <div key={user.id} className="flex mb-2">
+                                    <span className="w-1/2 px-2 text-sm text-purple-900 md:text-base">
+                                        {user.id}
+                                    </span>
+                                    <span className="w-1/2 px-2 text-sm text-gray-800 md:text-base">
+                                        {user.displayName}
+                                    </span>
+                                    <span className="w-1/2 px-2 text-sm text-gray-800 md:text-base">
+                                        {user.email}
+                                    </span>
+                                </div>
+                            );
+                        }
+                    )}
             </div>
         </div>
     );
