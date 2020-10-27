@@ -5,9 +5,10 @@ import StatusResolver from '../modules/status/StatusResolver';
 import StatusService from '../modules/status/StatusService';
 import UserResolver from '../modules/user/UserResolver';
 import UserService from '../modules/user/UserService';
+import AvatarResolver from '../modules/avatar/AvatarResolver';
 
 export async function createGraphqlServer(): Promise<ApolloServer> {
-    const schema = await buildSchema({ resolvers: [StatusResolver, UserResolver] });
+    const schema = await buildSchema({ resolvers: [StatusResolver, UserResolver, AvatarResolver] });
     const statusService = new StatusService();
     const userService = new UserService();
 

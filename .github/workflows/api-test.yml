@@ -53,7 +53,5 @@ jobs:
             - name: Build Shared Lib
               run: yarn workspace @orion/shared build
 
-            # - name: Run API tests
-            #   run: npm run test:api-p
             - name: Run API tests
               run: npm run test:api
