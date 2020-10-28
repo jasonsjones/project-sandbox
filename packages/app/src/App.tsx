@@ -483,12 +483,12 @@ function App(): JSX.Element {
 
             <Features />
 
-            <UserRegisterForm className="w-3/4 mx-auto mt-12 md:w-1/3" />
+            {/* <UserRegisterForm className="w-3/4 mx-auto mt-12 md:w-1/3" />
             <UserList className="w-full mx-auto mt-12 py-6 md:w-3/4 md:py-0" />
 
             <div className="my-4 mx-auto max-w-md">
                 <FileUpload />
-            </div>
+            </div> */}
 
             <ReactQueryDevtools initialIsOpen />
         </ReactQueryCacheProvider>

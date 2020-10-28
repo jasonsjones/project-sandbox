@@ -14,6 +14,7 @@
         "prettier:verify": "prettier --list-different \"**/*.{css,html,js,json,md,ts,yaml,yml}\"",
         "test": "lerna run test --stream",
         "test:api": "lerna run test --stream --scope @orion/api",
+        "test:api-v2": "lerna run test --stream --scope @orion/api-v2 && lerna run test:e2e --stream --scope @orion/api-v2",
         "test:app": "lerna run test --stream --scope @orion/app",
         "test:shared": "lerna run test --stream --scope @orion/shared"
     },
