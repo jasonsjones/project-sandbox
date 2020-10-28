@@ -122,3 +122,6 @@ dist
 
 # generated tailwind css
 main.css
+
+#generated api-v2 (nestjs) GraphQL schema
+packages/api-v2/src/schema.gql

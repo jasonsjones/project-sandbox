@@ -1,0 +1,57 @@
+name: API v2 tests
+
+on:
+    push:
+        branches:
+            - main
+        paths:
+            - 'packages/api-v2/**'
+
+    pull_request:
+        branches:
+            - main
+        paths:
+            - 'packages/api-v2/**'
+
+jobs:
+    runner-job:
+        name: API v2 (Nestjs) test
+        runs-on: ubuntu-latest
+
+        # env:
+        #     ACCESS_TOKEN_SECRET: AccesstokenSECRETforTESTING
+        #     REFRESH_TOKEN_SECRET: RefreshtokenSECRETforTESTING
+
+        # services:
+        #     postgres:
+        #         image: postgres:latest
+        #         env:
+        #             POSTGRES_USER: postgres
+        #             POSTGRES_PASSWORD: postgres
+        #         options: >-
+        #             --health-cmd pg_isready --health-interval 10s --health-timeout 5s
+        #             --health-retries 5
+        #         ports:
+        #             - 5432:5432
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            # - name: Set up test database
+            #   run: |
+            #       docker exec -i $(docker container ls -aq) bash < ./packages/api/scripts/db-setup.sh
+
+            - name: Install node
+              uses: actions/setup-node@v1
+              with:
+                  node-version: '12'
+
+            - name: Install dependencies
+              run: npm install
+
+            - name: Build Shared Lib
+              run: yarn workspace @orion/shared build
+
+            - name: Run API v2 tests
+              run: npm run test:api-v2
