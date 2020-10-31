@@ -53,5 +53,8 @@ jobs:
             - name: Build Shared Lib
               run: yarn workspace @orion/shared build
 
-            - name: Run API v2 tests
-              run: npm run test:api-v2
+            - name: Run API v2 unit tests
+              run: npm run test:api-v2:unit
+
+            - name: Run API v2 End-to-End tests
+              run: npm run test:api-v2:e2e
