@@ -9,7 +9,7 @@
     "scripts": {
         "bootstrap": "lerna bootstrap",
         "clean": "lerna run clean --stream && lerna clean --yes && rm -rf node_modules",
-        "dev": "yarn workspace @orion/shared build && lerna run dev --stream",
+        "dev": "yarn workspace @orion/shared build && lerna run dev --stream --no-prefix",
         "postinstall": "yarn bootstrap",
         "prettier:verify": "prettier --list-different \"**/*.{css,html,js,json,md,ts,yaml,yml}\"",
         "test": "lerna run test --stream",
