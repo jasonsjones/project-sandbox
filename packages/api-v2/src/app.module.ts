@@ -1,5 +1,6 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
+import { LoggerMiddleware } from './common/logger.middleware';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { StatusModule } from './modules/status/status.module';
@@ -14,4 +15,8 @@ import { UserModule } from './modules/user/user.module';
     controllers: [AppController],
     providers: [AppService]
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+    configure(consumer: MiddlewareConsumer) {
+        consumer.apply(LoggerMiddleware).forRoutes('*');
+    }
+}
