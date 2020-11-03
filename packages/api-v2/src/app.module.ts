@@ -5,10 +5,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { StatusModule } from './modules/status/status.module';
 import { UserModule } from './modules/user/user.module';
+import { AvatarModule } from './modules/avatar/avatar.module';
 
 @Module({
     imports: [
         GraphQLModule.forRoot({ autoSchemaFile: 'src/schema.gql' }),
+        AvatarModule,
         StatusModule,
         UserModule
     ],
