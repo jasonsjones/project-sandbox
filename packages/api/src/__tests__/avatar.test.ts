@@ -1,5 +1,4 @@
 import fs from 'fs';
-import request from 'supertest';
 import { Application } from 'express';
 import createApp from '../config/app';
 import { makeGraphQLFileUpload } from '../testutils';
