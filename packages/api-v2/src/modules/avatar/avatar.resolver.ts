@@ -10,7 +10,7 @@ export class AvatarResolver {
     async avatarUpload(
         @Args({ name: 'image', type: () => GraphQLUpload }) image: FileUpload
     ): Promise<boolean> {
-        const fileDir = process.env.NODE_ENV !== 'testing' ? 'uploads' : 'testUploads';
+        const fileDir = process.env.NODE_ENV !== 'test' ? 'uploads' : 'testUploads';
         const filePath = `${__dirname}/../../../${fileDir}`;
         if (!fs.existsSync(filePath)) {
             fs.mkdirSync(filePath);
