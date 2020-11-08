@@ -125,3 +125,7 @@ main.css
 
 #generated api-v2 (nestjs) GraphQL schema
 packages/api-v2/src/schema.gql
+
+# api-v2 avatars except for the default
+packages/api-v2/avatars/*
+!packages/api-v2/avatars/default

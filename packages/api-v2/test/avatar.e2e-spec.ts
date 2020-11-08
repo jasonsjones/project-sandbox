@@ -41,7 +41,7 @@ describe('Avatar resolver (e2e)', () => {
 
     describe('upload avatar mutation', () => {
         it('uploads png image', () => {
-            const testFile = `${__dirname}/../testAssets/default_avatar.png`;
+            const testFile = `${__dirname}/../avatars/default/avatar.png`;
 
             const variables = {
                 image: null
