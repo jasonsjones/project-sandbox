@@ -152,6 +152,34 @@ function UserRegisterForm({ className }: UserRegisterFormProps): JSX.Element {
 }
 // #endregion
 
+// #region User Card *******
+
+type UserCardProps = {
+    user: {
+        id?: string;
+        displayName?: string;
+        email?: string;
+    };
+};
+
+function UserCard({ user }: UserCardProps): JSX.Element {
+    return (
+        <div className="flex p-4 m-2 border-2 border-purple-600 rounded-md shadow-md">
+            <img
+                src="http://localhost:3000/default/avatar.png"
+                alt="default avatar"
+                className="w-24 rounded-full border-2 border-purple-300"
+            />
+            <div className="flex flex-col justify-center ml-4 text-purple-900">
+                <span>{user.displayName}</span>
+                <span>{user.email}</span>
+            </div>
+        </div>
+    );
+}
+
+// #endregion
+
 // #region User List *******
 
 type UserListProps = { className: string };
@@ -191,6 +219,15 @@ function UserList({ className }: UserListProps): JSX.Element {
                                     </span>
                                 </div>
                             );
+                        }
+                    )}
+            </div>
+            <h2 className="mb-2 text-3xl text-gray-600 text-center">User Cards</h2>
+            <div className="flex justify-center flex-wrap">
+                {data &&
+                    data.data?.users?.map(
+                        (user: { id: string; displayName: string; email: string }) => {
+                            return <UserCard key={user.id} user={user} />;
                         }
                     )}
             </div>
