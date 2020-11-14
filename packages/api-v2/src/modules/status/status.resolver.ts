@@ -5,8 +5,8 @@ import { StatusService } from './status.service';
 export class StatusResolver {
     constructor(private readonly statusService: StatusService) {}
 
-    @Query((returns) => String)
-    status(): string {
+    @Query((_returns) => String, { name: 'status' })
+    getStatus(): string {
         return this.statusService.getMessage();
     }
 }

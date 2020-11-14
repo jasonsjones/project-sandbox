@@ -30,12 +30,12 @@ class RegisterUserInput {
 export class UserResolver {
     constructor(private readonly userService: UserService) {}
 
-    @Query(() => [User])
-    users(): Promise<User[]> {
+    @Query(() => [User], { name: 'users' })
+    getUsers(): Promise<User[]> {
         return this.userService.getAllUsers();
     }
 
-    @ResolveField('displayName', (returns) => String)
+    @ResolveField('displayName', (_returns) => String)
     getDisplayName(@Parent() user: User) {
         return `${user.firstName} ${user.lastName}`;
     }
