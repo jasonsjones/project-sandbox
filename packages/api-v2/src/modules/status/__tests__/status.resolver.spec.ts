@@ -19,6 +19,6 @@ describe('StatusResolver', () => {
     });
 
     it('has staus() method', () => {
-        expect(resolver.status()).toBe(constants.STATUS_MESSAGE);
+        expect(resolver.getStatus()).toBe(constants.STATUS_MESSAGE);
     });
 });

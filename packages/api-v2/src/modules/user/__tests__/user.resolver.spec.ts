@@ -43,7 +43,7 @@ describe('User resolver', () => {
             const result = [];
             const getAllUsersSpy = jest.spyOn(userService, 'getAllUsers').mockResolvedValue(result);
 
-            expect(await userResolver.users()).toBe(result);
+            expect(await userResolver.getUsers()).toBe(result);
             expect(getAllUsersSpy).toHaveBeenCalled();
         });
     });
