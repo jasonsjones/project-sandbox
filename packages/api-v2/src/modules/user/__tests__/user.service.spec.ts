@@ -44,9 +44,15 @@ describe('User service', () => {
                     firstName: oliver.firstName,
                     lastName: oliver.lastName,
                     email: oliver.email,
-                    password: oliver.password
+                    password: expect.any(String)
                 })
             );
+        });
+
+        it("hashes the user's password before saving", async () => {
+            const result = await userService.create(oliver);
+            expect(result.password).not.toEqual(oliver.password);
+            expect(result.password).toMatch(/^\$2*/);
         });
     });
 
