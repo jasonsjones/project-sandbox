@@ -65,4 +65,27 @@ describe('User service', () => {
             expect(users).toHaveLength(2);
         });
     });
+
+    describe('findByEmail()', () => {
+        it('fetches a user with the given email', async () => {
+            await userService.create(barry);
+            const result = await userService.findByEmail(barry.email);
+
+            expect(result).toEqual(
+                expect.objectContaining({
+                    id: expect.any(String),
+                    firstName: barry.firstName,
+                    lastName: barry.lastName,
+                    email: barry.email,
+                    password: expect.any(String)
+                })
+            );
+        });
+
+        it('returns undefined if a user is not found with the given email', async () => {
+            await userService.create(cisco);
+            const unknownUser = await userService.findByEmail(barry.email);
+            expect(unknownUser).toBeUndefined();
+        });
+    });
 });
