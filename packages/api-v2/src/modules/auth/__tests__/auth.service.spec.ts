@@ -1,4 +1,5 @@
 import { Test } from '@nestjs/testing';
+import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from '../auth.service';
 import { UserService } from '../../user/user.service';
 import { CreateUserDto } from '../../user/create-user.dto';
@@ -17,7 +18,12 @@ describe('Auth service', () => {
 
     beforeEach(async () => {
         const moduleRef = await Test.createTestingModule({
-            imports: [UserModule],
+            imports: [
+                UserModule,
+                JwtModule.register({
+                    secret: 'tempjwtsecretfortest' // TODO: move this 'secret' to a config env file
+                })
+            ],
             providers: [AuthService]
         }).compile();
 

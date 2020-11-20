@@ -14,7 +14,9 @@ const oliver: CreateUserDto = {
 
 const LoginOp = `
 mutation Login($email: String!, $password: String!) {
-    login(email: $email, password: $password)
+    login(email: $email, password: $password) {
+        accessToken
+    }
 }`;
 
 describe('Auth resolver (e2e)', () => {
@@ -42,8 +44,8 @@ describe('Auth resolver (e2e)', () => {
                     variables: { email: oliver.email, password: oliver.password }
                 })
                 .expect(({ body }) => {
-                    const { login } = body.data;
-                    expect(login).toBe(true);
+                    const { accessToken } = body.data.login;
+                    expect(accessToken.length).toBeGreaterThan(0);
                 });
         });
 
@@ -57,8 +59,8 @@ describe('Auth resolver (e2e)', () => {
                     variables: { email: 'unknown-email@qc.com', password: oliver.password }
                 })
                 .expect(({ body }) => {
-                    const { login } = body.data;
-                    expect(login).toBe(false);
+                    const { accessToken } = body.data.login;
+                    expect(accessToken).toBeNull();
                 });
         });
 
@@ -72,8 +74,8 @@ describe('Auth resolver (e2e)', () => {
                     variables: { email: oliver.email, password: 'wrong-password' }
                 })
                 .expect(({ body }) => {
-                    const { login } = body.data;
-                    expect(login).toBe(false);
+                    const { accessToken } = body.data.login;
+                    expect(accessToken).toBeNull();
                 });
         });
     });
