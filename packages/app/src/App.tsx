@@ -90,7 +90,7 @@ function UserRegisterForm({ className }: UserRegisterFormProps): JSX.Element {
         <div className={className}>
             <h2 className="mb-4 text-3xl text-gray-600 text-center">Register for Account</h2>
             <form onSubmit={handleSubmit}>
-                <div className="flex flex-col px-4 pb-4">
+                <div className="flex flex-col pb-4">
                     <label htmlFor="firstname" className="mb-1 text-gray-500">
                         First Name
                     </label>
@@ -102,7 +102,7 @@ function UserRegisterForm({ className }: UserRegisterFormProps): JSX.Element {
                         onChange={updateField}
                     />
                 </div>
-                <div className="flex flex-col px-4 pb-4">
+                <div className="flex flex-col pb-4">
                     <label htmlFor="lastName" className="mb-1 text-gray-500">
                         Last Name
                     </label>
@@ -114,7 +114,7 @@ function UserRegisterForm({ className }: UserRegisterFormProps): JSX.Element {
                         onChange={updateField}
                     />
                 </div>
-                <div className="flex flex-col px-4 pb-4">
+                <div className="flex flex-col pb-4">
                     <label htmlFor="email" className="mb-1 text-gray-500">
                         Email
                     </label>
@@ -126,7 +126,7 @@ function UserRegisterForm({ className }: UserRegisterFormProps): JSX.Element {
                         onChange={updateField}
                     />
                 </div>
-                <div className="flex flex-col px-4 pb-4">
+                <div className="flex flex-col pb-4">
                     <label htmlFor="password" className="mb-1 text-gray-500">
                         Password
                     </label>
@@ -164,7 +164,7 @@ type UserCardProps = {
 
 function UserCard({ user }: UserCardProps): JSX.Element {
     return (
-        <div className="flex p-4 m-2 border-2 border-purple-600 rounded-md shadow-md">
+        <div className="flex p-4 transition duration-200 ease-in-out border-2 border-purple-600 rounded-md shadow-md transform hover:bg-purple-100 hover:scale-105 hover:shadow-lg">
             <img
                 src="http://localhost:3000/default/avatar.png"
                 alt="default avatar"
@@ -223,7 +223,7 @@ function UserList({ className }: UserListProps): JSX.Element {
                     )}
             </div>
             <h2 className="mb-2 text-3xl text-gray-600 text-center">User Cards</h2>
-            <div className="flex justify-center flex-wrap">
+            <div className="grid grid-flow-rows grid-col-1 mx-8 lg:grid-cols-2 xl:grid-cols-3 gap-4">
                 {data &&
                     data.data?.users?.map(
                         (user: { id: string; displayName: string; email: string }) => {
@@ -517,7 +517,6 @@ function App(): JSX.Element {
             </div>
 
             <Features />
-
             <UserRegisterForm className="w-3/4 mx-auto mt-12 md:w-1/3" />
             <UserList className="w-full mx-auto mt-12 py-6 md:w-3/4 md:py-0" />
 
