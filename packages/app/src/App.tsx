@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import {
     QueryCache,
     ReactQueryCacheProvider,
@@ -503,9 +504,9 @@ function FileUpload(): JSX.Element {
 
 // #endregion
 
-// #region App *******
+// #region Home *******
 
-function App(): JSX.Element {
+function Home(): JSX.Element {
     return (
         <ReactQueryCacheProvider queryCache={queryCache}>
             <div className="mt-8 mx-12">
@@ -526,6 +527,30 @@ function App(): JSX.Element {
 
             <ReactQueryDevtools initialIsOpen />
         </ReactQueryCacheProvider>
+    );
+}
+
+// #endregion
+
+// #region Layout *******
+
+function Layout({ children }: { children: React.ReactNode }): JSX.Element {
+    return <React.Fragment>{children}</React.Fragment>;
+}
+
+// #endregion
+
+// #region App *******
+
+function App(): JSX.Element {
+    return (
+        <BrowserRouter>
+            <Layout>
+                <Switch>
+                    <Route exact path="/" component={Home} />
+                </Switch>
+            </Layout>
+        </BrowserRouter>
     );
 }
 
