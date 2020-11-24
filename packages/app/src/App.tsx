@@ -12,6 +12,7 @@ import { makeGraphQLQuery, makeGraphQLMutation } from './dataservice';
 import secureLogo from './assets/secure.svg';
 import innovativeLogo from './assets/innovative.svg';
 import { Button } from './components/common';
+import Footer from './components/Footer';
 
 const queryCache = new QueryCache();
 
@@ -535,7 +536,12 @@ function Home(): JSX.Element {
 // #region Layout *******
 
 function Layout({ children }: { children: React.ReactNode }): JSX.Element {
-    return <React.Fragment>{children}</React.Fragment>;
+    return (
+        <div className="flex flex-col">
+            <div className="flex-grow flex-shrink-0 pb-6">{children}</div>
+            <Footer />
+        </div>
+    );
 }
 
 // #endregion
