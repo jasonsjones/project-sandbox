@@ -13,6 +13,7 @@ import secureLogo from './assets/secure.svg';
 import innovativeLogo from './assets/innovative.svg';
 import { Button } from './components/common';
 import Footer from './components/Footer';
+import Nav from './components/Nav';
 
 const queryCache = new QueryCache();
 
@@ -537,7 +538,8 @@ function Home(): JSX.Element {
 
 function Layout({ children }: { children: React.ReactNode }): JSX.Element {
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col h-screen">
+            <Nav />
             <div className="flex-grow flex-shrink-0 pb-6">{children}</div>
             <Footer />
         </div>
