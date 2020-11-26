@@ -14,6 +14,7 @@ import innovativeLogo from './assets/innovative.svg';
 import { Button, InputField } from './components/common';
 import Footer from './components/Footer';
 import Nav from './components/Nav';
+import LoginPage from './containers/LoginPage';
 
 const queryCache = new QueryCache();
 
@@ -540,6 +541,7 @@ function App(): JSX.Element {
             <Layout>
                 <Switch>
                     <Route exact path="/" component={Home} />
+                    <Route exact path="/login" component={LoginPage} />
                 </Switch>
             </Layout>
         </BrowserRouter>
