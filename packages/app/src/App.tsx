@@ -11,7 +11,7 @@ import { ReactQueryDevtools } from 'react-query-devtools';
 import { makeGraphQLQuery, makeGraphQLMutation } from './dataservice';
 import secureLogo from './assets/secure.svg';
 import innovativeLogo from './assets/innovative.svg';
-import { Button } from './components/common';
+import { Button, InputField } from './components/common';
 import Footer from './components/Footer';
 import Nav from './components/Nav';
 
@@ -93,54 +93,38 @@ function UserRegisterForm({ className }: UserRegisterFormProps): JSX.Element {
         <div className={className}>
             <h2 className="mb-4 text-3xl text-gray-600 text-center">Register for Account</h2>
             <form onSubmit={handleSubmit}>
-                <div className="flex flex-col pb-4">
-                    <label htmlFor="firstname" className="mb-1 text-gray-500">
-                        First Name
-                    </label>
-                    <input
-                        type="text"
-                        id="firstName"
-                        className="px-4 text-gray-700 border-2 border-gray-300 h-12 rounded-lg"
-                        value={formValues.firstName}
-                        onChange={updateField}
-                    />
-                </div>
-                <div className="flex flex-col pb-4">
-                    <label htmlFor="lastName" className="mb-1 text-gray-500">
-                        Last Name
-                    </label>
-                    <input
-                        type="text"
-                        id="lastName"
-                        className="px-4 text-gray-700 border-2 border-gray-300 h-12 rounded-lg"
-                        value={formValues.lastName}
-                        onChange={updateField}
-                    />
-                </div>
-                <div className="flex flex-col pb-4">
-                    <label htmlFor="email" className="mb-1 text-gray-500">
-                        Email
-                    </label>
-                    <input
-                        type="email"
-                        id="email"
-                        className="px-4 text-gray-700 border-2 border-gray-300 h-12 rounded-lg"
-                        value={formValues.email}
-                        onChange={updateField}
-                    />
-                </div>
-                <div className="flex flex-col pb-4">
-                    <label htmlFor="password" className="mb-1 text-gray-500">
-                        Password
-                    </label>
-                    <input
-                        type="password"
-                        id="password"
-                        className="px-4 text-gray-700 border-2 border-gray-300 h-12 rounded-lg"
-                        value={formValues.password}
-                        onChange={updateField}
-                    />
-                </div>
+                <InputField
+                    type="text"
+                    className="mb-4"
+                    id="firstName"
+                    label="First Name"
+                    value={formValues.firstName}
+                    changeHandler={updateField}
+                />
+                <InputField
+                    type="text"
+                    className="mb-4"
+                    id="lastName"
+                    label="Last Name"
+                    value={formValues.lastName}
+                    changeHandler={updateField}
+                />
+                <InputField
+                    type="email"
+                    className="mb-4"
+                    id="email"
+                    label="Email"
+                    value={formValues.email}
+                    changeHandler={updateField}
+                />
+                <InputField
+                    type="password"
+                    className="mb-4"
+                    id="password"
+                    label="Password"
+                    value={formValues.password}
+                    changeHandler={updateField}
+                />
                 <div className="flex justify-end">
                     <Button className="my-4 mr-6" variant="secondary" clickAction={handleCancel}>
                         Cancel
