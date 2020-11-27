@@ -7,6 +7,7 @@ WORKDIR /home/node/API
 
 COPY --chown=node:node package.json lerna.json /home/node/API/
 COPY --chown=node:node packages/api/package.json packages/api/tsconfig.json ./packages/api/
+COPY --chown=node:node packages/api/package.json packages/api/tsconfig.build.json ./packages/api/
 COPY --chown=node:node packages/shared/package.json packages/shared/tsconfig.json ./packages/shared/
 
 RUN yarn install
