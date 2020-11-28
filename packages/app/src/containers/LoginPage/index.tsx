@@ -1,11 +1,12 @@
 import React from 'react';
+import LoginForm from '../../components/LoginForm';
 
 function LoginPage(): JSX.Element {
     return (
-        <div className="mt-8 mx-auto">
-            <h1 className="text-2xl font-semibold text-center text-purple-900 sm:text-3xl">
-                Login
-            </h1>
+        <div className="mt-8 ">
+            <div className="w-3/4 mx-auto md:w-1/3">
+                <LoginForm />
+            </div>
         </div>
     );
 }
