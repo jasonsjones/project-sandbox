@@ -51,6 +51,7 @@ describe('Auth resolver (e2e)', () => {
 
         it('does not authenticate a user with an invalid email', async () => {
             await userService.create(oliver);
+
             return request(app.getHttpServer())
                 .post('/graphql')
                 .set('Content-Type', 'application/json')
@@ -59,13 +60,15 @@ describe('Auth resolver (e2e)', () => {
                     variables: { email: 'unknown-email@qc.com', password: oliver.password }
                 })
                 .expect(({ body }) => {
-                    const { accessToken } = body.data.login;
-                    expect(accessToken).toBeNull();
+                    expect(body.data).toBeNull();
+                    expect(body.errors).toHaveLength(1);
+                    expect(body.errors[0].message).toBe('Unauthorized');
                 });
         });
 
         it('does not authenticate a user with an invalid password', async () => {
             await userService.create(oliver);
+
             return request(app.getHttpServer())
                 .post('/graphql')
                 .set('Content-Type', 'application/json')
@@ -74,8 +77,10 @@ describe('Auth resolver (e2e)', () => {
                     variables: { email: oliver.email, password: 'wrong-password' }
                 })
                 .expect(({ body }) => {
-                    const { accessToken } = body.data.login;
-                    expect(accessToken).toBeNull();
+                    expect(body.data).toBeNull();
+                    expect(body.errors).toHaveLength(1);
+                    expect(body.errors[0].message).toBe('Unauthorized');
+                    expect(body.errors[0].extensions.exception.status).toBe(401);
                 });
         });
     });
