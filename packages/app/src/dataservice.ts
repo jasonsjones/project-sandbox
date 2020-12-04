@@ -1,8 +1,8 @@
 import { MutationFunction } from 'react-query';
 
-interface GraphQLResponse {
+export interface GraphQLResponse {
     data?: any;
-    error?: any;
+    errors?: any;
 }
 
 interface QueryPayload {
