@@ -1,11 +1,26 @@
 import React, { useState } from 'react';
+import { useMutation } from 'react-query';
+import { GraphQLResponse, makeGraphQLMutation } from '../../dataservice';
 import { Button, InputField } from '../common';
 
+const loginOp = `
+mutation Login($email: String!, $password: String!) {
+  login(email: $email, password: $password) {
+    accessToken
+  }
+}
+`;
+
 function LoginForm(): JSX.Element {
+    const [accessToken, setAccessToken] = useState('');
+    const [authError, setAuthError] = useState('');
+
     const [formValues, setFormValues] = useState({
         email: '',
         password: ''
     });
+
+    const [mutate] = useMutation(makeGraphQLMutation);
 
     const updateField: React.ChangeEventHandler<HTMLInputElement> = (e) => {
         setFormValues({
@@ -23,10 +38,30 @@ function LoginForm(): JSX.Element {
 
     const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
         e.preventDefault();
-        console.log(formValues);
+
         if (formValues.email.length > 0 && formValues.password.length > 0) {
-            console.log('submitting form...');
-            clearForm();
+            const response = await mutate({
+                query: loginOp,
+                variables: { email: formValues.email, password: formValues.password }
+            });
+
+            const { errors, data } = response as GraphQLResponse;
+
+            if (data) {
+                setAccessToken(response?.data.login.accessToken);
+                setAuthError('');
+                clearForm();
+            } else {
+                setAccessToken('');
+            }
+
+            if (errors && errors.length > 0) {
+                if (errors[0].message === 'Unauthorized') {
+                    setAuthError('Unauthorized access. Please try again.');
+                } else {
+                    setAuthError('Unexpected error. Please try again.');
+                }
+            }
         }
     };
 
@@ -59,6 +94,17 @@ function LoginForm(): JSX.Element {
                     </Button>
                 </div>
             </form>
+
+            {/* Temp dump of access token (jwt) for development */}
+            {accessToken ? (
+                <p className="mt-8 text-gray-600 break-words">Access Token: {accessToken}</p>
+            ) : null}
+
+            {authError ? (
+                <div className="flex flex-col justify-center h-12 mt-4 rounded-md bg-red-200 border-2 border-red-700">
+                    <p className="text-red-700 text-center">{authError}</p>
+                </div>
+            ) : null}
         </React.Fragment>
     );
 }
