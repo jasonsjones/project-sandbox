@@ -27,7 +27,6 @@
     },
     "homepage": "https://github.com/jasonsjones/side-project#readme",
     "devDependencies": {
-        "ts-jest": "26.3.0"
     },
     "jest": {
         "preset": "ts-jest"
