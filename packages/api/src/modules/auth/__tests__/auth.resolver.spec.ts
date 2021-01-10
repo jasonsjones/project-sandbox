@@ -24,7 +24,7 @@ describe('Auth resolver', () => {
             imports: [
                 UserModule,
                 JwtModule.register({
-                    secret: 'tempjwtsecret' // TODO: move this 'secret' to a config env file
+                    secret: 'jwtsecretfortest'
                 })
             ],
             providers: [AuthResolver, AuthService]
@@ -57,7 +57,7 @@ describe('Auth resolver', () => {
 
             const error = (await authResolver.login(
                 'unknown-user@example.com',
-                'secret'
+                'orion'
             )) as UnauthorizedException;
 
             expect(error instanceof UnauthorizedException).toBe(true);

@@ -21,7 +21,7 @@ describe('Auth service', () => {
             imports: [
                 UserModule,
                 JwtModule.register({
-                    secret: 'tempjwtsecretfortest' // TODO: move this 'secret' to a config env file
+                    secret: 'jwtsecretfortest'
                 })
             ],
             providers: [AuthService]
