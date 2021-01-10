@@ -1,4 +1,5 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { LoggerMiddleware } from './common/logger.middleware';
 import { AppController } from './app.controller';
@@ -10,6 +11,7 @@ import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
     imports: [
+        ConfigModule.forRoot(),
         GraphQLModule.forRoot({ autoSchemaFile: 'src/schema.gql' }),
         AuthModule,
         AvatarModule,
