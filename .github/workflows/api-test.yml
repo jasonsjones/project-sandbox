@@ -18,7 +18,8 @@ jobs:
         name: API test
         runs-on: ubuntu-latest
 
-        # env:
+        env:
+            JWT_SECRET: jwtsecretforTESTING
         #     ACCESS_TOKEN_SECRET: AccesstokenSECRETforTESTING
         #     REFRESH_TOKEN_SECRET: RefreshtokenSECRETforTESTING
 
