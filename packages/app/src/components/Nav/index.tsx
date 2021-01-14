@@ -82,7 +82,7 @@ function Nav(): JSX.Element {
                     </div>
                 </div>
                 {/* The nav links on small screens that are displayed when the button is clicked */}
-                <div className={`${isMobileLinksOpen ? 'block' : 'hidden'} mt-4 -ml-2`}>
+                <div className={`${isMobileLinksOpen ? 'block' : 'hidden'} mt-4 -ml-2 sm:hidden`}>
                     {!isFetching && !contextUser && (
                         <>
                             <NavLink
