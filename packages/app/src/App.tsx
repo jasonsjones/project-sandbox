@@ -8,7 +8,7 @@ import {
     useQueryCache
 } from 'react-query';
 import { ReactQueryDevtools } from 'react-query-devtools';
-import { makeGraphQLQuery, makeGraphQLMutation } from './dataservice';
+import { makeGraphQLQuery, makeGraphQLMutation, makeGraphQLFileUpload } from './dataservice';
 import secureLogo from './assets/secure.svg';
 import innovativeLogo from './assets/innovative.svg';
 import { Button, InputField } from './components/common';
@@ -400,6 +400,24 @@ function FileUpload(): JSX.Element {
         }
     };
 
+    const handleFileUpload = (e: React.MouseEvent) => {
+        const AvatarUploadOp = `
+mutation AvatarUpload ($image: Upload!) {
+    avatarUpload(image: $image)
+}
+`;
+        const variables = { image: null, operationName: 'UploadAvatar' };
+
+        // update to use the useMutation hook from react-query
+        makeGraphQLFileUpload({ query: AvatarUploadOp, variables }, image as File).then(
+            ({ data }) => {
+                if (data.avatarUpload) {
+                    clearFile();
+                }
+            }
+        );
+    };
+
     const processFile = (file: File): void => {
         if (file.type === 'image/png') {
             setImage(file);
@@ -429,7 +447,9 @@ function FileUpload(): JSX.Element {
     return (
         <div className="text-gray-700">
             <h3 className="text-center text-2xl mb-2">Upload Image</h3>
-            <p className="italic text-center mb-2">Note: No API support yet...</p>
+            <p className="italic text-center mb-2">
+                Note: Currently, the API drops this on the floor...
+            </p>
             {!image && (
                 <div>
                     <div
@@ -479,7 +499,12 @@ function FileUpload(): JSX.Element {
                         <Button className="my-4 mr-6" variant="secondary" clickAction={clearFile}>
                             Cancel
                         </Button>
-                        <Button type="button" className="my-4" variant="primary">
+                        <Button
+                            type="button"
+                            className="my-4"
+                            variant="primary"
+                            clickAction={handleFileUpload}
+                        >
                             Upload
                         </Button>
                     </div>
