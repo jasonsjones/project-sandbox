@@ -4,8 +4,6 @@ import { AppModule } from '../src/app.module';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 
-const testUploadDir = `${__dirname}/../testUploads`;
-
 function generateVariableMap(keyName: string) {
     return {
         keyName: [`variables.${keyName}`]
@@ -35,10 +33,6 @@ describe('Avatar resolver (e2e)', () => {
         await app.init();
     });
 
-    afterAll(() => {
-        fs.rmdirSync(testUploadDir, { recursive: true });
-    });
-
     describe('upload avatar mutation', () => {
         it('uploads png image', () => {
             const testFile = `${__dirname}/../avatars/default/avatar.png`;
@@ -54,7 +48,10 @@ describe('Avatar resolver (e2e)', () => {
                 .set('Content-Type', 'multipart/form-data')
                 .field(constants.OPERATIONS, JSON.stringify({ query: AvatarUploadOp, variables }))
                 .field(constants.MAP, JSON.stringify(variableMap))
-                .attach(Object.keys(variableMap)[0], testFile);
+                .attach(Object.keys(variableMap)[0], testFile)
+                .expect((res) => {
+                    expect(res.body.data.avatarUpload).toBe(true);
+                });
         });
     });
 });

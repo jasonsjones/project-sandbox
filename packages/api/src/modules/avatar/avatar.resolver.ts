@@ -1,5 +1,4 @@
-// import { Stream } from 'stream';
-import fs, { createWriteStream } from 'fs';
+import { Writable } from 'stream';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { GraphQLUpload, FileUpload } from 'graphql-upload';
 import Avatar from './avatar.entity';
@@ -10,16 +9,18 @@ export class AvatarResolver {
     async avatarUpload(
         @Args({ name: 'image', type: () => GraphQLUpload }) image: FileUpload
     ): Promise<boolean> {
-        const fileDir = process.env.NODE_ENV !== 'test' ? 'uploads' : 'testUploads';
-        const filePath = `${__dirname}/../../../${fileDir}`;
-        if (!fs.existsSync(filePath)) {
-            fs.mkdirSync(filePath);
-        }
+        // For time being, do nothing with the data 'chunk'.
+        // Eventually, this function will be replaced with the cloudinary upload_stream API
+        const nullStream = new Writable({
+            write(chunk, _, cb) {
+                cb();
+            }
+        });
 
         return new Promise((resolve, reject) => {
             image
                 .createReadStream()
-                .pipe(createWriteStream(`${filePath}/${image.filename}`))
+                .pipe(nullStream)
                 .on('finish', () => resolve(true))
                 .on('error', () => reject(false));
         });
