@@ -1,13 +1,13 @@
 import React, { useRef, useState } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import {
-    QueryCache,
-    ReactQueryCacheProvider,
+    QueryClient,
+    QueryClientProvider,
     useMutation,
     useQuery,
-    useQueryCache
+    useQueryClient
 } from 'react-query';
-import { ReactQueryDevtools } from 'react-query-devtools';
+import { ReactQueryDevtools } from 'react-query/devtools';
 import { makeGraphQLQuery, makeGraphQLMutation, makeGraphQLFileUpload } from './dataservice';
 import secureLogo from './assets/secure.svg';
 import innovativeLogo from './assets/innovative.svg';
@@ -16,7 +16,7 @@ import Footer from './components/Footer';
 import Nav from './components/Nav';
 import LoginPage from './containers/LoginPage';
 
-const queryCache = new QueryCache();
+const queryClient = new QueryClient();
 
 // #region User Registration Form *******
 
@@ -34,14 +34,16 @@ function UserRegisterForm({ className }: UserRegisterFormProps): JSX.Element {
                     }
                 }`;
 
-    const cache = useQueryCache();
+    const queryClient = useQueryClient();
+
     const [formValues, setFormValues] = useState({
         firstName: '',
         lastName: '',
         email: '',
         password: ''
     });
-    const [mutate] = useMutation(makeGraphQLMutation);
+
+    const mutation = useMutation(makeGraphQLMutation);
 
     const clearForm = () => {
         setFormValues({
@@ -63,31 +65,28 @@ function UserRegisterForm({ className }: UserRegisterFormProps): JSX.Element {
         clearForm();
     };
 
-    const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
+    const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
         e.preventDefault();
-        console.log(formValues);
-        if (
+        if (isFormValid()) {
+            mutation.mutate(
+                { query: registerUserOp, variables: { userData: formValues } },
+                {
+                    onSuccess: () => {
+                        clearForm();
+                        queryClient.invalidateQueries('users');
+                    }
+                }
+            );
+        }
+    };
+
+    const isFormValid = () => {
+        return (
             formValues.firstName.length > 0 &&
             formValues.lastName.length > 0 &&
             formValues.email.length > 0 &&
             formValues.password.length > 0
-        ) {
-            console.log('submitting form...');
-            try {
-                await mutate(
-                    { query: registerUserOp, variables: { userData: formValues } },
-                    {
-                        onSuccess: () => {
-                            cache.invalidateQueries('users');
-                        }
-                    }
-                );
-
-                clearForm();
-            } catch (error) {
-                console.log(error);
-            }
-        }
+        );
     };
 
     return (
@@ -375,6 +374,8 @@ function FileUpload(): JSX.Element {
     const [image, setImage] = useState<File | null>(null);
     const [error, setError] = useState('');
 
+    const mutation = useMutation(makeGraphQLFileUpload);
+
     const handleDragEnter: React.DragEventHandler<HTMLDivElement> = (e) => {
         setHighlight(true);
     };
@@ -408,14 +409,23 @@ mutation AvatarUpload ($image: Upload!) {
 `;
         const variables = { image: null, operationName: 'UploadAvatar' };
 
-        // update to use the useMutation hook from react-query
-        makeGraphQLFileUpload({ query: AvatarUploadOp, variables }, image as File).then(
-            ({ data }) => {
-                if (data.avatarUpload) {
+        mutation.mutate(
+            { query: AvatarUploadOp, variables, file: image as File },
+            {
+                onSuccess: () => {
                     clearFile();
                 }
             }
         );
+
+        // update to use the useMutation hook from react-query
+        // makeGraphQLFileUpload({ query: AvatarUploadOp, variables }, image as File).then(
+        //     ({ data }) => {
+        //         if (data.avatarUpload) {
+        //             clearFile();
+        //         }
+        //     }
+        // );
     };
 
     const processFile = (file: File): void => {
@@ -520,7 +530,7 @@ mutation AvatarUpload ($image: Upload!) {
 
 function Home(): JSX.Element {
     return (
-        <ReactQueryCacheProvider queryCache={queryCache}>
+        <>
             <div className="mt-8 mx-12">
                 <HeroBanner />
             </div>
@@ -536,9 +546,7 @@ function Home(): JSX.Element {
             <div className="my-4 mx-auto max-w-md">
                 <FileUpload />
             </div>
-
-            <ReactQueryDevtools initialIsOpen />
-        </ReactQueryCacheProvider>
+        </>
     );
 }
 
@@ -564,10 +572,13 @@ function App(): JSX.Element {
     return (
         <BrowserRouter>
             <Layout>
-                <Switch>
-                    <Route exact path="/" component={Home} />
-                    <Route exact path="/login" component={LoginPage} />
-                </Switch>
+                <QueryClientProvider client={queryClient}>
+                    <Switch>
+                        <Route exact path="/" component={Home} />
+                        <Route exact path="/login" component={LoginPage} />
+                    </Switch>
+                    <ReactQueryDevtools initialIsOpen={false} />
+                </QueryClientProvider>
             </Layout>
         </BrowserRouter>
     );
