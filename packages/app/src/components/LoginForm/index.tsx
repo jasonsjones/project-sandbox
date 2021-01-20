@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useMutation } from 'react-query';
-import { GraphQLResponse, makeGraphQLMutation } from '../../dataservice';
+import { makeGraphQLMutation } from '../../dataservice';
 import { Button, InputField } from '../common';
 
 const loginOp = `
@@ -20,7 +20,7 @@ function LoginForm(): JSX.Element {
         password: ''
     });
 
-    const [mutate] = useMutation(makeGraphQLMutation);
+    const mutation = useMutation(makeGraphQLMutation);
 
     const updateField: React.ChangeEventHandler<HTMLInputElement> = (e) => {
         setFormValues({
@@ -40,28 +40,34 @@ function LoginForm(): JSX.Element {
         e.preventDefault();
 
         if (formValues.email.length > 0 && formValues.password.length > 0) {
-            const response = await mutate({
-                query: loginOp,
-                variables: { email: formValues.email, password: formValues.password }
-            });
+            mutation.mutate(
+                {
+                    query: loginOp,
+                    variables: { email: formValues.email, password: formValues.password }
+                },
+                {
+                    onSuccess: (response) => {
+                        const { data, errors } = response;
+                        if (data) {
+                            setAccessToken(data.login.accessToken);
+                            setAuthError('');
+                            clearForm();
+                        }
 
-            const { errors, data } = response as GraphQLResponse;
-
-            if (data) {
-                setAccessToken(response?.data.login.accessToken);
-                setAuthError('');
-                clearForm();
-            } else {
-                setAccessToken('');
-            }
-
-            if (errors && errors.length > 0) {
-                if (errors[0].message === 'Unauthorized') {
-                    setAuthError('Unauthorized access. Please try again.');
-                } else {
-                    setAuthError('Unexpected error. Please try again.');
+                        if (errors.length > 0) {
+                            if (errors[0].message === 'Unauthorized') {
+                                setAuthError('Unauthorized access. Please try again.');
+                            } else {
+                                setAuthError('Unexpected error. Please try again.');
+                            }
+                            setAccessToken('');
+                        }
+                    },
+                    onError: (error) => {
+                        console.log(error);
+                    }
                 }
-            }
+            );
         }
     };
 

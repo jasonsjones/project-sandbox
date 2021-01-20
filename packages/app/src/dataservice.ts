@@ -8,14 +8,17 @@ export interface GraphQLResponse {
 interface QueryPayload {
     query: string;
     variables?: object;
+    file?: File;
 }
 
 const graphqlEndpoint = 'http://localhost:3000/graphql';
 
-export function makeGraphQLQuery(
-    _: string,
-    { query, variables = {} }: QueryPayload
-): Promise<GraphQLResponse> {
+export function makeGraphQLQuery({
+    queryKey
+}: {
+    queryKey: [string, QueryPayload];
+}): Promise<GraphQLResponse> {
+    const [, { query, variables = {} }] = queryKey;
     return fetch(graphqlEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -34,7 +37,11 @@ export const makeGraphQLMutation: MutationFunction<GraphQLResponse, QueryPayload
     }).then((res) => res.json());
 };
 
-export function makeGraphQLFileUpload({ query, variables = {} }: QueryPayload, file: File) {
+export const makeGraphQLFileUpload: MutationFunction<GraphQLResponse, QueryPayload> = ({
+    query,
+    variables = {},
+    file
+}: QueryPayload): Promise<GraphQLResponse> => {
     const data = new FormData();
 
     if (Object.keys(variables).length > 0) {
@@ -59,4 +66,4 @@ export function makeGraphQLFileUpload({ query, variables = {} }: QueryPayload, f
         method: 'POST',
         body: data
     }).then((res) => res.json());
-}
+};
