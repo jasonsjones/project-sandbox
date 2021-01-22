@@ -574,8 +574,12 @@ function App(): JSX.Element {
             <Layout>
                 <QueryClientProvider client={queryClient}>
                     <Switch>
-                        <Route exact path="/" component={Home} />
-                        <Route exact path="/login" component={LoginPage} />
+                        <Route exact path="/">
+                            <Home />
+                        </Route>
+                        <Route exact path="/login">
+                            <LoginPage />
+                        </Route>
                     </Switch>
                     <ReactQueryDevtools initialIsOpen={false} />
                 </QueryClientProvider>
