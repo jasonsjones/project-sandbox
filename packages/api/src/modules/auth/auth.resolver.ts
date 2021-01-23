@@ -1,7 +1,12 @@
+import { Request, Response } from 'express';
 import { UnauthorizedException } from '@nestjs/common';
-import { Args, Field, Mutation, ObjectType, Resolver } from '@nestjs/graphql';
+import { Args, Context, Field, Mutation, ObjectType, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 
+interface GraphQLContext {
+    req: Request;
+    res: Response;
+}
 @ObjectType()
 class LoginResponse {
     @Field({ nullable: true })
@@ -15,7 +20,8 @@ export class AuthResolver {
     @Mutation(() => LoginResponse)
     async login(
         @Args('email') email: string,
-        @Args('password') password: string
+        @Args('password') password: string,
+        @Context() { res }: GraphQLContext
     ): Promise<LoginResponse | UnauthorizedException> {
         const authUser = await this.authService.authenticateUser(email, password);
 
@@ -24,6 +30,8 @@ export class AuthResolver {
         }
 
         const accessToken = await this.authService.generateAccessToken(authUser);
+        const refreshToken = await this.authService.generateRefreshToken(authUser);
+        res.cookie('qid', refreshToken, { httpOnly: true });
         return {
             accessToken
         };

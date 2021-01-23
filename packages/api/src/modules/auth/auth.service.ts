@@ -17,7 +17,12 @@ export class AuthService {
     }
 
     async generateAccessToken(user: User): Promise<string | null> {
-        const payload = { email: user.email, sub: user.id };
+        const payload = { sub: user.id, email: user.email };
         return this.jwtService.sign(payload, { expiresIn: '10m' });
+    }
+
+    async generateRefreshToken(user: User): Promise<string | null> {
+        const payload = { sub: user.id, email: user.email, tokenId: user.refreshTokenId };
+        return this.jwtService.sign(payload, { expiresIn: '14d' });
     }
 }

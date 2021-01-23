@@ -17,7 +17,8 @@ import { AuthModule } from './modules/auth/auth.module';
             cors: {
                 origin: ['http://localhost:4200'],
                 credentials: true
-            }
+            },
+            context: ({ req, res }) => ({ req, res })
         }),
         AuthModule,
         AvatarModule,

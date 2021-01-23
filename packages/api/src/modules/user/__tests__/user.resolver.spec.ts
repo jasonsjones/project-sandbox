@@ -22,7 +22,8 @@ describe('User resolver', () => {
             lastName: 'Queen',
             email: 'oliver@qc.com',
             displayName: 'Oliver Queen',
-            password: '123456'
+            password: '123456',
+            refreshTokenId: 0
         };
 
         it('creates a new user', async () => {
@@ -55,7 +56,8 @@ describe('User resolver', () => {
             lastName: 'Queen',
             email: 'oliver@qc.com',
             displayName: '',
-            password: '123456'
+            password: '123456',
+            refreshTokenId: 0
         };
 
         it('returns a concatenation of first and last names', () => {
