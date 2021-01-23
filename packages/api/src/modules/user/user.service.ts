@@ -17,6 +17,7 @@ export class UserService {
         newUser.lastName = lastName;
         newUser.email = email;
         newUser.password = hashedPassword;
+        newUser.refreshTokenId = 0;
 
         this.users = [...this.users, newUser];
         return Promise.resolve(newUser);

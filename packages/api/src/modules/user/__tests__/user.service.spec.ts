@@ -44,7 +44,8 @@ describe('User service', () => {
                     firstName: oliver.firstName,
                     lastName: oliver.lastName,
                     email: oliver.email,
-                    password: expect.any(String)
+                    password: expect.any(String),
+                    refreshTokenId: 0
                 })
             );
         });
@@ -77,7 +78,8 @@ describe('User service', () => {
                     firstName: barry.firstName,
                     lastName: barry.lastName,
                     email: barry.email,
-                    password: expect.any(String)
+                    password: expect.any(String),
+                    refreshTokenId: 0
                 })
             );
         });
