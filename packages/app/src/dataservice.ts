@@ -21,6 +21,7 @@ export function makeGraphQLQuery({
     const [, { query, variables = {} }] = queryKey;
     return fetch(graphqlEndpoint, {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query, variables })
     }).then((res) => res.json());
@@ -32,6 +33,7 @@ export const makeGraphQLMutation: MutationFunction<GraphQLResponse, QueryPayload
 }): Promise<GraphQLResponse> => {
     return fetch(graphqlEndpoint, {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query, variables })
     }).then((res) => res.json());
@@ -64,6 +66,7 @@ export const makeGraphQLFileUpload: MutationFunction<GraphQLResponse, QueryPaylo
 
     return fetch(graphqlEndpoint, {
         method: 'POST',
+        credentials: 'include',
         body: data
     }).then((res) => res.json());
 };
