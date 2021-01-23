@@ -12,7 +12,13 @@ import { AuthModule } from './modules/auth/auth.module';
 @Module({
     imports: [
         ConfigModule.forRoot(),
-        GraphQLModule.forRoot({ autoSchemaFile: 'src/schema.gql' }),
+        GraphQLModule.forRoot({
+            autoSchemaFile: 'src/schema.gql',
+            cors: {
+                origin: ['http://localhost:4200'],
+                credentials: true
+            }
+        }),
         AuthModule,
         AvatarModule,
         StatusModule,
