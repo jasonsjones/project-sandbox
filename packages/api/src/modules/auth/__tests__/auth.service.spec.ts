@@ -1,9 +1,10 @@
 import { Test } from '@nestjs/testing';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AuthService } from '../auth.service';
 import { UserService } from '../../user/user.service';
 import { CreateUserDto } from '../../user/create-user.dto';
 import { UserModule } from '../../user/user.module';
+import { ConfigModule } from '@nestjs/config';
 
 const oliver: CreateUserDto = {
     firstName: 'Oliver',
@@ -15,10 +16,12 @@ const oliver: CreateUserDto = {
 describe('Auth service', () => {
     let authService: AuthService;
     let userService: UserService;
+    let jwtService: JwtService;
 
     beforeEach(async () => {
         const moduleRef = await Test.createTestingModule({
             imports: [
+                ConfigModule,
                 UserModule,
                 JwtModule.register({
                     secret: 'jwtsecretfortest'
@@ -29,6 +32,7 @@ describe('Auth service', () => {
 
         authService = moduleRef.get<AuthService>(AuthService);
         userService = moduleRef.get<UserService>(UserService);
+        jwtService = moduleRef.get<JwtService>(JwtService);
     });
 
     describe('authenticateUser()', () => {
@@ -50,6 +54,44 @@ describe('Auth service', () => {
             await userService.create(oliver);
             const result = await authService.authenticateUser(oliver.email, 'wrong-password');
             expect(result).toBeNull();
+        });
+    });
+
+    describe('generateAccessToken()', () => {
+        it('generates an access token string', async () => {
+            const ollie = await userService.create(oliver);
+            const token =
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+
+            jest.spyOn(jwtService, 'sign').mockImplementation(() => token);
+            expect(authService.generateAccessToken(ollie)).toBe(token);
+        });
+    });
+
+    describe('generateRefreshToken()', () => {
+        it('generates a refresh token string', async () => {
+            const ollie = await userService.create(oliver);
+            const token =
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+
+            jest.spyOn(jwtService, 'sign').mockImplementation(() => token);
+            expect(authService.generateRefreshToken(ollie)).toBe(token);
+        });
+    });
+
+    describe('verifyToken', () => {
+        it('verifies a valid jwt', () => {
+            const token =
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+
+            const result = {
+                sub: '234590-877673-787663',
+                email: oliver.email,
+                tokenId: 0,
+                iat: 1516239022
+            };
+            jest.spyOn(jwtService, 'verify').mockImplementation(() => result);
+            expect(authService.verifyToken(token)).toBe(result);
         });
     });
 });
