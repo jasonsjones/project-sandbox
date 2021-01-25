@@ -8,7 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { CreateUserDto } from '../../user/create-user.dto';
 import { UnauthorizedException } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { TokenExpiredError } from 'jsonwebtoken';
+import { TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken';
 
 const oliver: CreateUserDto = {
     firstName: 'Ollie',
@@ -186,6 +186,30 @@ describe('Auth resolver', () => {
 
             jest.spyOn(authService, 'verifyToken').mockImplementation(() => {
                 throw new TokenExpiredError('jwt expired', twoHoursAgo);
+            });
+
+            const result = await authResolver.refreshAccessToken({ req, res });
+
+            expect(result).toEqual(
+                expect.objectContaining({
+                    accessToken: null
+                })
+            );
+
+            expect(res.clearCookie).toHaveBeenCalledWith('qid');
+        });
+
+        it('returns null access token and clears cookie if refresh token is otherwize invalid', async () => {
+            const res = {} as Response;
+            res.clearCookie = jest.fn();
+
+            const req = {} as Request;
+            req.cookies = {
+                qid: fakeToken
+            };
+
+            jest.spyOn(authService, 'verifyToken').mockImplementation(() => {
+                throw new JsonWebTokenError('jwt malformed');
             });
 
             const result = await authResolver.refreshAccessToken({ req, res });

@@ -47,7 +47,7 @@ export class AuthResolver {
             try {
                 payload = this.authService.verifyToken(req.cookies.qid);
             } catch (error) {
-                if (error.name === 'TokenExpiredError') {
+                if (error.name === 'TokenExpiredError' || error.name === 'JsonWebTokenError') {
                     res.clearCookie('qid');
                 }
                 return {
