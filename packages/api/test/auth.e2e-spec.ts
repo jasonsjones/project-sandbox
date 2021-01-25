@@ -1,7 +1,10 @@
+import cookieParser from 'cookie-parser';
+import { TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken';
 import { INestApplication } from '@nestjs/common';
 import { TestingModule, Test } from '@nestjs/testing';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
+import { AuthService } from '../src/modules/auth/auth.service';
 import { CreateUserDto } from '../src/modules/user/create-user.dto';
 import { UserService } from '../src/modules/user/user.service';
 
@@ -19,9 +22,18 @@ mutation Login($email: String!, $password: String!) {
     }
 }`;
 
+const RefreshAccessTokenOp = `
+mutation RefreshAccessToken {
+    refreshAccessToken {
+        accessToken
+    }
+}
+`;
+
 describe('Auth resolver (e2e)', () => {
     let app: INestApplication;
     let userService: UserService;
+    let authService: AuthService;
 
     beforeEach(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -29,7 +41,9 @@ describe('Auth resolver (e2e)', () => {
         }).compile();
 
         userService = moduleFixture.get<UserService>(UserService);
+        authService = moduleFixture.get<AuthService>(AuthService);
         app = moduleFixture.createNestApplication();
+        app.use(cookieParser());
         await app.init();
     });
 
@@ -81,6 +95,87 @@ describe('Auth resolver (e2e)', () => {
                     expect(body.errors).toHaveLength(1);
                     expect(body.errors[0].message).toBe('Unauthorized');
                     expect(body.errors[0].extensions.exception.status).toBe(401);
+                });
+        });
+    });
+
+    describe('refreshAccessToken mutation', () => {
+        it('refreshes access token with valid refresh token', async () => {
+            const ollie = await userService.create(oliver);
+            const refreshToken = authService.generateRefreshToken(ollie);
+
+            return request(app.getHttpServer())
+                .post('/graphql')
+                .set('Content-Type', 'application/json')
+                .set('Cookie', [`qid=${refreshToken}`])
+                .send({
+                    query: RefreshAccessTokenOp,
+                    variables: {}
+                })
+                .expect(({ body }) => {
+                    const { accessToken } = body.data.refreshAccessToken;
+                    expect(accessToken.length).toBeGreaterThan(0);
+                    expect(accessToken).not.toEqual(refreshToken);
+                });
+        });
+
+        it('does not refresh access token without a refresh token', () => {
+            return request(app.getHttpServer())
+                .post('/graphql')
+                .set('Content-Type', 'application/json')
+                .send({
+                    query: RefreshAccessTokenOp,
+                    variables: {}
+                })
+                .expect(({ body }) => {
+                    const { accessToken } = body.data.refreshAccessToken;
+                    expect(accessToken).toBeNull();
+                });
+        });
+
+        it('does not refresh access token if refresh token is expired', async () => {
+            const twoHoursAgo = new Date();
+            twoHoursAgo.setHours(twoHoursAgo.getHours() - 2);
+            jest.spyOn(authService, 'verifyToken').mockImplementation(() => {
+                throw new TokenExpiredError('jwt expired', twoHoursAgo);
+            });
+
+            const ollie = await userService.create(oliver);
+            const refreshToken = authService.generateRefreshToken(ollie);
+
+            return request(app.getHttpServer())
+                .post('/graphql')
+                .set('Content-Type', 'application/json')
+                .set('Cookie', [`qid=${refreshToken}`])
+                .send({
+                    query: RefreshAccessTokenOp,
+                    variables: {}
+                })
+                .expect(({ body }) => {
+                    const { accessToken } = body.data.refreshAccessToken;
+                    expect(accessToken).toBeNull();
+                });
+        });
+
+        it('does not refresh access token if refresh token is otherwise invalid', async () => {
+            jest.spyOn(authService, 'verifyToken').mockImplementation(() => {
+                throw new JsonWebTokenError('jwt malformed');
+            });
+
+            const ollie = await userService.create(oliver);
+            const refreshToken = authService.generateRefreshToken(ollie);
+
+            return request(app.getHttpServer())
+                .post('/graphql')
+                .set('Content-Type', 'application/json')
+                .set('Cookie', [`qid=${refreshToken}`])
+                .send({
+                    query: RefreshAccessTokenOp,
+                    variables: {}
+                })
+                .expect(({ body }) => {
+                    const { accessToken } = body.data.refreshAccessToken;
+                    expect(accessToken).toBeNull();
                 });
         });
     });
