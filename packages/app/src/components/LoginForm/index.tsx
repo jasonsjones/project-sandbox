@@ -73,7 +73,9 @@ function LoginForm(): JSX.Element {
 
     return (
         <React.Fragment>
-            <h1 className="text-2xl font-semibold text-center text-gray-600 sm:text-3xl">Login</h1>
+            <h1 className="mb-4 text-2xl font-semibold text-center text-gray-600 sm:text-3xl">
+                Login
+            </h1>
             <form onSubmit={handleSubmit}>
                 <InputField
                     type="email"

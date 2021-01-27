@@ -59,10 +59,10 @@ function Nav(): JSX.Element {
                                 </NavLink>
 
                                 <NavLink
-                                    to="/signup"
+                                    to="/register"
                                     className="p-2 hover:text-white"
                                     activeClassName="border-purple-400 border-b-2 text-white font-semibold"
-                                    data-testid="desktop-signup"
+                                    data-testid="desktop-register"
                                 >
                                     Signup
                                 </NavLink>
@@ -93,7 +93,7 @@ function Nav(): JSX.Element {
                                 Login
                             </NavLink>
                             <NavLink
-                                to="/signup"
+                                to="/register"
                                 activeClassName="bg-purple-800 text-gray-100"
                                 className="block px-2 py-1 mt-1 font-semibold rounded hover:bg-purple-800 hover:text-gray-100"
                             >
