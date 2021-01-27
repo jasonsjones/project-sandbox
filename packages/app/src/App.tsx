@@ -1,143 +1,17 @@
 import React, { useRef, useState } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import {
-    QueryClient,
-    QueryClientProvider,
-    useMutation,
-    useQuery,
-    useQueryClient
-} from 'react-query';
+import { QueryClient, QueryClientProvider, useMutation, useQuery } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import { makeGraphQLQuery, makeGraphQLMutation, makeGraphQLFileUpload } from './dataservice';
+import { makeGraphQLQuery, makeGraphQLFileUpload } from './dataservice';
 import secureLogo from './assets/secure.svg';
 import innovativeLogo from './assets/innovative.svg';
-import { Button, InputField } from './components/common';
+import { Button } from './components/common';
 import Footer from './components/Footer';
 import Nav from './components/Nav';
 import LoginPage from './containers/LoginPage';
+import UserRegisterPage from './containers/UserRegisterPage';
 
 const queryClient = new QueryClient();
-
-// #region User Registration Form *******
-
-type UserRegisterFormProps = { className: string };
-
-function UserRegisterForm({ className }: UserRegisterFormProps): JSX.Element {
-    const registerUserOp = `
-                mutation RegisterUser($userData: RegisterUserInput!) {
-                    registerUser(userData: $userData) {
-                        id
-                        firstName
-                        lastName
-                        displayName
-                        email
-                    }
-                }`;
-
-    const queryClient = useQueryClient();
-
-    const [formValues, setFormValues] = useState({
-        firstName: '',
-        lastName: '',
-        email: '',
-        password: ''
-    });
-
-    const mutation = useMutation(makeGraphQLMutation);
-
-    const clearForm = () => {
-        setFormValues({
-            firstName: '',
-            lastName: '',
-            email: '',
-            password: ''
-        });
-    };
-
-    const updateField: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-        setFormValues({
-            ...formValues,
-            [e.target.id]: e.target.value
-        });
-    };
-
-    const handleCancel: React.MouseEventHandler<HTMLButtonElement> = () => {
-        clearForm();
-    };
-
-    const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
-        e.preventDefault();
-        if (isFormValid()) {
-            mutation.mutate(
-                { query: registerUserOp, variables: { userData: formValues } },
-                {
-                    onSuccess: () => {
-                        clearForm();
-                        queryClient.invalidateQueries('users');
-                    }
-                }
-            );
-        }
-    };
-
-    const isFormValid = () => {
-        return (
-            formValues.firstName.length > 0 &&
-            formValues.lastName.length > 0 &&
-            formValues.email.length > 0 &&
-            formValues.password.length > 0
-        );
-    };
-
-    return (
-        <div className={className}>
-            <h2 className="mb-4 text-3xl text-gray-600 text-center">Register for Account</h2>
-            <form onSubmit={handleSubmit}>
-                <InputField
-                    type="text"
-                    className="mb-4"
-                    id="firstName"
-                    label="First Name"
-                    value={formValues.firstName}
-                    changeHandler={updateField}
-                />
-                <InputField
-                    type="text"
-                    className="mb-4"
-                    id="lastName"
-                    label="Last Name"
-                    value={formValues.lastName}
-                    changeHandler={updateField}
-                />
-                <InputField
-                    type="email"
-                    className="mb-4"
-                    id="email"
-                    label="Email"
-                    value={formValues.email}
-                    changeHandler={updateField}
-                />
-                <InputField
-                    type="password"
-                    className="mb-4"
-                    id="password"
-                    label="Password"
-                    value={formValues.password}
-                    changeHandler={updateField}
-                />
-                <div className="flex justify-end">
-                    <Button className="my-4 mr-6" variant="secondary" clickAction={handleCancel}>
-                        Cancel
-                    </Button>
-                    <Button type="submit" className="my-4" variant="primary">
-                        Register
-                    </Button>
-                </div>
-            </form>
-        </div>
-    );
-}
-// #endregion
 
 // #region User Card *******
 
@@ -540,7 +414,6 @@ function Home(): JSX.Element {
             </div>
 
             <Features />
-            <UserRegisterForm className="w-3/4 mx-auto mt-12 md:w-1/3" />
             <UserList className="w-full mx-auto mt-12 py-6 md:w-3/4 md:py-0" />
 
             <div className="my-4 mx-auto max-w-md">
@@ -579,6 +452,9 @@ function App(): JSX.Element {
                         </Route>
                         <Route exact path="/login">
                             <LoginPage />
+                        </Route>
+                        <Route exact path="/register">
+                            <UserRegisterPage />
                         </Route>
                     </Switch>
                     <ReactQueryDevtools initialIsOpen={false} />
