@@ -54,7 +54,7 @@ function LoginForm(): JSX.Element {
                             clearForm();
                         }
 
-                        if (errors.length > 0) {
+                        if (errors?.length > 0) {
                             if (errors[0].message === 'Unauthorized') {
                                 setAuthError('Unauthorized access. Please try again.');
                             } else {
