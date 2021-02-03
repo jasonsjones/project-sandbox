@@ -13,7 +13,7 @@ test('renders hello react text', async () => {
     );
 
     const { getByText } = render(<App />);
-    const textElement = await waitFor(() => getByText(/hello react/i));
+    const textElement = await waitFor(() => getByText(/orion labs side project/i));
     expect(textElement).toBeInTheDocument();
 });
 
@@ -29,7 +29,7 @@ test(`renders 'All Good!'' when graphql call is successful`, async () => {
 
 test(`renders 'Ah snap!'' when something is wrong with graphql call`, async () => {
     mocked(makeGraphQLQuery).mockImplementation(() =>
-        Promise.resolve({ error: { message: 'Something went wrong.' } })
+        Promise.resolve({ errors: { message: 'Something went wrong.' } })
     );
 
     const { getByText } = render(<App />);
