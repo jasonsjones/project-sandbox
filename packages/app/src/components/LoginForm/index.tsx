@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useMutation } from 'react-query';
+import { useAuthContext } from '../../context/AuthContext';
 import { makeGraphQLMutation } from '../../dataservice';
 import { Button, InputField } from '../common';
 
@@ -12,8 +13,8 @@ mutation Login($email: String!, $password: String!) {
 `;
 
 function LoginForm(): JSX.Element {
-    const [accessToken, setAccessToken] = useState('');
     const [authError, setAuthError] = useState('');
+    const { token, login } = useAuthContext();
 
     const [formValues, setFormValues] = useState({
         email: '',
@@ -49,9 +50,9 @@ function LoginForm(): JSX.Element {
                     onSuccess: (response) => {
                         const { data, errors } = response;
                         if (data) {
-                            setAccessToken(data.login.accessToken);
                             setAuthError('');
                             clearForm();
+                            login(data.login.accessToken);
                         }
 
                         if (errors?.length > 0) {
@@ -60,7 +61,7 @@ function LoginForm(): JSX.Element {
                             } else {
                                 setAuthError('Unexpected error. Please try again.');
                             }
-                            setAccessToken('');
+                            login('');
                         }
                     },
                     onError: (error) => {
@@ -102,11 +103,6 @@ function LoginForm(): JSX.Element {
                     </Button>
                 </div>
             </form>
-
-            {/* Temp dump of access token (jwt) for development */}
-            {accessToken ? (
-                <p className="mt-8 text-gray-600 break-words">Access Token: {accessToken}</p>
-            ) : null}
 
             {authError ? (
                 <div className="flex flex-col justify-center h-12 mt-4 rounded-md bg-red-200 border-2 border-red-700">
