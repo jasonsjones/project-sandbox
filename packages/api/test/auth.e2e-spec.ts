@@ -15,15 +15,15 @@ const oliver: CreateUserDto = {
     password: '123456'
 };
 
-const LoginOp = `
+const loginOp = `
 mutation Login($email: String!, $password: String!) {
     login(email: $email, password: $password) {
         accessToken
     }
 }`;
 
-const RefreshAccessTokenOp = `
-mutation RefreshAccessToken {
+const refreshAccessTokenQuery = `
+query {
     refreshAccessToken {
         accessToken
     }
@@ -54,7 +54,7 @@ describe('Auth resolver (e2e)', () => {
                 .post('/graphql')
                 .set('Content-Type', 'application/json')
                 .send({
-                    query: LoginOp,
+                    query: loginOp,
                     variables: { email: oliver.email, password: oliver.password }
                 })
                 .expect(({ body }) => {
@@ -70,7 +70,7 @@ describe('Auth resolver (e2e)', () => {
                 .post('/graphql')
                 .set('Content-Type', 'application/json')
                 .send({
-                    query: LoginOp,
+                    query: loginOp,
                     variables: { email: 'unknown-email@qc.com', password: oliver.password }
                 })
                 .expect(({ body }) => {
@@ -87,7 +87,7 @@ describe('Auth resolver (e2e)', () => {
                 .post('/graphql')
                 .set('Content-Type', 'application/json')
                 .send({
-                    query: LoginOp,
+                    query: loginOp,
                     variables: { email: oliver.email, password: 'wrong-password' }
                 })
                 .expect(({ body }) => {
@@ -109,7 +109,7 @@ describe('Auth resolver (e2e)', () => {
                 .set('Content-Type', 'application/json')
                 .set('Cookie', [`qid=${refreshToken}`])
                 .send({
-                    query: RefreshAccessTokenOp,
+                    query: refreshAccessTokenQuery,
                     variables: {}
                 })
                 .expect(({ body }) => {
@@ -124,7 +124,7 @@ describe('Auth resolver (e2e)', () => {
                 .post('/graphql')
                 .set('Content-Type', 'application/json')
                 .send({
-                    query: RefreshAccessTokenOp,
+                    query: refreshAccessTokenQuery,
                     variables: {}
                 })
                 .expect(({ body }) => {
@@ -148,7 +148,7 @@ describe('Auth resolver (e2e)', () => {
                 .set('Content-Type', 'application/json')
                 .set('Cookie', [`qid=${refreshToken}`])
                 .send({
-                    query: RefreshAccessTokenOp,
+                    query: refreshAccessTokenQuery,
                     variables: {}
                 })
                 .expect(({ body }) => {
@@ -170,7 +170,7 @@ describe('Auth resolver (e2e)', () => {
                 .set('Content-Type', 'application/json')
                 .set('Cookie', [`qid=${refreshToken}`])
                 .send({
-                    query: RefreshAccessTokenOp,
+                    query: refreshAccessTokenQuery,
                     variables: {}
                 })
                 .expect(({ body }) => {
