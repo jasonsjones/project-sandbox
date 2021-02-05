@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { UnauthorizedException } from '@nestjs/common';
-import { Args, Context, Field, Mutation, ObjectType, Resolver } from '@nestjs/graphql';
+import { Args, Context, Field, Mutation, ObjectType, Query, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
 
@@ -38,7 +38,7 @@ export class AuthResolver {
         };
     }
 
-    @Mutation(() => LoginResponse)
+    @Query(() => LoginResponse)
     async refreshAccessToken(@Context() { req, res }: GraphQLContext): Promise<LoginResponse> {
         const refreshToken = req.cookies['qid'];
         if (refreshToken) {
