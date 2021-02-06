@@ -14,7 +14,7 @@ mutation Login($email: String!, $password: String!) {
 
 function LoginForm(): JSX.Element {
     const [authError, setAuthError] = useState('');
-    const { token, login } = useAuthContext();
+    const { login } = useAuthContext();
 
     const [formValues, setFormValues] = useState({
         email: '',

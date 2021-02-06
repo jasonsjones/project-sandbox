@@ -13,8 +13,8 @@ const queryClient = new QueryClient();
 function App(): JSX.Element {
     return (
         <BrowserRouter>
-            <Layout>
-                <QueryClientProvider client={queryClient}>
+            <QueryClientProvider client={queryClient}>
+                <Layout>
                     <Switch>
                         <Route exact path="/">
                             <Home />
@@ -30,8 +30,8 @@ function App(): JSX.Element {
                         </Route>
                     </Switch>
                     <ReactQueryDevtools initialIsOpen={false} />
-                </QueryClientProvider>
-            </Layout>
+                </Layout>
+            </QueryClientProvider>
         </BrowserRouter>
     );
 }
