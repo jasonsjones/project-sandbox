@@ -6,8 +6,7 @@ import NavLogo from './NavLogo';
 function Nav(): JSX.Element {
     const [isMobileLinksOpen, setIsMobileLinksOpen] = useState(false);
 
-    const isFetching = false;
-    const { token, logout } = useAuthContext();
+    const { token, isFetchingToken, logout } = useAuthContext();
 
     return (
         <header className="px-8 py-4 bg-purple-900 text-gray-400">
@@ -48,7 +47,7 @@ function Nav(): JSX.Element {
                     </button>
                     {/* The nav links that are displayed on larger screens */}
                     <div className="hidden sm:block flex items-center text-xl">
-                        {!isFetching && !token && (
+                        {!isFetchingToken && !token && (
                             <>
                                 <NavLink
                                     to="/login"
@@ -70,7 +69,7 @@ function Nav(): JSX.Element {
                             </>
                         )}
 
-                        {!isFetching && token && (
+                        {!isFetchingToken && token && (
                             <button
                                 type="button"
                                 className="px-2 py-1 hover:text-white focus:text-white"
@@ -84,7 +83,7 @@ function Nav(): JSX.Element {
                 </div>
                 {/* The nav links on small screens that are displayed when the button is clicked */}
                 <div className={`${isMobileLinksOpen ? 'block' : 'hidden'} mt-4 -ml-2 sm:hidden`}>
-                    {!isFetching && !token && (
+                    {!isFetchingToken && !token && (
                         <>
                             <NavLink
                                 to="/login"
@@ -102,7 +101,7 @@ function Nav(): JSX.Element {
                             </NavLink>
                         </>
                     )}
-                    {!isFetching && token && (
+                    {!isFetchingToken && token && (
                         <button
                             type="button"
                             className="w-full text-left px-2 py-1 mt-1 font-semibold rounded focus:bg-purple-800 hover:text-gray-100"
