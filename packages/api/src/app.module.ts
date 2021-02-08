@@ -8,6 +8,7 @@ import { StatusModule } from './modules/status/status.module';
 import { UserModule } from './modules/user/user.module';
 import { AvatarModule } from './modules/avatar/avatar.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { AuthMiddleware } from './common/auth.middleware';
 
 @Module({
     imports: [
@@ -31,7 +32,7 @@ import { AuthModule } from './modules/auth/auth.module';
 export class AppModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {
         if (process.env.NODE_ENV === 'development') {
-            consumer.apply(LoggerMiddleware).forRoutes('*');
+            consumer.apply(AuthMiddleware, LoggerMiddleware).forRoutes('*');
         }
     }
 }

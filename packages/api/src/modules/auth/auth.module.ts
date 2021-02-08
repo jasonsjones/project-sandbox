@@ -17,6 +17,7 @@ import { AuthService } from './auth.service';
             inject: [ConfigService]
         })
     ],
-    providers: [AuthService, AuthResolver]
+    providers: [AuthService, AuthResolver],
+    exports: [AuthService]
 })
 export class AuthModule {}
