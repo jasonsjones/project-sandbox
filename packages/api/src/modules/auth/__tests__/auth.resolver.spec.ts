@@ -90,7 +90,7 @@ describe('Auth resolver', () => {
         });
     });
 
-    describe('refreshAccessToken query', () => {
+    describe('refreshAccessToken mutation', () => {
         it('refreshes the access token when presented with a valid refresh token', async () => {
             const res = {} as Response;
             res.cookie = jest.fn();

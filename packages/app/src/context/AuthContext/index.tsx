@@ -1,9 +1,10 @@
 import React, { useState, useContext } from 'react';
-import { useQuery } from 'react-query';
-import { makeGraphQLQuery } from '../../dataservice';
+import { useMutation } from 'react-query';
+import { makeGraphQLMutation } from '../../dataservice';
+import { useInterval } from '../../hooks/useInterval';
 
-const refreshAccessTokenQuery = `
-query {
+const refreshAccessTokenOp = `
+mutation RefresAccessToken {
     refreshAccessToken {
         accessToken
     }
@@ -23,7 +24,7 @@ interface AuthProviderProps {
 
 const AuthContext = React.createContext<AuthContextProps>({
     token: '',
-    isFetchingToken: false,
+    isFetchingToken: true,
     login: (t: string) => {},
     logout: () => {}
 });
@@ -31,21 +32,26 @@ const AuthContext = React.createContext<AuthContextProps>({
 function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     const [token, setToken] = useState<string>('');
 
-    const { isLoading: isFetchingToken } = useQuery(
-        ['refreshToken', { query: refreshAccessTokenQuery }],
-        makeGraphQLQuery,
-        {
-            refetchInterval: 1000 * 60 * 8, // refresh access token every 8 minutes
-            onSuccess: (response) => {
-                if (response) {
-                    const { accessToken } = response.data?.refreshAccessToken;
-                    if (accessToken) {
-                        console.log('[Auth] Updating access token');
-                        setToken(accessToken);
-                    }
+    const { mutate, isLoading: isFetchingToken } = useMutation(makeGraphQLMutation, {
+        onSuccess: (response) => {
+            if (response) {
+                const { accessToken } = response.data?.refreshAccessToken;
+                if (accessToken) {
+                    setToken(accessToken);
                 }
             }
         }
+    });
+
+    useInterval(
+        () => {
+            mutate({
+                query: refreshAccessTokenOp,
+                variables: {}
+            });
+        },
+        1000 * 60,
+        { executeImmediate: true }
     );
 
     const login = (t: string) => {
