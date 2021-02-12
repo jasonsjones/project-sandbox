@@ -38,6 +38,12 @@ export class AuthResolver {
         };
     }
 
+    @Mutation(() => Boolean)
+    logout(@Context() { res }: GraphQLContext): boolean {
+        res.clearCookie('qid');
+        return true;
+    }
+
     @Mutation(() => LoginResponse)
     async refreshAccessToken(@Context() { req, res }: GraphQLContext): Promise<LoginResponse> {
         const refreshToken = req.cookies['qid'];

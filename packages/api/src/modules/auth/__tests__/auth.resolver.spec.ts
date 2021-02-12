@@ -90,6 +90,31 @@ describe('Auth resolver', () => {
         });
     });
 
+    describe('logout mutation', () => {
+        it('clears the refresh token cookie (qid)', async () => {
+            const res = {} as Response;
+            res.cookie = jest.fn();
+            res.clearCookie = jest.fn();
+
+            const req = {} as Request;
+
+            const ollie = await userService.create(oliver);
+
+            jest.spyOn(authService, 'authenticateUser').mockResolvedValue(ollie);
+            jest.spyOn(authService, 'generateAccessToken').mockImplementation(() => fakeToken);
+
+            await authResolver.login(oliver.email, oliver.password, {
+                req,
+                res
+            });
+
+            const result = authResolver.logout({ req, res });
+
+            expect(result).toBe(true);
+            expect(res.clearCookie).toHaveBeenCalledWith('qid');
+        });
+    });
+
     describe('refreshAccessToken mutation', () => {
         it('refreshes the access token when presented with a valid refresh token', async () => {
             const res = {} as Response;
