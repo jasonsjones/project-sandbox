@@ -22,6 +22,11 @@ mutation Login($email: String!, $password: String!) {
     }
 }`;
 
+const logoutOp = `
+mutation Logout {
+    logout
+}`;
+
 const refreshAccessTokenOp = `
 mutation RefreshAccessToken {
     refreshAccessToken {
@@ -95,6 +100,37 @@ describe('Auth resolver (e2e)', () => {
                     expect(body.errors).toHaveLength(1);
                     expect(body.errors[0].message).toBe('Unauthorized');
                     expect(body.errors[0].extensions.exception.status).toBe(401);
+                });
+        });
+    });
+
+    describe('logout mutation', () => {
+        it('clears the refresh token cookie', async () => {
+            const ollie = await userService.create(oliver);
+            const refreshToken = authService.generateRefreshToken(ollie);
+
+            return request(app.getHttpServer())
+                .post('/graphql')
+                .set('Content-Type', 'application/json')
+                .set('Cookie', [`qid=${refreshToken}`])
+                .send({
+                    query: logoutOp,
+                    variables: {}
+                })
+                .expect((response) => {
+                    const cookies = response.headers['set-cookie'][0].split(';');
+
+                    const [refreshTokenCookieKey, refreshTokenCookieValue] = cookies
+                        .map((cookie: string) => {
+                            return cookie.split('=');
+                        })
+                        .find((parts: string[]) => parts[0] === 'qid');
+
+                    expect(refreshTokenCookieKey).toBe('qid');
+                    expect(refreshTokenCookieValue).toBe('');
+
+                    const { logout } = response.body.data;
+                    expect(logout).toBe(true);
                 });
         });
     });
