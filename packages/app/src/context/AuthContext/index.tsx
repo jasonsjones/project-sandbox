@@ -11,6 +11,11 @@ mutation RefresAccessToken {
 }
 `;
 
+const logoutOp = `
+mutation Logout {
+    logout
+}`;
+
 interface AuthContextProps {
     token: string;
     isFetchingToken: boolean;
@@ -43,6 +48,8 @@ function AuthProvider({ children }: AuthProviderProps): JSX.Element {
         }
     });
 
+    const { mutate: doLogout } = useMutation(makeGraphQLMutation);
+
     useInterval(
         () => {
             mutate({
@@ -50,7 +57,7 @@ function AuthProvider({ children }: AuthProviderProps): JSX.Element {
                 variables: {}
             });
         },
-        1000 * 60,
+        1000 * 60 * 9, // every 9 mins
         { executeImmediate: true }
     );
 
@@ -59,6 +66,10 @@ function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     };
 
     const logout = () => {
+        doLogout({
+            query: logoutOp,
+            variables: {}
+        });
         setToken('');
     };
 
