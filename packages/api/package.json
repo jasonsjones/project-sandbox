@@ -65,5 +65,8 @@
         },
         "coverageDirectory": "../coverage",
         "testEnvironment": "node"
+    },
+    "resolutions": {
+        "graphql-upload": "11.0.0"
     }
 }

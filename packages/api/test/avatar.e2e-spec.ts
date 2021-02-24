@@ -1,4 +1,3 @@
-import fs from 'fs';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
 import { INestApplication } from '@nestjs/common';
@@ -6,7 +5,7 @@ import request from 'supertest';
 
 function generateVariableMap(keyName: string) {
     return {
-        keyName: [`variables.${keyName}`]
+        [keyName]: [`variables.${keyName}`]
     };
 }
 
