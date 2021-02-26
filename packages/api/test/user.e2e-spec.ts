@@ -4,6 +4,8 @@ import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { CreateUserDto } from '../src/modules/user/create-user.dto';
 import { UserService } from '../src/modules/user/user.service';
+import { AuthService } from '../src/modules/auth/auth.service';
+import { AuthMiddleware } from '../src/common/auth.middleware';
 
 const oliver: CreateUserDto = {
     firstName: 'Ollie',
@@ -44,6 +46,7 @@ mutation RegisterUser($userData: RegisterUserInput!) {
 describe('User resolver (e2e)', () => {
     let app: INestApplication;
     let userService: UserService;
+    let authService: AuthService;
 
     beforeEach(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -51,6 +54,7 @@ describe('User resolver (e2e)', () => {
         }).compile();
 
         userService = moduleFixture.get<UserService>(UserService);
+        authService = moduleFixture.get<AuthService>(AuthService);
         app = moduleFixture.createNestApplication();
         await app.init();
     });
@@ -85,11 +89,14 @@ describe('User resolver (e2e)', () => {
     });
 
     describe('users query', () => {
-        it('fetches all users', async () => {
-            await userService.create(barry);
+        it('fetches all users with a valid access token', async () => {
+            const user = await userService.create(barry);
+            const accessToken = authService.generateAccessToken(user);
+
             return request(app.getHttpServer())
                 .post('/graphql')
                 .set('Content-Type', 'application/json')
+                .set('Authorization', `Bearer ${accessToken}`)
                 .send({ query: userQuery })
                 .expect(({ body }) => {
                     const { users } = body.data;
@@ -105,6 +112,40 @@ describe('User resolver (e2e)', () => {
                             })
                         ])
                     );
+                });
+        });
+
+        it('protects the user resource when requested with no token', async () => {
+            return request(app.getHttpServer())
+                .post('/graphql')
+                .set('Content-Type', 'application/json')
+                .send({ query: userQuery })
+                .expect(({ body }) => {
+                    expect(body.errors).toEqual(
+                        expect.arrayContaining([
+                            expect.objectContaining({ message: 'Forbidden resource' })
+                        ])
+                    );
+                    expect(body.data).toBeNull();
+                });
+        });
+
+        it('protects the user resource when requested with an invalid token', async () => {
+            const accessToken =
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+
+            return request(app.getHttpServer())
+                .post('/graphql')
+                .set('Content-Type', 'application/json')
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({ query: userQuery })
+                .expect(({ body }) => {
+                    expect(body.errors).toEqual(
+                        expect.arrayContaining([
+                            expect.objectContaining({ message: 'Forbidden resource' })
+                        ])
+                    );
+                    expect(body.data).toBeNull();
                 });
         });
     });

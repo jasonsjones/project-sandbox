@@ -31,8 +31,10 @@ import { AuthMiddleware } from './common/auth.middleware';
 })
 export class AppModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV !== 'test') {
             consumer.apply(AuthMiddleware, LoggerMiddleware).forRoutes('*');
+        } else {
+            consumer.apply(AuthMiddleware).forRoutes('*');
         }
     }
 }
