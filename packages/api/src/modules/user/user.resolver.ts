@@ -1,3 +1,4 @@
+import { UseGuards } from '@nestjs/common';
 import {
     Query,
     Resolver,
@@ -8,6 +9,7 @@ import {
     ResolveField,
     Parent
 } from '@nestjs/graphql';
+import { AuthGuard } from '../auth/auth.guard';
 import { User } from './user.entity';
 import { UserService } from './user.service';
 
@@ -31,6 +33,7 @@ export class UserResolver {
     constructor(private readonly userService: UserService) {}
 
     @Query(() => [User], { name: 'users' })
+    @UseGuards(AuthGuard)
     getUsers(): Promise<User[]> {
         return this.userService.getAllUsers();
     }

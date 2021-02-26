@@ -20,12 +20,13 @@ export class AuthMiddleware implements NestMiddleware {
                     );
 
                     if (authUser) {
-                        console.log('auth user: ', authUser);
                         req.user = authUser;
                     }
                 } catch (err) {
                     // noop for any errors...
-                    console.error(clc.red('Auth middleware error: ', err.message));
+                    if (process.env.NODE_ENV !== 'test') {
+                        console.log(clc.red('Auth middleware error: ', err.message));
+                    }
                 }
             }
         }
