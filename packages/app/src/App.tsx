@@ -7,6 +7,7 @@ import UserRegisterPage from './containers/UserRegisterPage';
 import UserListPage from './containers/UserListPage';
 import Layout from './containers/Layout';
 import Home from './containers/Home';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const queryClient = new QueryClient();
 
@@ -25,9 +26,9 @@ function App(): JSX.Element {
                         <Route exact path="/register">
                             <UserRegisterPage />
                         </Route>
-                        <Route exact path="/users">
+                        <ProtectedRoute exact path="/users">
                             <UserListPage />
-                        </Route>
+                        </ProtectedRoute>
                     </Switch>
                     <ReactQueryDevtools initialIsOpen={false} />
                 </Layout>

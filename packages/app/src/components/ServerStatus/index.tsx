@@ -15,7 +15,7 @@ function ServerStatus(): JSX.Element {
     return (
         <>
             {!isLoading && (
-                <div className="text-lg text-gray-600 border-2 border-gray-600 rounded-md py-2 text-center">
+                <div className="text-lg text-gray-600 border-2 border-gray-600 rounded-md py-2 px-4 text-center">
                     GraphQL server status:
                     <svg
                         className={`w-6 h-6 ml-2 inline-block stroke-current ${
