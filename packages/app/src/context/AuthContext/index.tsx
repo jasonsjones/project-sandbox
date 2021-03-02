@@ -19,8 +19,8 @@ mutation Logout {
 interface AuthContextProps {
     token: string;
     isFetchingToken: boolean;
-    login: (t: string) => void;
-    logout: () => void;
+    login: (t: string, cb?: () => void) => void;
+    logout: (cb?: () => void) => void;
 }
 
 interface AuthProviderProps {
@@ -61,16 +61,28 @@ function AuthProvider({ children }: AuthProviderProps): JSX.Element {
         { executeImmediate: true }
     );
 
-    const login = (t: string) => {
+    const login = (t: string, cb?: () => void) => {
         setToken(t);
+        if (cb) {
+            cb();
+        }
     };
 
-    const logout = () => {
-        doLogout({
-            query: logoutOp,
-            variables: {}
-        });
-        setToken('');
+    const logout = (cb?: () => void) => {
+        doLogout(
+            {
+                query: logoutOp,
+                variables: {}
+            },
+            {
+                onSuccess: () => {
+                    setToken('');
+                    if (cb) {
+                        cb();
+                    }
+                }
+            }
+        );
     };
 
     return (

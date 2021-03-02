@@ -11,15 +11,14 @@ function Home(): JSX.Element {
                 <HeroBanner />
             </div>
 
-            <div className="mt-12 max-w-md mx-auto">
+            <div className="mt-12 mx-auto flex flex-col items-center">
                 <ServerStatus />
+                <div className="mt-10 text-lg text-gray-600 border-2 border-gray-600 rounded-md py-2 px-4 text-center">
+                    <Link to="/users">List Users</Link>
+                </div>
             </div>
 
             <Features />
-
-            <div className="mt-12 max-w-md mx-auto text-lg text-gray-600 border-2 border-gray-600 rounded-md py-2 text-center">
-                <Link to="/users">Show Users</Link>
-            </div>
         </>
     );
 }
