@@ -1,14 +1,9 @@
 import React from 'react';
-import { useQuery } from 'react-query';
-import { makeGraphQLQuery } from '../../dataservice';
+import useServerStatus from '../../hooks/useServerStatus';
 import Spinner from '../Spinner';
 
 function ServerStatus(): JSX.Element {
-    const statusQuery = 'query { status }';
-    const { data: status, isLoading } = useQuery(
-        ['status', { query: statusQuery }],
-        makeGraphQLQuery
-    );
+    const { data: status, isLoading } = useServerStatus();
 
     if (isLoading) return <Spinner />;
 
