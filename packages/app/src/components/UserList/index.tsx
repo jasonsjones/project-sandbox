@@ -1,15 +1,15 @@
 import React from 'react';
-import { useQuery } from 'react-query';
-import { makeGraphQLQuery } from '../../dataservice';
+import useUsers from '../../hooks/useUsers';
 import Spinner from '../Spinner';
 import UserCard from '../UserCard';
 
 type UserListProps = { className: string };
 
 function UserList({ className }: UserListProps): JSX.Element {
-    const statusQuery = 'query { users { id displayName email } }';
-    const { data, isLoading } = useQuery(['users', { query: statusQuery }], makeGraphQLQuery);
+    const { data, isLoading } = useUsers();
+
     if (isLoading) return <Spinner />;
+
     return (
         <div className={className}>
             <h2 className="text-3xl text-gray-600 text-center border-b-2">User List</h2>

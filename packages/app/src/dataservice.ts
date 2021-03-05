@@ -8,6 +8,7 @@ export interface GraphQLResponse {
 interface QueryPayload {
     query: string;
     variables?: object;
+    token?: string;
     file?: File;
 }
 
@@ -18,11 +19,19 @@ export function makeGraphQLQuery({
 }: {
     queryKey: [string, QueryPayload];
 }): Promise<GraphQLResponse> {
-    const [, { query, variables = {} }] = queryKey;
+    const [, { query, variables = {}, token }] = queryKey;
+    let fetchHeaders: Record<string, string> = {
+        'Content-Type': 'application/json'
+    };
+
+    if (token) {
+        fetchHeaders.Authorization = `Bearer ${token}`;
+    }
+
     return fetch(graphqlEndpoint, {
         method: 'POST',
         credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
+        headers: fetchHeaders,
         body: JSON.stringify({ query, variables })
     }).then((res) => res.json());
 }
