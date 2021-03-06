@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { useMutation } from 'react-query';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useAuthContext } from '../../context/AuthContext';
-import { makeGraphQLMutation } from '../../dataservice';
+import { GraphQLResponse } from '../../dataservice';
+import useLogin from '../../hooks/useLogin';
 import { Button, InputField } from '../common';
 
 const loginOp = `
@@ -30,7 +30,30 @@ function LoginForm(): JSX.Element {
         password: ''
     });
 
-    const mutation = useMutation(makeGraphQLMutation);
+    const loginMutation = useLogin({
+        onSuccess: (response: GraphQLResponse) => {
+            const { data, errors } = response;
+            if (data) {
+                setAuthError('');
+                clearForm();
+                login(data.login.accessToken, () => {
+                    history.replace(from);
+                });
+            }
+
+            if (errors?.length > 0) {
+                if (errors[0].message === 'Unauthorized') {
+                    setAuthError('Unauthorized access. Please try again.');
+                } else {
+                    setAuthError('Unexpected error. Please try again.');
+                }
+                login('');
+            }
+        },
+        onError: (error) => {
+            console.log(error);
+        }
+    });
 
     const updateField: React.ChangeEventHandler<HTMLInputElement> = (e) => {
         setFormValues({
@@ -50,36 +73,10 @@ function LoginForm(): JSX.Element {
         e.preventDefault();
 
         if (formValues.email.length > 0 && formValues.password.length > 0) {
-            mutation.mutate(
-                {
-                    query: loginOp,
-                    variables: { email: formValues.email, password: formValues.password }
-                },
-                {
-                    onSuccess: (response) => {
-                        const { data, errors } = response;
-                        if (data) {
-                            setAuthError('');
-                            clearForm();
-                            login(data.login.accessToken, () => {
-                                history.replace(from);
-                            });
-                        }
-
-                        if (errors?.length > 0) {
-                            if (errors[0].message === 'Unauthorized') {
-                                setAuthError('Unauthorized access. Please try again.');
-                            } else {
-                                setAuthError('Unexpected error. Please try again.');
-                            }
-                            login('');
-                        }
-                    },
-                    onError: (error) => {
-                        console.log(error);
-                    }
-                }
-            );
+            loginMutation.mutate({
+                query: loginOp,
+                variables: { email: formValues.email, password: formValues.password }
+            });
         }
     };
 
