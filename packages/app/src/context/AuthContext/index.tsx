@@ -41,9 +41,11 @@ function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     const { mutate: doLogout } = useMutation(makeGraphQLMutation);
 
     const handleRefreshSuccess = (response: GraphQLResponse) => {
-        const { accessToken } = response.data?.refreshAccessToken;
-        if (accessToken) {
-            setToken(accessToken);
+        if (response) {
+            const { accessToken } = response.data?.refreshAccessToken;
+            if (accessToken) {
+                setToken(accessToken);
+            }
         }
     };
 
