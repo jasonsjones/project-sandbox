@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useMutation } from 'react-query';
-import { makeGraphQLMutation } from '../../dataservice';
+import { GraphQLResponse, makeGraphQLMutation } from '../../dataservice';
 import { useInterval } from '../../hooks/useInterval';
 
 const refreshAccessTokenOp = `
@@ -37,27 +37,29 @@ const AuthContext = React.createContext<AuthContextProps>({
 function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     const [token, setToken] = useState<string>('');
 
-    const { mutate, isLoading: isFetchingToken } = useMutation(makeGraphQLMutation, {
-        onSuccess: (response) => {
-            if (response) {
-                const { accessToken } = response.data?.refreshAccessToken;
-                if (accessToken) {
-                    setToken(accessToken);
-                }
-            }
-        }
-    });
-
+    const { mutate: doRefresh, isLoading: isFetchingToken } = useMutation(makeGraphQLMutation);
     const { mutate: doLogout } = useMutation(makeGraphQLMutation);
+
+    const handleRefreshSuccess = (response: GraphQLResponse) => {
+        const { accessToken } = response.data?.refreshAccessToken;
+        if (accessToken) {
+            setToken(accessToken);
+        }
+    };
 
     useInterval(
         () => {
-            mutate({
-                query: refreshAccessTokenOp,
-                variables: {}
-            });
+            doRefresh(
+                {
+                    query: refreshAccessTokenOp,
+                    variables: {}
+                },
+                {
+                    onSuccess: handleRefreshSuccess
+                }
+            );
         },
-        1000 * 60 * 9, // every 9 mins
+        1000 * 60 * 8, // every 8 mins
         { executeImmediate: true }
     );
 
