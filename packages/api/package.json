@@ -34,6 +34,7 @@
         "cookie-parser": "1.4.5",
         "graphql": "15.4.0",
         "graphql-tools": "7.0.2",
+        "graphql-upload": "11.0.0",
         "reflect-metadata": "0.1.13",
         "rimraf": "3.0.2",
         "rxjs": "6.6.3"
@@ -65,8 +66,5 @@
         },
         "coverageDirectory": "../coverage",
         "testEnvironment": "node"
-    },
-    "resolutions": {
-        "graphql-upload": "11.0.0"
     }
 }
