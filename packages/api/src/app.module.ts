@@ -1,6 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
+import { graphqlUploadExpress } from 'graphql-upload';
 import { LoggerMiddleware } from './common/logger.middleware';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -19,7 +20,8 @@ import { AuthMiddleware } from './common/auth.middleware';
                 origin: ['http://localhost:4200'],
                 credentials: true
             },
-            context: ({ req, res }) => ({ req, res })
+            context: ({ req, res }) => ({ req, res }),
+            uploads: false // disable built-in upload handling
         }),
         AuthModule,
         AvatarModule,
@@ -31,10 +33,14 @@ import { AuthMiddleware } from './common/auth.middleware';
 })
 export class AppModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {
+        // utilize graphql-upload middleware to handle uploads; this is required
+        // to address lagging dependency versions which caused a
+        // `RangeError: Maximum call stack size exceeded` (Issue #78)
+        consumer.apply(graphqlUploadExpress()).forRoutes('graphql');
+        consumer.apply(AuthMiddleware).forRoutes('*');
+
         if (process.env.NODE_ENV !== 'test') {
-            consumer.apply(AuthMiddleware, LoggerMiddleware).forRoutes('*');
-        } else {
-            consumer.apply(AuthMiddleware).forRoutes('*');
+            consumer.apply(LoggerMiddleware).forRoutes('*');
         }
     }
 }
