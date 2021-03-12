@@ -1,7 +1,18 @@
 import React, { useState } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
+import { useQueryClient } from 'react-query';
 import { Button, InputField } from '../common/';
-import { makeGraphQLMutation } from '../../dataservice';
+import useRegister from '../../hooks/useRegister';
+
+const registerUserOp = `
+mutation RegisterUser($userData: RegisterUserInput!) {
+    registerUser(userData: $userData) {
+        id
+        firstName
+        lastName
+        displayName
+        email
+    }
+}`;
 
 type UserRegisterFormProps = {
     className?: string;
@@ -9,17 +20,6 @@ type UserRegisterFormProps = {
 };
 
 function UserRegisterForm({ className, onRegister }: UserRegisterFormProps): JSX.Element {
-    const registerUserOp = `
-                mutation RegisterUser($userData: RegisterUserInput!) {
-                    registerUser(userData: $userData) {
-                        id
-                        firstName
-                        lastName
-                        displayName
-                        email
-                    }
-                }`;
-
     const queryClient = useQueryClient();
 
     const [formValues, setFormValues] = useState({
@@ -29,7 +29,13 @@ function UserRegisterForm({ className, onRegister }: UserRegisterFormProps): JSX
         password: ''
     });
 
-    const mutation = useMutation(makeGraphQLMutation);
+    const { mutate: doRegister } = useRegister({
+        onSuccess: () => {
+            clearForm();
+            queryClient.invalidateQueries('users');
+            onRegister();
+        }
+    });
 
     const clearForm = () => {
         setFormValues({
@@ -54,16 +60,7 @@ function UserRegisterForm({ className, onRegister }: UserRegisterFormProps): JSX
     const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
         e.preventDefault();
         if (isFormValid()) {
-            mutation.mutate(
-                { query: registerUserOp, variables: { userData: formValues } },
-                {
-                    onSuccess: () => {
-                        clearForm();
-                        queryClient.invalidateQueries('users');
-                        onRegister();
-                    }
-                }
-            );
+            doRegister({ query: registerUserOp, variables: { userData: formValues } });
         }
     };
 
