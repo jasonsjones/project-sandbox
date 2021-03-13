@@ -1,7 +1,12 @@
 import React, { useRef, useState } from 'react';
-import { useMutation } from 'react-query';
-import { makeGraphQLFileUpload } from '../../dataservice';
+import useFileUpload from '../../hooks/useFIleUpload';
 import { Button } from '../common';
+
+const AvatarUploadOp = `
+mutation AvatarUpload ($image: Upload!) {
+    avatarUpload(image: $image)
+}
+`;
 
 function FileUpload(): JSX.Element {
     const imgRef = useRef<HTMLImageElement>(null);
@@ -9,7 +14,11 @@ function FileUpload(): JSX.Element {
     const [image, setImage] = useState<File | null>(null);
     const [error, setError] = useState('');
 
-    const mutation = useMutation(makeGraphQLFileUpload);
+    const { mutate: upload } = useFileUpload({
+        onSuccess: () => {
+            clearFile();
+        }
+    });
 
     const handleDragEnter: React.DragEventHandler<HTMLDivElement> = (e) => {
         setHighlight(true);
@@ -37,30 +46,9 @@ function FileUpload(): JSX.Element {
     };
 
     const handleFileUpload = (e: React.MouseEvent) => {
-        const AvatarUploadOp = `
-mutation AvatarUpload ($image: Upload!) {
-    avatarUpload(image: $image)
-}
-`;
         const variables = { image: null, operationName: 'UploadAvatar' };
 
-        mutation.mutate(
-            { query: AvatarUploadOp, variables, file: image as File },
-            {
-                onSuccess: () => {
-                    clearFile();
-                }
-            }
-        );
-
-        // update to use the useMutation hook from react-query
-        // makeGraphQLFileUpload({ query: AvatarUploadOp, variables }, image as File).then(
-        //     ({ data }) => {
-        //         if (data.avatarUpload) {
-        //             clearFile();
-        //         }
-        //     }
-        // );
+        upload({ query: AvatarUploadOp, variables, file: image as File });
     };
 
     const processFile = (file: File): void => {
