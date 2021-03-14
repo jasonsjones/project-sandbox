@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { useMutation } from 'react-query';
 import { GraphQLResponse, makeGraphQLMutation } from '../../dataservice';
 import { useInterval } from '../../hooks/useInterval';
+import useLogout from '../../hooks/useLogout';
 
 const refreshAccessTokenOp = `
 mutation RefresAccessToken {
@@ -20,7 +21,7 @@ interface AuthContextProps {
     token: string;
     isFetchingToken: boolean;
     login: (t: string, cb?: () => void) => void;
-    logout: (cb?: () => void) => void;
+    logout: () => void;
 }
 
 interface AuthProviderProps {
@@ -38,7 +39,11 @@ function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     const [token, setToken] = useState<string>('');
 
     const { mutate: doRefresh, isLoading: isFetchingToken } = useMutation(makeGraphQLMutation);
-    const { mutate: doLogout } = useMutation(makeGraphQLMutation);
+    const { mutate: doLogout } = useLogout({
+        onSuccess: () => {
+            setToken('');
+        }
+    });
 
     const handleRefreshSuccess = (response: GraphQLResponse) => {
         if (response) {
@@ -72,21 +77,11 @@ function AuthProvider({ children }: AuthProviderProps): JSX.Element {
         }
     };
 
-    const logout = (cb?: () => void) => {
-        doLogout(
-            {
-                query: logoutOp,
-                variables: {}
-            },
-            {
-                onSuccess: () => {
-                    setToken('');
-                    if (cb) {
-                        cb();
-                    }
-                }
-            }
-        );
+    const logout = () => {
+        doLogout({
+            query: logoutOp,
+            variables: {}
+        });
     };
 
     return (
