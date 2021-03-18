@@ -3,6 +3,7 @@ import { useMutation } from 'react-query';
 import { GraphQLResponse, makeGraphQLMutation } from '../../dataservice';
 import { useInterval } from '../../hooks/useInterval';
 import useLogout from '../../hooks/useLogout';
+import useRefreshAccessToken from '../../hooks/useRefreshAccessToken';
 
 const refreshAccessTokenOp = `
 mutation RefresAccessToken {
@@ -38,7 +39,7 @@ const AuthContext = React.createContext<AuthContextProps>({
 function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     const [token, setToken] = useState<string>('');
 
-    const { mutate: doRefresh, isLoading: isFetchingToken } = useMutation(makeGraphQLMutation);
+    const { mutate: doRefresh, isLoading: isFetchingToken } = useRefreshAccessToken();
     const { mutate: doLogout } = useLogout({
         onSuccess: () => {
             setToken('');
@@ -62,6 +63,10 @@ function AuthProvider({ children }: AuthProviderProps): JSX.Element {
                     variables: {}
                 },
                 {
+                    // need to handle onSuccess here as part of the options of the actual
+                    // mutate function instead of setting up the handler when the hook is
+                    // invoked.  Don't know exactly why, but suspect it may be because we
+                    // have some different hooks at play with this scenario
                     onSuccess: handleRefreshSuccess
                 }
             );
