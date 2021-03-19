@@ -29,6 +29,8 @@
         "build:css": "postcss src/styles/tailwind.css -o src/styles/main.css",
         "clean": "rm -rf build",
         "dev": "PORT=4200 CI=true react-scripts start",
+        "lint": "eslint src/**/*.tsx --fix",
+        "lint:ci": "eslint src/**/*.tsx",
         "start": "PORT=4200 serve -s build",
         "test": "react-scripts test --color --watchAll=false --runInBand",
         "test:watch": "react-scripts test --color",

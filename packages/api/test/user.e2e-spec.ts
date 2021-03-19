@@ -5,7 +5,6 @@ import { AppModule } from '../src/app.module';
 import { CreateUserDto } from '../src/modules/user/create-user.dto';
 import { UserService } from '../src/modules/user/user.service';
 import { AuthService } from '../src/modules/auth/auth.service';
-import { AuthMiddleware } from '../src/common/auth.middleware';
 
 const oliver: CreateUserDto = {
     firstName: 'Ollie',
