@@ -54,6 +54,9 @@ jobs:
             - name: Build Shared Lib
               run: yarn workspace @orion/shared build
 
+            - name: Lint code
+              run: npm run lint:ci
+
             - name: Run API v2 unit tests
               run: npm run test:api:unit
 

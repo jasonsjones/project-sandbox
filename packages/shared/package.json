@@ -20,14 +20,15 @@
     "scripts": {
         "build": "tsc --build tsconfig.json",
         "clean": "rm -rf dist",
+        "lint": "eslint \"{src,apps,lib,test}/**/*.ts\" --fix",
+        "lint:ci": "eslint \"{src,apps,lib,test}/**/*.ts\"",
         "test": "NODE_ENV=testing jest --color --runInBand"
     },
     "bugs": {
         "url": "https://github.com/jasonsjones/side-project/issues"
     },
     "homepage": "https://github.com/jasonsjones/side-project#readme",
-    "devDependencies": {
-    },
+    "devDependencies": {},
     "jest": {
         "preset": "ts-jest"
     }
