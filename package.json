@@ -11,6 +11,7 @@
         "clean": "lerna run clean --stream && lerna clean --yes && rm -rf node_modules",
         "dev": "yarn workspace @orion/shared build && lerna run dev --stream --no-prefix",
         "lint": "lerna run lint --stream",
+        "lint:ci": "lerna run lint:ci --stream",
         "postinstall": "yarn bootstrap",
         "prettier:verify": "prettier --list-different \"**/*.{css,html,js,json,md,ts,yaml,yml}\"",
         "test": "lerna run test --stream",
