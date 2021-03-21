@@ -129,3 +129,6 @@ packages/api/src/schema.gql
 # api avatars except for the default
 packages/api/avatars/*
 !packages/api/avatars/default
+
+# private certs for salesforce integration
+.certs

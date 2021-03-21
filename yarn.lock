@@ -5158,6 +5158,13 @@ base64-js@^1.0.2, base64-js@^1.3.1:
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
   integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
 
+base64url-xplatform@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/base64url-xplatform/-/base64url-xplatform-1.1.2.tgz#806a10c49181cfe0c33aa3e7971766ac6d17a5ab"
+  integrity sha512-WjNIvS5Xiy/X+NBEbetd1yjmfuzDLESyzMEjFyYa1tdBGKZBtR2DPmfe4uVSE9SrXgjo2iTwySHIKrB3Hy6dJQ==
+  dependencies:
+    buffer-esm "^1.0.1"
+
 base@^0.11.1:
   version "0.11.2"
   resolved "https://registry.yarnpkg.com/base/-/base-0.11.2.tgz#7bde5ced145b6d551a90db87f83c558b4eb48a8f"
@@ -5443,6 +5450,11 @@ buffer-equal-constant-time@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/buffer-equal-constant-time/-/buffer-equal-constant-time-1.0.1.tgz#f8e71132f7ffe6e01a5c9697a4c6f3e48d5cc819"
   integrity sha1-+OcRMvf/5uAaXJaXpMbz5I1cyBk=
+
+buffer-esm@^1.0.1:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/buffer-esm/-/buffer-esm-1.2.0.tgz#d6cd1cda051068c3f975af9552a5d5c88b19ac9c"
+  integrity sha512-VdoXyqlJpVWspgSdR795+2IIBwpUx0rHRaMEYMKgr/fXaDgrdyL2B9fcc2VqJy3+IJKktZFVtfOBMHadatWEsQ==
 
 buffer-from@1.x, buffer-from@^1.0.0:
   version "1.1.1"
@@ -13849,7 +13861,7 @@ pseudomap@^1.0.2:
   resolved "https://registry.yarnpkg.com/pseudomap/-/pseudomap-1.0.2.tgz#f052a28da70e618917ef0a8ac34c1ae5a68286b3"
   integrity sha1-8FKijacOYYkX7wqKw0wa5aaChrM=
 
-psl@^1.1.28:
+psl@^1.1.28, psl@^1.1.33:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/psl/-/psl-1.8.0.tgz#9326f8bcfb013adcc005fdff056acce020e51c24"
   integrity sha512-RIdOzyoavK+hA18OGGWDqUTsCLhtA7IcZ/6NCs4fFJaHBDab+pDDmDIByWFRQJq2Cd7r1OoQxBGKOaztq+hjIQ==
@@ -14589,6 +14601,13 @@ repeating@^2.0.0:
   dependencies:
     is-finite "^1.0.0"
 
+request-it-client@^1.3.3:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/request-it-client/-/request-it-client-1.4.1.tgz#1aee34a50e2772997043eefc593949f21c1e62e7"
+  integrity sha512-ls2Wt1DUnEE19MaxnxTOslm1DqxuwKTlv2hMlCAW0mvov8nyegpPOeT4Tv2clBwYow6FYgfB2nCXK+8PGAlPWQ==
+  dependencies:
+    tough-cookie "^4.0.0"
+
 request-promise-core@1.1.4:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/request-promise-core/-/request-promise-core-1.1.4.tgz#3eedd4223208d419867b78ce815167d10593a22f"
@@ -15139,6 +15158,14 @@ setprototypeof@1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/setprototypeof/-/setprototypeof-1.2.0.tgz#66c9a24a73f9fc28cbe66b09fed3d33dcaf1b424"
   integrity sha512-E5LDX7Wrp85Kil5bhZv46j8jOeboKq5JMmYM3gVGdGH8xFpPWXUMsNrlODCrkoxMEeNi/XZIwuRvY4XNwYMJpw==
+
+sf-jwt-token@1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/sf-jwt-token/-/sf-jwt-token-1.3.0.tgz#85423026791b3bec81baf0f714a594a20894320b"
+  integrity sha512-k/CPjmdF0bT0kbNRo6HItAWpXHtqDlEkZp6m3GmOxjws+pxtye6aY5tbRpoB6Cgm1QzRpL0HytFKaG/N1OgUbw==
+  dependencies:
+    base64url-xplatform "^1.1.2"
+    request-it-client "^1.3.3"
 
 sha.js@^2.4.0, sha.js@^2.4.11, sha.js@^2.4.8:
   version "2.4.11"
@@ -16318,6 +16345,15 @@ tough-cookie@^3.0.1:
     psl "^1.1.28"
     punycode "^2.1.1"
 
+tough-cookie@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/tough-cookie/-/tough-cookie-4.0.0.tgz#d822234eeca882f991f0f908824ad2622ddbece4"
+  integrity sha512-tHdtEpQCMrc1YLrMaqXXcj6AxhYi/xgit6mZu1+EDWUn+qhUf8wMQoFIy9NXuq23zAwtcB0t/MjACGR18pcRbg==
+  dependencies:
+    psl "^1.1.33"
+    punycode "^2.1.1"
+    universalify "^0.1.2"
+
 tr46@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/tr46/-/tr46-1.0.1.tgz#a8b13fd6bfd2489519674ccde55ba3693b706d09"
@@ -16678,7 +16714,7 @@ universal-user-agent@^6.0.0:
   resolved "https://registry.yarnpkg.com/universal-user-agent/-/universal-user-agent-6.0.0.tgz#3381f8503b251c0d9cd21bc1de939ec9df5480ee"
   integrity sha512-isyNax3wXoKaulPDZWHQqbmIx1k2tb9fb3GGDBRxCscfYV2Ch7WxPArBsFEG8s/safwXTT7H4QGhaIkTp9447w==
 
-universalify@^0.1.0:
+universalify@^0.1.0, universalify@^0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/universalify/-/universalify-0.1.2.tgz#b646f69be3942dabcecc9d6639c80dc105efaa66"
   integrity sha512-rBJeI5CXAlmy1pV+617WB9J63U6XcazHHF2f2dbJix4XzpUF0RS3Zbj0FGIOCAva5P/d/GBOYaACQ1w+0azUkg==
