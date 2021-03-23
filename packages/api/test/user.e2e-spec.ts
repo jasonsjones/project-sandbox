@@ -42,6 +42,17 @@ mutation RegisterUser($userData: RegisterUserInput!) {
     }
 }`;
 
+const meQuery = `
+query {
+    me {
+        id
+        firstName
+        lastName
+        displayName
+        email
+    }
+}`;
+
 describe('User resolver (e2e)', () => {
     let app: INestApplication;
     let userService: UserService;
@@ -145,6 +156,56 @@ describe('User resolver (e2e)', () => {
                         ])
                     );
                     expect(body.data).toBeNull();
+                });
+        });
+    });
+
+    describe('me query', () => {
+        it('returns the user represented in the jwt access token', async () => {
+            const user = await userService.create(barry);
+            const accessToken = authService.generateAccessToken(user);
+            return request(app.getHttpServer())
+                .post('/graphql')
+                .set('Content-Type', 'application/json')
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({ query: meQuery })
+                .expect(({ body }) => {
+                    const { me } = body.data;
+                    expect(me).toEqual(
+                        expect.objectContaining({
+                            id: expect.any(String),
+                            firstName: barry.firstName,
+                            lastName: barry.lastName,
+                            displayName: `${barry.firstName} ${barry.lastName}`,
+                            email: barry.email
+                        })
+                    );
+                });
+        });
+
+        it('returns null if token is invalid', () => {
+            const accessToken =
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+
+            return request(app.getHttpServer())
+                .post('/graphql')
+                .set('Content-Type', 'application/json')
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({ query: meQuery })
+                .expect(({ body }) => {
+                    const { me } = body.data;
+                    expect(me).toBeNull();
+                });
+        });
+
+        it('returns null if no token is provided', () => {
+            return request(app.getHttpServer())
+                .post('/graphql')
+                .set('Content-Type', 'application/json')
+                .send({ query: meQuery })
+                .expect(({ body }) => {
+                    const { me } = body.data;
+                    expect(me).toBeNull();
                 });
         });
     });
