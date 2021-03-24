@@ -4,10 +4,12 @@ import { mocked } from 'ts-jest/utils';
 import { getToken } from 'sf-jwt-token';
 import { SFDCAuthService } from '../auth.sfdc.service';
 import { TokenOutput } from 'sf-jwt-token/dist/Interfaces';
+import jsforce from 'jsforce';
 
 jest.mock('sf-jwt-token');
+jest.mock('jsforce');
 
-const mokenToken: TokenOutput = {
+const mockToken: TokenOutput = {
     access_token:
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.' +
         'eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.' +
@@ -19,7 +21,7 @@ const mokenToken: TokenOutput = {
 };
 
 describe('SFDC auth service', () => {
-    let tokenManager: SFDCAuthService;
+    let service: SFDCAuthService;
     beforeEach(async () => {
         jest.clearAllMocks();
 
@@ -28,27 +30,66 @@ describe('SFDC auth service', () => {
             providers: [SFDCAuthService]
         }).compile();
 
-        tokenManager = moduleRef.get<SFDCAuthService>(SFDCAuthService);
+        service = moduleRef.get<SFDCAuthService>(SFDCAuthService);
     });
 
-    it('gets SFDC access token info for GS0 org', async () => {
-        mocked(getToken).mockImplementationOnce(() => {
-            return Promise.resolve(mokenToken);
+    describe('getToken()', () => {
+        it('gets SFDC access token info for GS0 org', async () => {
+            mocked(getToken).mockImplementationOnce(() => {
+                return Promise.resolve(mockToken);
+            });
+
+            const result = await service.getTokenInfo();
+            expect(result).toMatchObject(mockToken);
         });
 
-        const result = await tokenManager.getTokenInfo();
-        expect(result).toMatchObject(mokenToken);
+        it('caches access token info', async () => {
+            const mockedGetToken = mocked(getToken).mockImplementationOnce(() => {
+                return Promise.resolve(mockToken);
+            });
+
+            // make multiple calls
+            await service.getTokenInfo();
+            await service.getTokenInfo();
+            await service.getTokenInfo();
+
+            expect(mockedGetToken).toHaveBeenCalledTimes(1);
+        });
     });
 
-    it('caches access token info', async () => {
-        const mockedGetToken = mocked(getToken).mockImplementationOnce(() => {
-            return Promise.resolve(mokenToken);
+    describe('getConnection()', () => {
+        const mockConnection = {} as jsforce.Connection;
+
+        it('returns a jsforce connection object', async () => {
+            mocked(getToken).mockImplementationOnce(() => {
+                return Promise.resolve(mockToken);
+            });
+
+            const mockConstructor = mocked(jsforce.Connection).mockImplementationOnce(
+                () => mockConnection
+            );
+
+            const result = await service.getConnection();
+
+            expect(result).toMatchObject(mockConnection);
+            expect(mockConstructor).toHaveBeenCalledTimes(1);
         });
 
-        // make multiple calls
-        await tokenManager.getTokenInfo();
-        await tokenManager.getTokenInfo();
+        it('caches a jsforce connection object after first call', async () => {
+            mocked(getToken).mockImplementationOnce(() => {
+                return Promise.resolve(mockToken);
+            });
 
-        expect(mockedGetToken).toHaveBeenCalledTimes(1);
+            const mockConstructor = mocked(jsforce.Connection).mockImplementationOnce(
+                () => mockConnection
+            );
+
+            // make multiple calls
+            await service.getConnection();
+            await service.getConnection();
+            await service.getConnection();
+
+            expect(mockConstructor).toHaveBeenCalledTimes(1);
+        });
     });
 });

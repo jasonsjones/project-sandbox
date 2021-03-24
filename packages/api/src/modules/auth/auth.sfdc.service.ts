@@ -2,11 +2,13 @@ import fs from 'fs';
 import { Injectable } from '@nestjs/common';
 import { getToken } from 'sf-jwt-token';
 import { TokenOutput } from 'sf-jwt-token/dist/Interfaces';
+import jsforce from 'jsforce';
 
 @Injectable()
 export class SFDCAuthService {
     static privateKey = fs.readFileSync(__dirname + '/../../../.certs/server.key').toString('utf8');
     token: TokenOutput;
+    connection: jsforce.Connection;
 
     private async fetchTokenInfo(): Promise<TokenOutput> {
         const clientId =
@@ -32,5 +34,16 @@ export class SFDCAuthService {
             return await this.fetchTokenInfo();
         }
         return this.token;
+    }
+
+    async getConnection(): Promise<jsforce.Connection> {
+        const tokenInfo = await this.getTokenInfo();
+        if (!this.connection) {
+            this.connection = new jsforce.Connection({
+                instanceUrl: tokenInfo.instance_url,
+                accessToken: tokenInfo.access_token
+            });
+        }
+        return this.connection;
     }
 }
