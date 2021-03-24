@@ -20,6 +20,15 @@ jobs:
 
         env:
             JWT_SECRET: jwtsecretforTESTING
+            SFDC_LOCAL_CLIENT_ID: randomClientIdString
+            SFDC_PROD_CLIENT_ID:
+            SFDC_USERNAME: user@force.com
+            SFDC_AUDIENCE: https://login.salesforce.com
+
+            SFDC_SERVER_PRIVATE_KEY: >
+                -----BEGIN FAKE RSA PRIVATE KEY-----
+                MIIEpQIBAAKCAQEAshBM2JiNGtmH8dGbspfuSSszccIufzIb0v876tg1JUN8CuEmH8dGbspfuTmH8dGbspfu
+                -----END FAKE RSA PRIVATE KEY-----
         #     ACCESS_TOKEN_SECRET: AccesstokenSECRETforTESTING
         #     REFRESH_TOKEN_SECRET: RefreshtokenSECRETforTESTING
 
