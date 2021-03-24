@@ -1,27 +1,32 @@
-import fs from 'fs';
 import { Injectable } from '@nestjs/common';
 import { getToken } from 'sf-jwt-token';
 import { TokenOutput } from 'sf-jwt-token/dist/Interfaces';
 import jsforce from 'jsforce';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class SFDCAuthService {
-    static privateKey = fs.readFileSync(__dirname + '/../../../.certs/server.key').toString('utf8');
-    token: TokenOutput;
-    connection: jsforce.Connection;
+    private privateKey: string;
+    private token: TokenOutput;
+    private connection: jsforce.Connection;
+
+    constructor(private configService: ConfigService) {
+        this.privateKey = configService.get<string>('SFDC_SERVER_PRIVATE_KEY') || '';
+    }
 
     private async fetchTokenInfo(): Promise<TokenOutput> {
-        const clientId =
-            process.env.NODE_ENV === 'production'
-                ? process.env.SFDC_PROD_CLIENT_ID
-                : process.env.SFDC_LOCAL_CLIENT_ID;
+        const env = this.configService.get<string>('NODE_ENV');
+        const prodClientId = this.configService.get<string>('SFDC_PROD_CLIENT_ID');
+        const localClientId = this.configService.get<string>('SFDC_LOCAL_CLIENT_ID');
+
+        const clientId = env === 'production' ? prodClientId : localClientId;
 
         try {
             this.token = await getToken({
                 iss: clientId,
-                sub: process.env.SFDC_USERNAME,
-                aud: process.env.SFDC_AUDIENCE,
-                privateKey: SFDCAuthService.privateKey
+                sub: this.configService.get<string>('SFDC_USERNAME'),
+                aud: this.configService.get<string>('SFDC_AUDIENCE'),
+                privateKey: this.privateKey
             });
             return this.token;
         } catch (e) {
