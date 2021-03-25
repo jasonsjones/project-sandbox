@@ -2,9 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
-import { CreateUserDto } from '../src/modules/user/create-user.dto';
-import { UserService } from '../src/modules/user/user.service';
-import { AuthService } from '../src/modules/auth/auth.service';
+import { CreateUserDto } from '../src/user/create-user.dto';
+import { UserService } from '../src/user/user.service';
+import { AuthService } from '../src/auth/auth.service';
 
 const oliver: CreateUserDto = {
     firstName: 'Ollie',
