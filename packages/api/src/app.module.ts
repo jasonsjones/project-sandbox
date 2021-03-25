@@ -7,7 +7,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { StatusModule } from './status/status.module';
 import { UserModule } from './modules/user/user.module';
-import { AvatarModule } from './modules/avatar/avatar.module';
+import { AvatarModule } from './avatar/avatar.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { AuthMiddleware } from './common/auth.middleware';
 
