@@ -6,9 +6,9 @@ import { LoggerMiddleware } from './common/logger.middleware';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { StatusModule } from './status/status.module';
-import { UserModule } from './modules/user/user.module';
+import { UserModule } from './user/user.module';
 import { AvatarModule } from './avatar/avatar.module';
-import { AuthModule } from './modules/auth/auth.module';
+import { AuthModule } from './auth/auth.module';
 import { AuthMiddleware } from './common/auth.middleware';
 
 @Module({
