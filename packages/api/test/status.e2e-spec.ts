@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
-import constants from '../src/modules/status/constants';
+import constants from '../src/status/constants';
 
 describe('Status resolver (e2e)', () => {
     let app: INestApplication;
