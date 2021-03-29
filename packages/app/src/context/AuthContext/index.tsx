@@ -1,6 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { useMutation } from 'react-query';
-import { GraphQLResponse, makeGraphQLMutation } from '../../dataservice';
+import { GraphQLResponse } from '../../dataservice';
 import { useInterval } from '../../hooks/useInterval';
 import useLogout from '../../hooks/useLogout';
 import useRefreshAccessToken from '../../hooks/useRefreshAccessToken';
