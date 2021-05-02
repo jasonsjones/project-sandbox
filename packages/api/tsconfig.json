@@ -13,6 +13,8 @@
     "skipLibCheck": true,
     "incremental": true,
     "esModuleInterop": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "typeRoots": [
       "@types",
       "./node_modules/@types",
