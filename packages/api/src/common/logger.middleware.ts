@@ -16,9 +16,10 @@ export class LoggerMiddleware implements NestMiddleware {
             query = req.body.query;
             variables = req.body.variables;
 
-            console.log(methodAndPath);
+            console.log(`${clc.yellow(new Date().toISOString())} ${methodAndPath}`);
             console.log('query: ', clc.cyan.italic(query));
             console.log('variables: ', clc.magenta(JSON.stringify(variables)));
+            console.log(clc.blue('====== End of Request ======\n\n'));
         } else {
             console.log(`${methodAndPath}`);
         }
