@@ -12,7 +12,7 @@ export class AvatarResolver {
         // For time being, do nothing with the data 'chunk'.
         // Eventually, this function will be replaced with the cloudinary upload_stream API
         const nullStream = new Writable({
-            write(chunk, _, cb) {
+            write(_chunk, _encoding, cb) {
                 cb();
             }
         });
