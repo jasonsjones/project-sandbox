@@ -1,10 +1,12 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import clc from 'cli-color';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
-    use(req: Request, res: Response, next: NextFunction) {
+    private readonly logger = new Logger(LoggerMiddleware.name);
+
+    use(req: Request, _: Response, next: NextFunction) {
         const hasBody = Object.keys(req.body).length !== 0;
         const methodAndPath = `${clc.green(req.method)}  ${clc.white(req.path)}`;
 
@@ -16,12 +18,14 @@ export class LoggerMiddleware implements NestMiddleware {
             query = req.body.query;
             variables = req.body.variables;
 
-            console.log(`${clc.yellow(new Date().toISOString())} ${methodAndPath}`);
-            console.log('query: ', clc.cyan.italic(query));
-            console.log('variables: ', clc.magenta(JSON.stringify(variables)));
-            console.log(clc.blue('====== End of Request ======\n\n'));
+            this.logger.log(methodAndPath);
+            this.logger.log(clc.cyan.italic(query), `${LoggerMiddleware.name} -- query`);
+            this.logger.log(
+                clc.magenta(JSON.stringify(variables)),
+                `${LoggerMiddleware.name} -- variables`
+            );
         } else {
-            console.log(`${methodAndPath}`);
+            this.logger.log(`${methodAndPath}`);
         }
 
         next();
