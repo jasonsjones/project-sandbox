@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { UseGuards } from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
 import {
     Query,
     Resolver,
@@ -37,21 +37,25 @@ class RegisterUserInput {
 
 @Resolver(() => User)
 export class UserResolver {
+    private readonly logger = new Logger(UserResolver.name);
     constructor(private readonly userService: UserService) {}
 
     @Query(() => [User], { name: 'users' })
     @UseGuards(AuthGuard)
     getUsers(): Promise<User[]> {
+        this.logger.log('Fetching all users');
         return this.userService.getAllUsers();
     }
 
     @ResolveField('displayName', (_returns) => String)
     getDisplayName(@Parent() user: User) {
+        this.logger.log('Resolving display name');
         return `${user.firstName} ${user.lastName}`;
     }
 
     @Mutation(() => User)
     async registerUser(@Args('userData') userData: RegisterUserInput): Promise<User> {
+        this.logger.log('Registering new user');
         const newUser = await this.userService.create(userData);
         return newUser;
     }
@@ -59,6 +63,7 @@ export class UserResolver {
     @Query(() => User, { nullable: true })
     me(@Context() { req }: GraphQLContext): User | null {
         if (req.user) {
+            this.logger.log('Fetching context (authenticated) user');
             return req.user;
         }
         return null;

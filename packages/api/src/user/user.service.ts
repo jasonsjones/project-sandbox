@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { v4 } from 'uuid';
 import bcrypt from 'bcryptjs';
 import { User } from './user.entity';
@@ -6,6 +6,7 @@ import { CreateUserDto } from './create-user.dto';
 
 @Injectable()
 export class UserService {
+    private readonly logger = new Logger(UserService.name);
     private users: User[] = [];
 
     async create({ firstName, lastName, email, password }: CreateUserDto): Promise<User> {
@@ -20,14 +21,18 @@ export class UserService {
         newUser.refreshTokenId = 0;
 
         this.users = [...this.users, newUser];
+
+        this.logger.log('Creating new user');
         return Promise.resolve(newUser);
     }
 
     getAllUsers(): Promise<User[]> {
+        this.logger.log('Fetching all users');
         return Promise.resolve(this.users);
     }
 
     findByEmail(email: string): Promise<User | undefined> {
+        this.logger.log('Fetching users by email');
         const foundUser = this.users.find((user) => user.email === email);
         return Promise.resolve(foundUser);
     }
