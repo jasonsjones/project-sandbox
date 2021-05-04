@@ -1,10 +1,13 @@
 import { Writable } from 'stream';
+import { Logger } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { GraphQLUpload, FileUpload } from 'graphql-upload';
 import Avatar from './avatar.entity';
 
 @Resolver(() => Avatar)
 export class AvatarResolver {
+    private readonly logger = new Logger(AvatarResolver.name);
+
     @Mutation(() => Boolean)
     async avatarUpload(
         @Args({ name: 'image', type: () => GraphQLUpload }) image: FileUpload
@@ -17,6 +20,7 @@ export class AvatarResolver {
             }
         });
 
+        this.logger.log('Uploading avatar');
         return new Promise((resolve, reject) => {
             image
                 .createReadStream()
