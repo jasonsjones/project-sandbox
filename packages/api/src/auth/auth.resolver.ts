@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { UnauthorizedException } from '@nestjs/common';
+import { Logger, UnauthorizedException } from '@nestjs/common';
 import { Args, Context, Field, Mutation, ObjectType, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
@@ -16,6 +16,8 @@ class LoginResponse {
 
 @Resolver()
 export class AuthResolver {
+    private readonly logger = new Logger(AuthResolver.name);
+
     constructor(private authService: AuthService, private userService: UserService) {}
 
     @Mutation(() => LoginResponse)
@@ -24,8 +26,9 @@ export class AuthResolver {
         @Args('password') password: string,
         @Context() { res }: GraphQLContext
     ): Promise<LoginResponse | UnauthorizedException> {
-        const authUser = await this.authService.authenticateUser(email, password);
+        this.logger.log('Attempting to login user');
 
+        const authUser = await this.authService.authenticateUser(email, password);
         if (!authUser) {
             return new UnauthorizedException();
         }
@@ -40,12 +43,16 @@ export class AuthResolver {
 
     @Mutation(() => Boolean)
     logout(@Context() { res }: GraphQLContext): boolean {
+        this.logger.log('Logging out user');
+
         res.clearCookie('qid');
         return true;
     }
 
     @Mutation(() => LoginResponse)
     async refreshAccessToken(@Context() { req, res }: GraphQLContext): Promise<LoginResponse> {
+        this.logger.log('Attempting to refresh access token');
+
         const refreshToken = req.cookies['qid'];
         if (refreshToken) {
             let payload;
@@ -64,6 +71,7 @@ export class AuthResolver {
             if (payload.email) {
                 const user = await this.userService.findByEmail(payload.email as string);
                 if (user && user.refreshTokenId === payload.tokenId) {
+                    this.logger.log('Refreshing access token');
                     const accessToken = this.authService.generateAccessToken(user);
                     const refreshToken = this.authService.generateRefreshToken(user);
 
