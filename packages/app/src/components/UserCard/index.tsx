@@ -10,7 +10,7 @@ type UserCardProps = {
 
 function UserCard({ user }: UserCardProps): JSX.Element {
     return (
-        <div className="flex p-4 transition duration-200 ease-in-out border-2 border-purple-600 rounded-md shadow-md transform hover:bg-purple-100 hover:scale-105 hover:shadow-lg">
+        <div className="flex p-4 transition duration-200 ease-in-out border-l-4 border-purple-600 bg-gray-100 shadow-md transform hover:shadow-lg cursor-pointer">
             <img
                 src="http://localhost:3000/default/avatar.png"
                 alt="default avatar"
