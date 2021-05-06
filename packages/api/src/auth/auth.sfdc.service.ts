@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { getToken } from 'sf-jwt-token';
 import { TokenOutput } from 'sf-jwt-token/dist/Interfaces';
 import jsforce from 'jsforce';
@@ -6,6 +6,8 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class SFDCAuthService {
+    private readonly logger = new Logger(SFDCAuthService.name);
+
     private privateKey: string;
     private token: TokenOutput;
     private connection: jsforce.Connection;
@@ -29,12 +31,13 @@ export class SFDCAuthService {
                 privateKey: this.privateKey
             });
             return this.token;
-        } catch (e) {
-            console.log(e);
+        } catch (err) {
+            this.logger.error(`Error in sf-jwt-token "getToken()": ${err.message}`);
         }
     }
 
     async getTokenInfo(): Promise<TokenOutput> {
+        this.logger.log('Fetching SFDC token info');
         if (!this.token) {
             return await this.fetchTokenInfo();
         }
@@ -42,6 +45,7 @@ export class SFDCAuthService {
     }
 
     async getConnection(): Promise<jsforce.Connection> {
+        this.logger.log('Getting SFDC (jsforce) connection');
         const tokenInfo = await this.getTokenInfo();
         if (!this.connection) {
             this.connection = new jsforce.Connection({
