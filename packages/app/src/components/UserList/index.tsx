@@ -3,7 +3,7 @@ import useUsers from '../../hooks/useUsers';
 import Spinner from '../Spinner';
 import UserCard from '../UserCard';
 
-type UserListProps = { className: string };
+type UserListProps = { className?: string };
 
 function UserList({ className }: UserListProps): JSX.Element {
     const { data, isLoading } = useUsers();
@@ -14,7 +14,7 @@ function UserList({ className }: UserListProps): JSX.Element {
         <div className={className}>
             <h2 className="text-4xl text-gray-600 text-center">User List</h2>
 
-            <div className="px-8 py-4 md:p-4">
+            <div>
                 {data?.data?.users?.length > 0 ? (
                     <div className="flex mb-2 border-l-4 border-white text-gray-500 text-lg">
                         <span className="w-1/2 px-2">Id</span>
