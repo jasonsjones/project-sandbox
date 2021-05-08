@@ -1,9 +1,18 @@
 import React from 'react';
-import UserCard from '../UserCard';
 import { User } from '../../types';
 
-type UserListProps = { className?: string; users: User[] };
+type UserRecordProps = { className?: string; user: User };
+function UserRecord({ className, user }: UserRecordProps): JSX.Element {
+    return (
+        <div className={className}>
+            <span className="w-1/2 px-2 text-sm text-purple-900 md:text-xl">{user.id}</span>
+            <span className="w-1/2 px-2 text-sm text-gray-800 md:text-xl">{user.displayName}</span>
+            <span className="w-1/2 px-2 text-sm text-gray-800 md:text-xl">{user.email}</span>
+        </div>
+    );
+}
 
+type UserListProps = { className?: string; users: User[] };
 function UserList({ className, users }: UserListProps): JSX.Element {
     return (
         <div className={className}>
@@ -22,29 +31,12 @@ function UserList({ className, users }: UserListProps): JSX.Element {
 
                 {users.map((user: User) => {
                     return (
-                        <div
+                        <UserRecord
                             key={user.id}
+                            user={user}
                             className="flex mb-2 border-l-4 border-white hover:border-purple-600 cursor-pointer"
-                        >
-                            <span className="w-1/2 px-2 text-sm text-purple-900 md:text-base">
-                                {user.id}
-                            </span>
-                            <span className="w-1/2 px-2 text-sm text-gray-800 md:text-base">
-                                {user.displayName}
-                            </span>
-                            <span className="w-1/2 px-2 text-sm text-gray-800 md:text-base">
-                                {user.email}
-                            </span>
-                        </div>
+                        />
                     );
-                })}
-            </div>
-            <h2 className="mt-24 mb-2 text-3xl md:text-4xl text-gray-600 text-center">
-                User Cards
-            </h2>
-            <div className="grid grid-flow-rows grid-col-1 mx-8 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-                {users.map((user: User) => {
-                    return <UserCard key={user.id} user={user} />;
                 })}
             </div>
         </div>
