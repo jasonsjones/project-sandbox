@@ -99,7 +99,7 @@ describe('Auth resolver (e2e)', () => {
                     expect(body.data).toBeNull();
                     expect(body.errors).toHaveLength(1);
                     expect(body.errors[0].message).toBe('Unauthorized');
-                    expect(body.errors[0].extensions.exception.status).toBe(401);
+                    expect(body.errors[0].extensions.response.statusCode).toBe(401);
                 });
         });
     });
