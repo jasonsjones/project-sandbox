@@ -24,6 +24,7 @@
         "tailwindcss": "2.2.8"
     },
     "scripts": {
+        "prebuild": "yarn build:css",
         "build": "react-scripts build",
         "build:css": "postcss src/styles/tailwind.css -o src/styles/main.css",
         "clean": "rm -rf build",
