@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, waitFor } from '@testing-library/react';
 import { mocked } from 'ts-jest/utils';
 import '@testing-library/jest-dom/extend-expect';

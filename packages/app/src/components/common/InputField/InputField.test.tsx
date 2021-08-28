@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, cleanup } from '@testing-library/react';
 import user from '@testing-library/user-event';
 import InputField from './InputField';

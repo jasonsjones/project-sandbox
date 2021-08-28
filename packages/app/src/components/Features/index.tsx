@@ -1,5 +1,3 @@
-import React from 'react';
-
 import secureLogo from '../../assets/secure.svg';
 import innovativeLogo from '../../assets/innovative.svg';
 
