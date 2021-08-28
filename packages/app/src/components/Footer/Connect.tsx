@@ -1,5 +1,3 @@
-import React from 'react';
-
 function Connect(): JSX.Element {
     return (
         <section className="sm:ml-6">

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Redirect } from 'react-router-dom';
 import LoginForm from '../../components/LoginForm';
 import { useAuthContext } from '../../context/AuthContext';

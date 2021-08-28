@@ -20,10 +20,10 @@ function FileUpload(): JSX.Element {
         }
     });
 
-    const handleDragEnter: React.DragEventHandler<HTMLDivElement> = (e) => {
+    const handleDragEnter: React.DragEventHandler<HTMLDivElement> = () => {
         setHighlight(true);
     };
-    const handleDragLeave: React.DragEventHandler<HTMLDivElement> = (e) => {
+    const handleDragLeave: React.DragEventHandler<HTMLDivElement> = () => {
         setHighlight(false);
     };
     const handleDragOver: React.DragEventHandler<HTMLDivElement> = (e) => {
@@ -45,7 +45,7 @@ function FileUpload(): JSX.Element {
         }
     };
 
-    const handleFileUpload = (e: React.MouseEvent) => {
+    const handleFileUpload = () => {
         const variables = { image: null, operationName: 'UploadAvatar' };
 
         upload({ query: AvatarUploadOp, variables, file: image as File });

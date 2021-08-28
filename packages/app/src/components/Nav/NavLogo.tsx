@@ -1,5 +1,3 @@
-import React from 'react';
-
 function NavLogo(): JSX.Element {
     return (
         <div className="flex flex-col items-end">

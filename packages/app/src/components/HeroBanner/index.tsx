@@ -1,5 +1,3 @@
-import React from 'react';
-
 function HeroBanner(): JSX.Element {
     return (
         <div

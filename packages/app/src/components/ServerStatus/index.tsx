@@ -1,4 +1,3 @@
-import React from 'react';
 import useServerStatus from '../../hooks/useServerStatus';
 import Spinner from '../Spinner';
 

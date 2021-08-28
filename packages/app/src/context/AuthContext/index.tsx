@@ -31,7 +31,7 @@ interface AuthProviderProps {
 const AuthContext = React.createContext<AuthContextProps>({
     token: '',
     isFetchingToken: true,
-    login: (t: string) => {},
+    login: () => {},
     logout: () => {}
 });
 

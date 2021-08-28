@@ -1,5 +1,3 @@
-import React from 'react';
-
 function About(): JSX.Element {
     return (
         <section className="max-w-none sm:max-w-md">

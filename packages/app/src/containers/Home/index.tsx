@@ -1,6 +1,5 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-import Features from '../../components/Features/indes';
+import Features from '../../components/Features';
 import HeroBanner from '../../components/HeroBanner';
 import ServerStatus from '../../components/ServerStatus';
 import { useAuthContext } from '../../context/AuthContext';
