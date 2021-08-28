@@ -46,7 +46,7 @@ function Nav(): JSX.Element {
                         </svg>
                     </button>
                     {/* The nav links that are displayed on larger screens */}
-                    <div className="hidden sm:block flex items-center text-xl">
+                    <div className="hidden sm:block items-center text-xl">
                         {!isFetchingToken && !token && (
                             <>
                                 <NavLink
