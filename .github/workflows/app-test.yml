@@ -25,13 +25,16 @@ jobs:
             - name: Install node
               uses: actions/setup-node@v1
               with:
-                  node-version: '12'
+                  node-version: '14'
 
             - name: Install dependencies
-              run: npm install
+              run: yarn install
 
             - name: Lint code
-              run: npm run lint:ci
+              run: yarn lint:ci
+
+            - name: Build App
+              run: yarn workspace @orion/app build
 
             - name: Run App tests
-              run: npm run test:app
+              run: yarn test:app
