@@ -1,4 +1,4 @@
-import { MutationFunction } from 'react-query';
+import { MutationFunction, QueryFunctionContext } from 'react-query';
 
 export interface GraphQLResponse {
     data?: any;
@@ -16,9 +16,7 @@ const graphqlEndpoint = 'http://localhost:3000/graphql';
 
 export function makeGraphQLQuery({
     queryKey
-}: {
-    queryKey: [string, QueryPayload];
-}): Promise<GraphQLResponse> {
+}: QueryFunctionContext<[string, QueryPayload]>): Promise<GraphQLResponse> {
     const [, { query, variables = {}, token }] = queryKey;
     let fetchHeaders: Record<string, string> = {
         'Content-Type': 'application/json'
