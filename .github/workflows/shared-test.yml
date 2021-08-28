@@ -1,4 +1,4 @@
-name: Shared lib tests
+name: Shared Lib Verification Checks
 
 on:
     push:
@@ -15,7 +15,7 @@ on:
 
 jobs:
     runner-job:
-        name: Shared lib test
+        name: Shared Lib Build and Tests
         runs-on: ubuntu-latest
 
         steps:
