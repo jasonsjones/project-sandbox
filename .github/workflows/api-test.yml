@@ -1,4 +1,4 @@
-name: API tests
+name: API Verification Checks
 
 on:
     push:
@@ -15,7 +15,7 @@ on:
 
 jobs:
     runner-job:
-        name: API test
+        name: API Build and Tests
         runs-on: ubuntu-latest
 
         env:

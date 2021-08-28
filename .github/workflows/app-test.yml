@@ -1,4 +1,4 @@
-name: App tests
+name: App Verification Checks
 
 on:
     push:
@@ -15,7 +15,7 @@ on:
 
 jobs:
     runner-job:
-        name: App test
+        name: App Build and Tests
         runs-on: ubuntu-latest
 
         steps:
