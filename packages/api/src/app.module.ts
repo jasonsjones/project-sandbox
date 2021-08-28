@@ -20,8 +20,7 @@ import { AuthMiddleware } from './common/auth.middleware';
                 origin: ['http://localhost:4200'],
                 credentials: true
             },
-            context: ({ req, res }) => ({ req, res }),
-            uploads: false // disable built-in upload handling
+            context: ({ req, res }) => ({ req, res })
         }),
         AuthModule,
         AvatarModule,
