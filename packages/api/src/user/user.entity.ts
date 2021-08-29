@@ -15,7 +15,7 @@ export class User {
     email!: string;
 
     @Field(() => String)
-    displayName: string;
+    displayName!: string;
 
     password!: string;
 
