@@ -75,6 +75,7 @@ function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     );
 
     const login = (t: string, cb?: () => void) => {
+        localStorage.setItem('hasToken', 'true');
         setToken(t);
         if (cb) {
             cb();
@@ -86,6 +87,7 @@ function AuthProvider({ children }: AuthProviderProps): JSX.Element {
             query: logoutOp,
             variables: {}
         });
+        localStorage.removeItem('hasToken');
     };
 
     return (
