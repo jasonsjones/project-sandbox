@@ -4,7 +4,7 @@ import UserCards from '../../components/UserCards';
 import UserList from '../../components/UserList';
 import useUsers from '../../hooks/useUsers';
 
-function UserListPage(): JSX.Element {
+function UserPage(): JSX.Element {
     const { data: response, isLoading } = useUsers();
 
     if (isLoading) return <Spinner />;
@@ -20,4 +20,4 @@ function UserListPage(): JSX.Element {
     );
 }
 
-export default UserListPage;
+export default UserPage;
