@@ -50,6 +50,8 @@ function AuthProvider({ children }: AuthProviderProps): JSX.Element {
             const { accessToken } = response.data?.refreshAccessToken;
             if (accessToken) {
                 setToken(accessToken);
+            } else {
+                localStorage.removeItem('hasToken');
             }
         }
     };
