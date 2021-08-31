@@ -12,7 +12,7 @@ enum VIEW {
     Cards = 'cards'
 }
 
-function UserPage(): JSX.Element {
+function UserListPage(): JSX.Element {
     const query = useQueryParams();
     const [view, setView] = useState(query.get('view') || VIEW.Cards);
     const { data: response, isLoading } = useUsers();
@@ -51,4 +51,4 @@ function UserPage(): JSX.Element {
     );
 }
 
-export default UserPage;
+export default UserListPage;
