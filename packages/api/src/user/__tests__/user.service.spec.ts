@@ -90,4 +90,29 @@ describe('User service', () => {
             expect(unknownUser).toBeUndefined();
         });
     });
+
+    describe('findById()', () => {
+        it('fetches a user with the given id', async () => {
+            const user = await userService.create(barry);
+            const result = await userService.findById(user.id);
+
+            expect(result).toEqual(
+                expect.objectContaining({
+                    id: user.id,
+                    firstName: barry.firstName,
+                    lastName: barry.lastName,
+                    email: barry.email,
+                    password: expect.any(String),
+                    refreshTokenId: 0
+                })
+            );
+        });
+
+        it('returns undefined if a user is not found with the given id', async () => {
+            const unknownId = 'f65504ef-e934-4094-8fe3-af7d4762de88';
+            await userService.create(cisco);
+            const unknownUser = await userService.findByEmail(unknownId);
+            expect(unknownUser).toBeUndefined();
+        });
+    });
 });

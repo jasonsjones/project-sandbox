@@ -32,8 +32,14 @@ export class UserService {
     }
 
     findByEmail(email: string): Promise<User | undefined> {
-        this.logger.log('Fetching users by email');
+        this.logger.log('Fetching user by email');
         const foundUser = this.users.find((user) => user.email === email);
+        return Promise.resolve(foundUser);
+    }
+
+    findById(id: string): Promise<User | undefined> {
+        this.logger.log('Fetching user by id');
+        const foundUser = this.users.find((user) => user.id === id);
         return Promise.resolve(foundUser);
     }
 }
