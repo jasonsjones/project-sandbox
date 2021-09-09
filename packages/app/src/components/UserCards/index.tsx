@@ -1,9 +1,13 @@
+import { Link } from 'react-router-dom';
 import { User } from '../../types';
 
 type UserCardProps = { user: User };
 function UserCard({ user }: UserCardProps): JSX.Element {
     return (
-        <div className="flex p-4 min-w-max text-base md:text-xl transition duration-200 ease-in-out border-l-4 border-purple-600 bg-gray-100 shadow-md transform hover:shadow-lg cursor-pointer">
+        <Link
+            to={`users/${user.id}`}
+            className="flex p-4 min-w-max text-base md:text-xl transition duration-200 ease-in-out border-l-4 border-purple-600 bg-gray-100 shadow-md transform hover:shadow-lg cursor-pointer"
+        >
             <img
                 src="http://localhost:3000/default/avatar.png"
                 alt="default avatar"
@@ -13,7 +17,7 @@ function UserCard({ user }: UserCardProps): JSX.Element {
                 <span>{user.displayName}</span>
                 <span>{user.email}</span>
             </div>
-        </div>
+        </Link>
     );
 }
 

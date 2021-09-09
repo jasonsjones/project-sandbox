@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Button } from '../../components/common';
-import FileUpload from '../../components/FileUpload';
 import Spinner from '../../components/Spinner';
 import UserCards from '../../components/UserCards';
 import UserList from '../../components/UserList';
@@ -44,9 +43,6 @@ function UserListPage(): JSX.Element {
             ) : (
                 <UserCards className="mt-16" users={response?.data.users} />
             )}
-            <div className="mt-24 mb-4 mx-auto max-w-md">
-                <FileUpload />
-            </div>
         </div>
     );
 }
