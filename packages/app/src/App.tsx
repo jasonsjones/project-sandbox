@@ -7,6 +7,7 @@ import UserListPage from './containers/UserListPage';
 import Layout from './containers/Layout';
 import Home from './containers/Home';
 import ProtectedRoute from './components/ProtectedRoute';
+import UserDetailPage from './containers/UserDetailPage';
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,9 @@ function App(): JSX.Element {
                         <Route exact path="/register">
                             <UserRegisterPage />
                         </Route>
+                        <ProtectedRoute exact path="/users/:id">
+                            <UserDetailPage />
+                        </ProtectedRoute>
                         <ProtectedRoute exact path="/users">
                             <UserListPage />
                         </ProtectedRoute>
