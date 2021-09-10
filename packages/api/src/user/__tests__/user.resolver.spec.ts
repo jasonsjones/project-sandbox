@@ -3,6 +3,16 @@ import { Test } from '@nestjs/testing';
 import { UserService } from '../user.service';
 import { UserResolver } from '../user.resolver';
 
+const ollie = {
+    id: '05fc4d47-b88c-4494-86e9-b64d748e1df6',
+    firstName: 'Ollie',
+    lastName: 'Queen',
+    email: 'oliver@qc.com',
+    displayName: 'Oliver Queen',
+    password: '123456',
+    refreshTokenId: 0
+};
+
 describe('User resolver', () => {
     let userService: UserService;
     let userResolver: UserResolver;
@@ -17,16 +27,6 @@ describe('User resolver', () => {
     });
 
     describe('registerUser mutation', () => {
-        const ollie = {
-            id: '05fc4d47-b88c-4494-86e9-b64d748e1df6',
-            firstName: 'Ollie',
-            lastName: 'Queen',
-            email: 'oliver@qc.com',
-            displayName: 'Oliver Queen',
-            password: '123456',
-            refreshTokenId: 0
-        };
-
         it('creates a new user', async () => {
             const createSpy = jest.spyOn(userService, 'create').mockResolvedValue(ollie);
             const result = await userResolver.registerUser({
@@ -47,6 +47,14 @@ describe('User resolver', () => {
 
             expect(await userResolver.getUsers()).toBe(result);
             expect(getAllUsersSpy).toHaveBeenCalled();
+        });
+    });
+
+    describe('user query', () => {
+        it('returns the user with the given id', async () => {
+            const findUserByIdSpy = jest.spyOn(userService, 'findById').mockResolvedValue(ollie);
+            expect(await userResolver.getUser(ollie.id)).toEqual(ollie);
+            expect(findUserByIdSpy).toHaveBeenCalled();
         });
     });
 

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Logger, UseGuards } from '@nestjs/common';
+import { Logger, ParseUUIDPipe, UseGuards } from '@nestjs/common';
 import {
     Query,
     Resolver,
@@ -45,6 +45,13 @@ export class UserResolver {
     getUsers(): Promise<User[]> {
         this.logger.log('Fetching all users');
         return this.userService.getAllUsers();
+    }
+
+    @Query(() => User, { name: 'user' })
+    @UseGuards(AuthGuard)
+    getUser(@Args('id', ParseUUIDPipe) id: string): Promise<User> {
+        this.logger.log('Fetching user by id');
+        return this.userService.findById(id);
     }
 
     @ResolveField('displayName', (_returns) => String)
