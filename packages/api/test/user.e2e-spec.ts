@@ -20,9 +20,20 @@ const barry: CreateUserDto = {
     password: 'secretpassword'
 };
 
-const userQuery = `
+const usersQuery = `
 query {
     users {
+        id
+        firstName
+        lastName
+        displayName
+        email
+    }
+}`;
+
+const userQuery = `
+query getUserById($id: String!) {
+    user(id: $id) {
         id
         firstName
         lastName
@@ -107,7 +118,7 @@ describe('User resolver (e2e)', () => {
                 .post('/graphql')
                 .set('Content-Type', 'application/json')
                 .set('Authorization', `Bearer ${accessToken}`)
-                .send({ query: userQuery })
+                .send({ query: usersQuery })
                 .expect(({ body }) => {
                     const { users } = body.data;
                     expect(users).toHaveLength(1);
@@ -129,7 +140,7 @@ describe('User resolver (e2e)', () => {
             return request(app.getHttpServer())
                 .post('/graphql')
                 .set('Content-Type', 'application/json')
-                .send({ query: userQuery })
+                .send({ query: usersQuery })
                 .expect(({ body }) => {
                     expect(body.errors).toEqual(
                         expect.arrayContaining([
@@ -148,7 +159,73 @@ describe('User resolver (e2e)', () => {
                 .post('/graphql')
                 .set('Content-Type', 'application/json')
                 .set('Authorization', `Bearer ${accessToken}`)
-                .send({ query: userQuery })
+                .send({ query: usersQuery })
+                .expect(({ body }) => {
+                    expect(body.errors).toEqual(
+                        expect.arrayContaining([
+                            expect.objectContaining({ message: 'Forbidden resource' })
+                        ])
+                    );
+                    expect(body.data).toBeNull();
+                });
+        });
+    });
+
+    describe('user (by id) query', () => {
+        it('fetches the user with the given id', async () => {
+            const mainUser = await userService.create(barry);
+            const otherUser = await userService.create(oliver);
+            const accessToken = authService.generateAccessToken(mainUser);
+            const idToFind = otherUser.id;
+
+            return request(app.getHttpServer())
+                .post('/graphql')
+                .set('Content-Type', 'application/json')
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({ query: userQuery, variables: { id: idToFind } })
+                .expect(({ body }) => {
+                    const { user } = body.data;
+                    expect(user).toEqual(
+                        expect.objectContaining({
+                            id: expect.any(String),
+                            firstName: oliver.firstName,
+                            lastName: oliver.lastName,
+                            displayName: `${oliver.firstName} ${oliver.lastName}`,
+                            email: oliver.email
+                        })
+                    );
+                });
+        });
+
+        it('protects the single user (by id) resource when no token is present', () => {
+            const unknownId = 'f65504ef-e934-4094-8fe3-af7d4762de88';
+
+            return request(app.getHttpServer())
+                .post('/graphql')
+                .set('Content-Type', 'application/json')
+                .send({ query: userQuery, variables: { id: unknownId } })
+                .expect(({ body }) => {
+                    expect(body.errors).toEqual(
+                        expect.arrayContaining([
+                            expect.objectContaining({ message: 'Forbidden resource' })
+                        ])
+                    );
+                    expect(body.data).toBeNull();
+                });
+        });
+
+        it('protects the single user (by id) resource when an invalid token is provided', async () => {
+            await userService.create(barry);
+            const otherUser = await userService.create(oliver);
+            const idToFind = otherUser.id;
+            const accessToken =
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+
+            return request(app.getHttpServer())
+                .post('/graphql')
+                .set('Content-Type', 'application/json')
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({ query: userQuery, variables: { id: idToFind } })
                 .expect(({ body }) => {
                     expect(body.errors).toEqual(
                         expect.arrayContaining([
