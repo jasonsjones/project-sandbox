@@ -69,8 +69,8 @@ jobs:
             - name: Build API
               run: yarn workspace @orion/api build
 
-            - name: Run API v2 unit tests
+            - name: Run API unit tests
               run: yarn test:api:unit
 
-            - name: Run API v2 End-to-End tests
+            - name: Run API End-to-End tests
               run: yarn test:api:e2e
