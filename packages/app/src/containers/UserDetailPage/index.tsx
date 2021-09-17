@@ -12,7 +12,7 @@ function UserDetailPage(): JSX.Element {
 
     return (
         <div className="w-full md:w-3/4 mx-auto mt-12 px-4">
-            <h1 className="text-4xl">User Profile</h1>
+            <h1 className="text-5xl text-gray-700">Profile Page</h1>
             <UserDetail user={response?.data.user} />
             <div className="mt-24 mb-4 mx-auto max-w-md">
                 <FileUpload />
