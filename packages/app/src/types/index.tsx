@@ -3,3 +3,8 @@ export interface User {
     displayName: string;
     email: string;
 }
+
+export enum UserListView {
+    LIST = 'list',
+    CARDS = 'cards'
+}

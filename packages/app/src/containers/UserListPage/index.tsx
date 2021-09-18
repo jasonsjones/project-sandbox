@@ -5,15 +5,11 @@ import UserCards from '../../components/UserCards';
 import UserList from '../../components/UserList';
 import useQueryParams from '../../hooks/useQueryParams';
 import useUsers from '../../hooks/useUsers';
-
-enum VIEW {
-    List = 'list',
-    Cards = 'cards'
-}
+import { UserListView } from '../../types';
 
 function UserListPage(): JSX.Element {
     const query = useQueryParams();
-    const [view, setView] = useState(query.get('view') || VIEW.Cards);
+    const [view, setView] = useState(query.get('view') || UserListView.CARDS);
     const { data: response, isLoading } = useUsers();
 
     if (isLoading) return <Spinner />;
@@ -24,21 +20,21 @@ function UserListPage(): JSX.Element {
                 <Button
                     type="button"
                     className="w-32 my-4"
-                    variant={view === VIEW.List ? 'primary' : 'secondary'}
-                    clickAction={() => setView(VIEW.List)}
+                    variant={view === UserListView.LIST ? 'primary' : 'secondary'}
+                    clickAction={() => setView(UserListView.LIST)}
                 >
                     List
                 </Button>
                 <Button
                     type="button"
                     className="w-32 my-4"
-                    variant={view === VIEW.Cards ? 'primary' : 'secondary'}
-                    clickAction={() => setView(VIEW.Cards)}
+                    variant={view === UserListView.CARDS ? 'primary' : 'secondary'}
+                    clickAction={() => setView(UserListView.CARDS)}
                 >
                     Cards
                 </Button>
             </div>
-            {view === VIEW.List ? (
+            {view === UserListView.LIST ? (
                 <UserList className="mt-16" users={response?.data.users} />
             ) : (
                 <UserCards className="mt-16" users={response?.data.users} />
