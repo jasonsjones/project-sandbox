@@ -132,3 +132,6 @@ packages/api/avatars/*
 
 # private certs for salesforce integration
 .certs
+
+# api sqlite db file
+packages/api/data
