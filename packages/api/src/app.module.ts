@@ -1,4 +1,10 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import {
+    Logger,
+    MiddlewareConsumer,
+    Module,
+    NestModule,
+    OnApplicationBootstrap
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { graphqlUploadExpress } from 'graphql-upload';
@@ -10,6 +16,9 @@ import { UserModule } from './user/user.module';
 import { AvatarModule } from './avatar/avatar.module';
 import { AuthModule } from './auth/auth.module';
 import { AuthMiddleware } from './common/auth.middleware';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import dbConfig from '../ormconfig';
+import { Connection } from 'typeorm';
 
 @Module({
     imports: [
@@ -22,6 +31,7 @@ import { AuthMiddleware } from './common/auth.middleware';
             },
             context: ({ req, res }) => ({ req, res })
         }),
+        TypeOrmModule.forRoot(dbConfig),
         AuthModule,
         AvatarModule,
         StatusModule,
@@ -30,7 +40,11 @@ import { AuthMiddleware } from './common/auth.middleware';
     controllers: [AppController],
     providers: [AppService]
 })
-export class AppModule implements NestModule {
+export class AppModule implements NestModule, OnApplicationBootstrap {
+    private readonly logger = new Logger(AppModule.name);
+
+    constructor(private connection: Connection) {}
+
     configure(consumer: MiddlewareConsumer) {
         // utilize graphql-upload middleware to handle uploads; this is required
         // to address lagging dependency versions which caused a
@@ -40,6 +54,16 @@ export class AppModule implements NestModule {
 
         if (process.env.NODE_ENV !== 'test') {
             consumer.apply(LoggerMiddleware).forRoutes('*');
+        }
+    }
+
+    async onApplicationBootstrap() {
+        this.logger.log('App module bootstrapping complete');
+        try {
+            this.logger.log('Running db migrations...');
+            await this.connection.runMigrations();
+        } catch (err) {
+            this.logger.error(err);
         }
     }
 }
