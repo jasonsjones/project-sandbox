@@ -1,12 +1,18 @@
 import { Writable } from 'stream';
 import { Logger } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { GraphQLUpload, FileUpload } from 'graphql-upload';
 import Avatar from './avatar.entity';
 
 @Resolver(() => Avatar)
 export class AvatarResolver {
     private readonly logger = new Logger(AvatarResolver.name);
+
+    // stub top-level query to make avatar e2e tests happy
+    @Query((_returns) => String)
+    avatar(): string {
+        return 'temp avatar status message';
+    }
 
     @Mutation(() => Boolean)
     async avatarUpload(

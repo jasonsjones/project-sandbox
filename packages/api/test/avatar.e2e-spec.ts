@@ -1,7 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '../src/app.module';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
+import { AvatarModule } from '../src/avatar/avatar.module';
+import { GraphQLModule } from '@nestjs/graphql';
+import { graphqlUploadExpress } from 'graphql-upload';
 
 function generateVariableMap(keyName: string) {
     return {
@@ -25,10 +27,21 @@ describe('Avatar resolver (e2e)', () => {
 
     beforeEach(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
-            imports: [AppModule]
+            imports: [
+                GraphQLModule.forRoot({
+                    autoSchemaFile: 'src/schema.gql',
+                    cors: {
+                        origin: ['http://localhost:4200'],
+                        credentials: true
+                    },
+                    context: ({ req, res }) => ({ req, res })
+                }),
+                AvatarModule
+            ]
         }).compile();
 
         app = moduleFixture.createNestApplication();
+        app.use(graphqlUploadExpress());
         await app.init();
     });
 

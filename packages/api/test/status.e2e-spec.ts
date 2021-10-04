@@ -1,18 +1,31 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { AppModule } from '../src/app.module';
 import constants from '../src/status/constants';
+import { StatusModule } from '../src/status/status.module';
+import { json } from 'express';
+import { GraphQLModule } from '@nestjs/graphql';
 
 describe('Status resolver (e2e)', () => {
     let app: INestApplication;
 
     beforeEach(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
-            imports: [AppModule]
+            imports: [
+                GraphQLModule.forRoot({
+                    autoSchemaFile: 'src/schema.gql',
+                    cors: {
+                        origin: ['http://localhost:4200'],
+                        credentials: true
+                    },
+                    context: ({ req, res }) => ({ req, res })
+                }),
+                StatusModule
+            ]
         }).compile();
 
         app = moduleFixture.createNestApplication();
+        app.use(json());
         await app.init();
     });
 

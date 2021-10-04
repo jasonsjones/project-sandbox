@@ -3,10 +3,13 @@ import { TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken';
 import { INestApplication } from '@nestjs/common';
 import { TestingModule, Test } from '@nestjs/testing';
 import request from 'supertest';
-import { AppModule } from '../src/app.module';
 import { AuthService } from '../src/auth/auth.service';
 import { CreateUserDto } from '../src/user/create-user.dto';
 import { UserService } from '../src/user/user.service';
+import { GraphQLModule } from '@nestjs/graphql';
+import { AuthModule } from '../src/auth/auth.module';
+import { UserModule } from '../src/user/user.module';
+import { ConfigModule } from '@nestjs/config';
 
 const oliver: CreateUserDto = {
     firstName: 'Ollie',
@@ -42,7 +45,19 @@ describe('Auth resolver (e2e)', () => {
 
     beforeEach(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
-            imports: [AppModule]
+            imports: [
+                ConfigModule.forRoot(),
+                GraphQLModule.forRoot({
+                    autoSchemaFile: 'src/schema.gql',
+                    cors: {
+                        origin: ['http://localhost:4200'],
+                        credentials: true
+                    },
+                    context: ({ req, res }) => ({ req, res })
+                }),
+                AuthModule,
+                UserModule
+            ]
         }).compile();
 
         userService = moduleFixture.get<UserService>(UserService);
