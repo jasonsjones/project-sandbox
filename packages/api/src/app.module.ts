@@ -50,11 +50,7 @@ export class AppModule implements NestModule, OnApplicationBootstrap {
         // to address lagging dependency versions which caused a
         // `RangeError: Maximum call stack size exceeded` (Issue #78)
         consumer.apply(graphqlUploadExpress()).forRoutes('graphql');
-        consumer.apply(AuthMiddleware).forRoutes('*');
-
-        if (process.env.NODE_ENV !== 'test') {
-            consumer.apply(LoggerMiddleware).forRoutes('*');
-        }
+        consumer.apply(LoggerMiddleware, AuthMiddleware).forRoutes('*');
     }
 
     async onApplicationBootstrap() {

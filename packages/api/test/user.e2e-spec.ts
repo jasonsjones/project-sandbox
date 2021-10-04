@@ -1,10 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import request from 'supertest';
-import { AppModule } from '../src/app.module';
 import { CreateUserDto } from '../src/user/create-user.dto';
 import { UserService } from '../src/user/user.service';
 import { AuthService } from '../src/auth/auth.service';
+import { ConfigModule } from '@nestjs/config';
+import { GraphQLModule } from '@nestjs/graphql';
+import { AuthModule } from '../src/auth/auth.module';
+import { UserModule } from '../src/user/user.module';
+import { AuthMiddleware } from '../src/common/auth.middleware';
 
 const oliver: CreateUserDto = {
     firstName: 'Ollie',
@@ -63,6 +67,26 @@ query {
         email
     }
 }`;
+@Module({
+    imports: [
+        ConfigModule.forRoot(),
+        GraphQLModule.forRoot({
+            autoSchemaFile: 'src/schema.gql',
+            cors: {
+                origin: ['http://localhost:4200'],
+                credentials: true
+            },
+            context: ({ req, res }) => ({ req, res })
+        }),
+        AuthModule,
+        UserModule
+    ]
+})
+class AppTestModule implements NestModule {
+    configure(consumer: MiddlewareConsumer) {
+        consumer.apply(AuthMiddleware).forRoutes('*');
+    }
+}
 
 describe('User resolver (e2e)', () => {
     let app: INestApplication;
@@ -71,7 +95,7 @@ describe('User resolver (e2e)', () => {
 
     beforeEach(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
-            imports: [AppModule]
+            imports: [AppTestModule]
         }).compile();
 
         userService = moduleFixture.get<UserService>(UserService);
