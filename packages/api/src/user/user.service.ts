@@ -32,11 +32,11 @@ export class UserService {
 
     findByEmail(email: string): Promise<User | undefined> {
         this.logger.log('Fetching user by email');
-        return this.userRepository.findOneOrFail({ where: { email } });
+        return this.userRepository.findOne({ where: { email } });
     }
 
     findById(id: string): Promise<User | undefined> {
         this.logger.log('Fetching user by id');
-        return this.userRepository.findOneOrFail(id);
+        return this.userRepository.findOne(id);
     }
 }

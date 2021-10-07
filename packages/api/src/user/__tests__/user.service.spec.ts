@@ -15,7 +15,7 @@ class UserRepositoryFake {
     public async find(): Promise<void> {
         /* empty */
     }
-    public async findOneOrFail(): Promise<void> {
+    public async findOne(): Promise<void> {
         /* empty */
     }
 }
@@ -96,13 +96,13 @@ describe('User service', () => {
 
     describe('findByEmail()', () => {
         it('calls the repository with the correct arguments', async () => {
-            const userRepositoryFindOneOrFailSpy = jest
-                .spyOn(userRepository, 'findOneOrFail')
+            const userRepositoryFindOneSpy = jest
+                .spyOn(userRepository, 'findOne')
                 .mockResolvedValue(mockSavedBarry);
 
             await userService.findByEmail(barry.email);
 
-            expect(userRepositoryFindOneOrFailSpy).toHaveBeenCalledWith(
+            expect(userRepositoryFindOneSpy).toHaveBeenCalledWith(
                 expect.objectContaining({
                     where: expect.objectContaining({
                         email: barry.email
@@ -114,12 +114,12 @@ describe('User service', () => {
 
     describe('findById()', () => {
         it('calls the repository with the correct arguments', async () => {
-            const userRepositoryFindOneOrFailSpy = jest
-                .spyOn(userRepository, 'findOneOrFail')
+            const userRepositoryFindOneSpy = jest
+                .spyOn(userRepository, 'findOne')
                 .mockResolvedValue(mockSavedOliver);
             await userService.findById(mockSavedBarry.id);
 
-            expect(userRepositoryFindOneOrFailSpy).toHaveBeenCalledWith(mockSavedBarry.id);
+            expect(userRepositoryFindOneSpy).toHaveBeenCalledWith(mockSavedBarry.id);
         });
     });
 });
