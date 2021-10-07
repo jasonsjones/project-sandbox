@@ -1,14 +1,16 @@
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { Test } from '@nestjs/testing';
 import { AuthService } from '../auth.service';
 import { AuthResolver } from '../auth.resolver';
-import { UserModule } from '../../user/user.module';
 import { UserService } from '../../user/user.service';
 import { JwtModule } from '@nestjs/jwt';
 import { CreateUserDto } from '../../user/create-user.dto';
 import { UnauthorizedException } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { User } from '../../user/user.entity';
+import { mockSavedOliver } from '../../user/__tests__/user.data';
 
 const oliver: CreateUserDto = {
     firstName: 'Ollie',
@@ -16,6 +18,21 @@ const oliver: CreateUserDto = {
     email: 'oliver@qc.com',
     password: '123456'
 };
+
+class UserRepositoryFake {
+    public create(): void {
+        /* empty */
+    }
+    public async save(): Promise<void> {
+        /* empty */
+    }
+    public async find(): Promise<void> {
+        /* empty */
+    }
+    public async findOneOrFail(): Promise<void> {
+        /* empty */
+    }
+}
 
 describe('Auth resolver', () => {
     let authService: AuthService;
@@ -28,13 +45,30 @@ describe('Auth resolver', () => {
     beforeEach(async () => {
         const moduleRef = await Test.createTestingModule({
             imports: [
-                ConfigModule,
-                UserModule,
                 JwtModule.register({
                     secret: 'jwtsecretfortest'
                 })
             ],
-            providers: [AuthResolver, AuthService]
+            providers: [
+                AuthResolver,
+                AuthService,
+                UserService,
+                {
+                    provide: getRepositoryToken(User),
+                    useClass: UserRepositoryFake
+                },
+                {
+                    provide: ConfigService,
+                    useValue: {
+                        get: jest.fn((key: string) => {
+                            if (key === 'JWT_SECRET') {
+                                return 'jwtsecretfortest';
+                            }
+                            return null;
+                        })
+                    }
+                }
+            ]
         }).compile();
 
         authService = moduleRef.get<AuthService>(AuthService);
@@ -44,15 +78,14 @@ describe('Auth resolver', () => {
 
     describe('login mutation', () => {
         it('returns an access token if user is authenticated', async () => {
-            const res = {} as Response;
-            res.cookie = jest.fn();
-
             const req = {} as Request;
+            const res: any = {
+                cookie: jest.fn()
+            };
 
-            const ollie = await userService.create(oliver);
-
-            jest.spyOn(authService, 'authenticateUser').mockResolvedValue(ollie);
-            jest.spyOn(authService, 'generateAccessToken').mockImplementation(() => fakeToken);
+            jest.spyOn(authService, 'authenticateUser').mockResolvedValue(mockSavedOliver);
+            jest.spyOn(authService, 'generateAccessToken').mockReturnValue(fakeToken);
+            jest.spyOn(authService, 'generateRefreshToken').mockReturnValue(fakeToken);
 
             const result = await authResolver.login(oliver.email, oliver.password, {
                 req,
@@ -64,14 +97,16 @@ describe('Auth resolver', () => {
                     accessToken: fakeToken
                 })
             );
-            expect(res.cookie).toHaveBeenCalled();
+
+            expect(res.cookie).toHaveBeenCalledWith('qid', fakeToken, { httpOnly: true });
         });
 
         it('returns an Unauthorized exception if user is not authenticated', async () => {
-            const res = {} as Response;
-            res.cookie = jest.fn();
-
             const req = {} as Request;
+            const res: any = {
+                cookie: jest.fn()
+            };
+
             jest.spyOn(authService, 'authenticateUser').mockResolvedValue(null);
 
             const error = (await authResolver.login('unknown-user@example.com', 'orion', {
@@ -92,21 +127,22 @@ describe('Auth resolver', () => {
 
     describe('logout mutation', () => {
         it('clears the refresh token cookie (qid)', async () => {
-            const res = {} as Response;
-            res.cookie = jest.fn();
-            res.clearCookie = jest.fn();
-
             const req = {} as Request;
+            const res: any = {
+                cookie: jest.fn(),
+                clearCookie: jest.fn()
+            };
 
-            const ollie = await userService.create(oliver);
+            // const ollie = await userService.create(oliver);
 
-            jest.spyOn(authService, 'authenticateUser').mockResolvedValue(ollie);
-            jest.spyOn(authService, 'generateAccessToken').mockImplementation(() => fakeToken);
+            // jest.spyOn(authService, 'authenticateUser').mockResolvedValue(mockSavedOliver);
+            // jest.spyOn(authService, 'authenticateUser').mockResolvedValue(ollie);
+            // jest.spyOn(authService, 'generateAccessToken').mockImplementation(() => fakeToken);
 
-            await authResolver.login(oliver.email, oliver.password, {
-                req,
-                res
-            });
+            // await authResolver.login(oliver.email, oliver.password, {
+            //     req,
+            //     res
+            // });
 
             const result = authResolver.logout({ req, res });
 
@@ -117,12 +153,15 @@ describe('Auth resolver', () => {
 
     describe('refreshAccessToken mutation', () => {
         it('refreshes the access token when presented with a valid refresh token', async () => {
-            const res = {} as Response;
-            res.cookie = jest.fn();
+            const req: any = {
+                cookies: {
+                    qid: fakeToken
+                }
+            };
 
-            const req = {} as Request;
-            req.cookies = {
-                qid: fakeToken
+            const res: any = {
+                cookie: jest.fn(),
+                clearCookie: jest.fn()
             };
 
             const tokenPayload = {
@@ -132,9 +171,9 @@ describe('Auth resolver', () => {
                 iat: 1516239032
             };
 
-            const ollie = await userService.create(oliver);
+            // const ollie = await userService.create(oliver);
             jest.spyOn(authService, 'verifyToken').mockImplementation(() => tokenPayload);
-            jest.spyOn(userService, 'findByEmail').mockResolvedValue(ollie);
+            jest.spyOn(userService, 'findByEmail').mockResolvedValue(mockSavedOliver);
             jest.spyOn(authService, 'generateAccessToken').mockImplementation(() => fakeToken);
             jest.spyOn(authService, 'generateRefreshToken').mockImplementation(() => fakeToken);
 
@@ -150,10 +189,15 @@ describe('Auth resolver', () => {
         });
 
         it('returns null access token if refresh token is undefined', async () => {
-            const res = {} as Response;
-            const req = {} as Request;
-            req.cookies = {
-                qid: undefined
+            const req: any = {
+                cookies: {
+                    qid: undefined
+                }
+            };
+
+            const res: any = {
+                cookie: jest.fn(),
+                clearCookie: jest.fn()
             };
 
             const result = await authResolver.refreshAccessToken({ req, res });
@@ -166,12 +210,15 @@ describe('Auth resolver', () => {
         });
 
         it('returns null access token and clears cookie if refresh token id does not match', async () => {
-            const res = {} as Response;
-            res.clearCookie = jest.fn();
+            const req: any = {
+                cookies: {
+                    qid: fakeToken
+                }
+            };
 
-            const req = {} as Request;
-            req.cookies = {
-                qid: fakeToken
+            const res: any = {
+                cookie: jest.fn(),
+                clearCookie: jest.fn()
             };
 
             const tokenPayload = {
@@ -181,10 +228,16 @@ describe('Auth resolver', () => {
                 iat: 1516239032
             };
 
-            const ollie = await userService.create(oliver);
-            ollie.refreshTokenId = 2;
+            // const ollie = await userService.create(oliver);
+            // ollie.refreshTokenId = 2;
             jest.spyOn(authService, 'verifyToken').mockImplementation(() => tokenPayload);
-            jest.spyOn(userService, 'findByEmail').mockResolvedValue(ollie);
+            // jest.spyOn(userService, 'findByEmail').mockResolvedValue(ollie);
+            jest.spyOn(userService, 'findByEmail').mockResolvedValue(
+                User.of({
+                    ...mockSavedOliver,
+                    refreshTokenId: 2
+                })
+            );
 
             const result = await authResolver.refreshAccessToken({ req, res });
 
@@ -198,12 +251,15 @@ describe('Auth resolver', () => {
         });
 
         it('returns null access token and clears cookie if refresh token is expired', async () => {
-            const res = {} as Response;
-            res.clearCookie = jest.fn();
+            const req: any = {
+                cookies: {
+                    qid: fakeToken
+                }
+            };
 
-            const req = {} as Request;
-            req.cookies = {
-                qid: fakeToken
+            const res: any = {
+                cookie: jest.fn(),
+                clearCookie: jest.fn()
             };
 
             const twoHoursAgo = new Date();
@@ -225,12 +281,15 @@ describe('Auth resolver', () => {
         });
 
         it('returns null access token and clears cookie if refresh token is otherwize invalid', async () => {
-            const res = {} as Response;
-            res.clearCookie = jest.fn();
+            const req: any = {
+                cookies: {
+                    qid: fakeToken
+                }
+            };
 
-            const req = {} as Request;
-            req.cookies = {
-                qid: fakeToken
+            const res: any = {
+                cookie: jest.fn(),
+                clearCookie: jest.fn()
             };
 
             jest.spyOn(authService, 'verifyToken').mockImplementation(() => {

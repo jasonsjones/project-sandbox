@@ -1,10 +1,13 @@
 import { Test } from '@nestjs/testing';
+import bcrypt from 'bcryptjs';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AuthService } from '../auth.service';
 import { UserService } from '../../user/user.service';
 import { CreateUserDto } from '../../user/create-user.dto';
-import { UserModule } from '../../user/user.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { User } from '../../user/user.entity';
+import { mockSavedOliver } from '../../user/__tests__/user.data';
 
 const oliver: CreateUserDto = {
     firstName: 'Oliver',
@@ -12,6 +15,20 @@ const oliver: CreateUserDto = {
     email: 'oliver@qc.com',
     password: 'secretpassword'
 };
+class UserRepositoryFake {
+    public create(): void {
+        /* empty */
+    }
+    public async save(): Promise<void> {
+        /* empty */
+    }
+    public async find(): Promise<void> {
+        /* empty */
+    }
+    public async findOneOrFail(): Promise<void> {
+        /* empty */
+    }
+}
 
 describe('Auth service', () => {
     let authService: AuthService;
@@ -21,13 +38,29 @@ describe('Auth service', () => {
     beforeEach(async () => {
         const moduleRef = await Test.createTestingModule({
             imports: [
-                ConfigModule,
-                UserModule,
                 JwtModule.register({
                     secret: 'jwtsecretfortest'
                 })
             ],
-            providers: [AuthService]
+            providers: [
+                AuthService,
+                UserService,
+                {
+                    provide: getRepositoryToken(User),
+                    useClass: UserRepositoryFake
+                },
+                {
+                    provide: ConfigService,
+                    useValue: {
+                        get: jest.fn((key: string) => {
+                            if (key === 'JWT_SECRET') {
+                                return 'jwtsecretfortest';
+                            }
+                            return null;
+                        })
+                    }
+                }
+            ]
         }).compile();
 
         authService = moduleRef.get<AuthService>(AuthService);
@@ -37,7 +70,12 @@ describe('Auth service', () => {
 
     describe('authenticateUser()', () => {
         it('authenticates a user given a valid password', async () => {
-            await userService.create(oliver);
+            const hashedPwd = await bcrypt.hash(mockSavedOliver.password, 12);
+            jest.spyOn(userService, 'findByEmail').mockResolvedValue({
+                ...mockSavedOliver,
+                password: hashedPwd
+            });
+
             const result = await authService.authenticateUser(oliver.email, oliver.password);
             expect(result).toEqual(
                 expect.objectContaining({
@@ -51,36 +89,58 @@ describe('Auth service', () => {
         });
 
         it('returns null if an invalid password', async () => {
-            await userService.create(oliver);
+            const hashedPwd = await bcrypt.hash(mockSavedOliver.password, 12);
+            jest.spyOn(userService, 'findByEmail').mockResolvedValue({
+                ...mockSavedOliver,
+                password: hashedPwd
+            });
             const result = await authService.authenticateUser(oliver.email, 'wrong-password');
             expect(result).toBeNull();
         });
     });
 
     describe('generateAccessToken()', () => {
-        it('generates an access token string', async () => {
-            const ollie = await userService.create(oliver);
-            const token =
-                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+        it('calls the jwt service with the correct arguments ', async () => {
+            const jwtSignSpy = jest.spyOn(jwtService, 'sign');
 
-            jest.spyOn(jwtService, 'sign').mockImplementation(() => token);
-            expect(authService.generateAccessToken(ollie)).toBe(token);
+            authService.generateAccessToken(mockSavedOliver);
+
+            expect(jwtSignSpy.mock.calls[0][0]).toEqual(
+                expect.objectContaining({
+                    sub: mockSavedOliver.id,
+                    email: mockSavedOliver.email
+                })
+            );
+            expect(jwtSignSpy.mock.calls[0][1]).toEqual(
+                expect.objectContaining({
+                    expiresIn: '10m'
+                })
+            );
         });
     });
 
     describe('generateRefreshToken()', () => {
-        it('generates a refresh token string', async () => {
-            const ollie = await userService.create(oliver);
-            const token =
-                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+        it('calls the jwt service with the correct arguments', async () => {
+            const jwtSignSpy = jest.spyOn(jwtService, 'sign');
 
-            jest.spyOn(jwtService, 'sign').mockImplementation(() => token);
-            expect(authService.generateRefreshToken(ollie)).toBe(token);
+            authService.generateRefreshToken(mockSavedOliver);
+
+            expect(jwtSignSpy.mock.calls[0][0]).toEqual(
+                expect.objectContaining({
+                    sub: mockSavedOliver.id,
+                    email: mockSavedOliver.email
+                })
+            );
+            expect(jwtSignSpy.mock.calls[0][1]).toEqual(
+                expect.objectContaining({
+                    expiresIn: '14d'
+                })
+            );
         });
     });
 
     describe('verifyToken()', () => {
-        it('verifies a valid jwt', () => {
+        it('calls the jwt service with the correct arguments', () => {
             const token =
                 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
 
@@ -90,8 +150,16 @@ describe('Auth service', () => {
                 tokenId: 0,
                 iat: 1516239022
             };
-            jest.spyOn(jwtService, 'verify').mockImplementation(() => result);
-            expect(authService.verifyToken(token)).toBe(result);
+            const jwtVerifySpy = jest.spyOn(jwtService, 'verify').mockReturnValue(result);
+
+            authService.verifyToken(token);
+
+            expect(jwtVerifySpy.mock.calls[0][0]).toBe(token);
+            expect(jwtVerifySpy.mock.calls[0][1]).toEqual(
+                expect.objectContaining({
+                    secret: 'jwtsecretfortest'
+                })
+            );
         });
     });
 });
