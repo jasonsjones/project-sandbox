@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import { Test } from '@nestjs/testing';
 import { UserService } from '../user.service';
 import { UserResolver } from '../user.resolver';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { User } from '../user.entity';
 
 const ollie = {
     id: '05fc4d47-b88c-4494-86e9-b64d748e1df6',
@@ -13,13 +15,35 @@ const ollie = {
     refreshTokenId: 0
 };
 
+class UserRepositoryFake {
+    public create(): void {
+        /* empty */
+    }
+    public async save(): Promise<void> {
+        /* empty */
+    }
+    public async find(): Promise<void> {
+        /* empty */
+    }
+    public async findOneOrFail(): Promise<void> {
+        /* empty */
+    }
+}
+
 describe('User resolver', () => {
     let userService: UserService;
     let userResolver: UserResolver;
 
     beforeEach(async () => {
         const moduleRef = await Test.createTestingModule({
-            providers: [UserService, UserResolver]
+            providers: [
+                UserResolver,
+                UserService,
+                {
+                    provide: getRepositoryToken(User),
+                    useClass: UserRepositoryFake
+                }
+            ]
         }).compile();
 
         userService = moduleRef.get<UserService>(UserService);

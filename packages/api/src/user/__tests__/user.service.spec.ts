@@ -1,46 +1,63 @@
 import { Test } from '@nestjs/testing';
-import { CreateUserDto } from '../create-user.dto';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from '../user.entity';
 import { UserService } from '../user.service';
+import { barry, mockSavedBarry, mockSavedOliver, oliver } from './user.data';
 
-const oliver: CreateUserDto = {
-    firstName: 'Oliver',
-    lastName: 'Queen',
-    email: 'oliver@qc.com',
-    password: 'secretpassword'
-};
-
-const barry: CreateUserDto = {
-    firstName: 'Barry',
-    lastName: 'Allen',
-    email: 'barry@starlabs.com',
-    password: 'secretpassword'
-};
-
-const cisco: CreateUserDto = {
-    firstName: 'Ciso',
-    lastName: 'Ramon',
-    email: 'cisco@starlabs.com',
-    password: 'secretpassword'
-};
+class UserRepositoryFake {
+    public create(): void {
+        /* empty */
+    }
+    public async save(): Promise<void> {
+        /* empty */
+    }
+    public async find(): Promise<void> {
+        /* empty */
+    }
+    public async findOneOrFail(): Promise<void> {
+        /* empty */
+    }
+}
 
 describe('User service', () => {
     let userService: UserService;
+    let userRepository: Repository<User>;
 
     beforeEach(async () => {
         const moduleRef = await Test.createTestingModule({
-            providers: [UserService]
+            providers: [
+                UserService,
+                {
+                    provide: getRepositoryToken(User),
+                    useClass: UserRepositoryFake
+                }
+            ]
         }).compile();
 
         userService = moduleRef.get<UserService>(UserService);
+        userRepository = moduleRef.get<Repository<User>>(getRepositoryToken(User));
     });
 
     describe('createUser()', () => {
-        it('creates a new user', async () => {
-            const result = await userService.create(oliver);
+        const mockCreateUser = User.of({});
 
-            expect(result).toEqual(
+        it('calls the repository with the correct arguments', async () => {
+            const userRepositoryCreateSpy = jest
+                .spyOn(userRepository, 'create')
+                .mockReturnValue(mockCreateUser);
+
+            const userRepositorySaveSpy = jest
+                .spyOn(userRepository, 'save')
+                .mockResolvedValue(mockSavedOliver);
+
+            await userService.create(oliver);
+
+            expect(userRepositoryCreateSpy).toHaveBeenCalled();
+            expect(userRepositorySaveSpy).toHaveBeenCalled();
+
+            expect(userRepositorySaveSpy).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    id: expect.any(String),
                     firstName: oliver.firstName,
                     lastName: oliver.lastName,
                     email: oliver.email,
@@ -51,68 +68,58 @@ describe('User service', () => {
         });
 
         it("hashes the user's password before saving", async () => {
-            const result = await userService.create(oliver);
-            expect(result.password).not.toEqual(oliver.password);
-            expect(result.password).toMatch(/^\$2*/);
+            jest.spyOn(userRepository, 'create').mockReturnValue(mockCreateUser);
+
+            const userRepositorySaveSpy = jest
+                .spyOn(userRepository, 'save')
+                .mockResolvedValue(mockSavedOliver);
+
+            await userService.create(oliver);
+
+            const savedPwd = userRepositorySaveSpy.mock.calls[0][0].password;
+            expect(savedPwd).not.toEqual(oliver.password);
+            expect(savedPwd).toMatch(/^\$2*/);
         });
     });
 
     describe('getAllUsers()', () => {
-        it('fetches all users', async () => {
-            await userService.create(barry);
-            await userService.create(cisco);
+        it('calls the repository with no arguments', async () => {
+            const userRepositoryFindSpy = jest
+                .spyOn(userRepository, 'find')
+                .mockResolvedValue([mockSavedBarry]);
 
-            const users = await userService.getAllUsers();
-            expect(users).toHaveLength(2);
+            await userService.getAllUsers();
+
+            expect(userRepositoryFindSpy).toHaveBeenCalledWith();
         });
     });
 
     describe('findByEmail()', () => {
-        it('fetches a user with the given email', async () => {
-            await userService.create(barry);
-            const result = await userService.findByEmail(barry.email);
+        it('calls the repository with the correct arguments', async () => {
+            const userRepositoryFindOneOrFailSpy = jest
+                .spyOn(userRepository, 'findOneOrFail')
+                .mockResolvedValue(mockSavedBarry);
 
-            expect(result).toEqual(
+            await userService.findByEmail(barry.email);
+
+            expect(userRepositoryFindOneOrFailSpy).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    id: expect.any(String),
-                    firstName: barry.firstName,
-                    lastName: barry.lastName,
-                    email: barry.email,
-                    password: expect.any(String),
-                    refreshTokenId: 0
+                    where: expect.objectContaining({
+                        email: barry.email
+                    })
                 })
             );
-        });
-
-        it('returns undefined if a user is not found with the given email', async () => {
-            await userService.create(cisco);
-            const unknownUser = await userService.findByEmail(barry.email);
-            expect(unknownUser).toBeUndefined();
         });
     });
 
     describe('findById()', () => {
-        it('fetches a user with the given id', async () => {
-            const user = await userService.create(barry);
-            const result = await userService.findById(user.id);
+        it('calls the repository with the correct arguments', async () => {
+            const userRepositoryFindOneOrFailSpy = jest
+                .spyOn(userRepository, 'findOneOrFail')
+                .mockResolvedValue(mockSavedOliver);
+            await userService.findById(mockSavedBarry.id);
 
-            expect(result).toEqual(
-                expect.objectContaining({
-                    id: user.id,
-                    firstName: barry.firstName,
-                    lastName: barry.lastName,
-                    email: barry.email,
-                    password: expect.any(String),
-                    refreshTokenId: 0
-                })
-            );
-        });
-
-        it('returns undefined if a user is not found with the given id', async () => {
-            const unknownId = 'f65504ef-e934-4094-8fe3-af7d4762de88';
-            await userService.create(cisco);
-            const unknownUser = await userService.findByEmail(unknownId);
-            expect(unknownUser).toBeUndefined();
+            expect(userRepositoryFindOneOrFailSpy).toHaveBeenCalledWith(mockSavedBarry.id);
         });
     });
 });
