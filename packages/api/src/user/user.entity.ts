@@ -28,4 +28,10 @@ export class User {
 
     @Column()
     refreshTokenId!: number;
+
+    public static of(params: Partial<User>): User {
+        const user = new User();
+        Object.assign(user, params);
+        return user;
+    }
 }
