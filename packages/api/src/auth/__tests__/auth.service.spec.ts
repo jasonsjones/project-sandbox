@@ -25,7 +25,7 @@ class UserRepositoryFake {
     public async find(): Promise<void> {
         /* empty */
     }
-    public async findOneOrFail(): Promise<void> {
+    public async findOne(): Promise<void> {
         /* empty */
     }
 }
