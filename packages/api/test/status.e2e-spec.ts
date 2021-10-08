@@ -5,6 +5,7 @@ import constants from '../src/status/constants';
 import { StatusModule } from '../src/status/status.module';
 import { json } from 'express';
 import { GraphQLModule } from '@nestjs/graphql';
+import { statusQuery } from './utils/constants';
 
 describe('Status resolver (e2e)', () => {
     let app: INestApplication;
@@ -30,7 +31,6 @@ describe('Status resolver (e2e)', () => {
     });
 
     it('Query status', () => {
-        const statusQuery = `query { status }`;
         return request(app.getHttpServer())
             .post('/graphql')
             .set('Content-Type', 'application/json')

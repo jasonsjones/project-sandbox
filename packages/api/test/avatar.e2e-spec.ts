@@ -4,6 +4,7 @@ import request from 'supertest';
 import { AvatarModule } from '../src/avatar/avatar.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { graphqlUploadExpress } from 'graphql-upload';
+import { avatarUploadOp } from './utils/constants';
 
 function generateVariableMap(keyName: string) {
     return {
@@ -15,12 +16,6 @@ const constants = {
     OPERATIONS: 'operations',
     MAP: 'map'
 };
-
-const AvatarUploadOp = `
-mutation AvatarUpload ($image: Upload!) {
-    avatarUpload(image: $image)
-}
-`;
 
 describe('Avatar resolver (e2e)', () => {
     let app: INestApplication;
@@ -58,7 +53,7 @@ describe('Avatar resolver (e2e)', () => {
             return request(app.getHttpServer())
                 .post('/graphql')
                 .set('Content-Type', 'multipart/form-data')
-                .field(constants.OPERATIONS, JSON.stringify({ query: AvatarUploadOp, variables }))
+                .field(constants.OPERATIONS, JSON.stringify({ query: avatarUploadOp, variables }))
                 .field(constants.MAP, JSON.stringify(variableMap))
                 .attach(Object.keys(variableMap)[0], testFile)
                 .expect((res) => {
