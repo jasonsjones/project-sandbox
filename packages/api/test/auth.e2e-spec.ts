@@ -10,6 +10,9 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { AuthModule } from '../src/auth/auth.module';
 import { UserModule } from '../src/user/user.module';
 import { ConfigModule } from '@nestjs/config';
+import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
+import { getConnection, Repository } from 'typeorm';
+import { User } from '../src/user/user.entity';
 
 const oliver: CreateUserDto = {
     firstName: 'Ollie',
@@ -42,6 +45,7 @@ describe('Auth resolver (e2e)', () => {
     let app: INestApplication;
     let userService: UserService;
     let authService: AuthService;
+    let userRepository: Repository<User>;
 
     beforeEach(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -55,6 +59,12 @@ describe('Auth resolver (e2e)', () => {
                     },
                     context: ({ req, res }) => ({ req, res })
                 }),
+                TypeOrmModule.forRoot({
+                    type: 'sqlite',
+                    database: ':memory:',
+                    synchronize: true,
+                    entities: [User]
+                }),
                 AuthModule,
                 UserModule
             ]
@@ -62,9 +72,15 @@ describe('Auth resolver (e2e)', () => {
 
         userService = moduleFixture.get<UserService>(UserService);
         authService = moduleFixture.get<AuthService>(AuthService);
+        userRepository = moduleFixture.get<Repository<User>>(getRepositoryToken(User));
         app = moduleFixture.createNestApplication();
         app.use(cookieParser());
         await app.init();
+    });
+
+    afterEach(async () => {
+        await userRepository.clear();
+        await getConnection().close();
     });
 
     describe('login mutation', () => {
