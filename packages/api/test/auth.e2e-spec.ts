@@ -13,6 +13,7 @@ import { ConfigModule } from '@nestjs/config';
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
 import { getConnection, Repository } from 'typeorm';
 import { User } from '../src/user/user.entity';
+import { loginOp, logoutOp, refreshAccessTokenOp } from './utils/constants';
 
 const oliver: CreateUserDto = {
     firstName: 'Ollie',
@@ -20,26 +21,6 @@ const oliver: CreateUserDto = {
     email: 'oliver@qc.com',
     password: '123456'
 };
-
-const loginOp = `
-mutation Login($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
-        accessToken
-    }
-}`;
-
-const logoutOp = `
-mutation Logout {
-    logout
-}`;
-
-const refreshAccessTokenOp = `
-mutation RefreshAccessToken {
-    refreshAccessToken {
-        accessToken
-    }
-}
-`;
 
 describe('Auth resolver (e2e)', () => {
     let app: INestApplication;

@@ -12,6 +12,7 @@ import { AuthMiddleware } from '../src/common/auth.middleware';
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
 import { getConnection, Repository } from 'typeorm';
 import { User } from '../src/user/user.entity';
+import { meQuery, RegisterUserOp, userQuery, usersQuery } from './utils/constants';
 
 const oliver: CreateUserDto = {
     firstName: 'Ollie',
@@ -27,49 +28,6 @@ const barry: CreateUserDto = {
     password: 'secretpassword'
 };
 
-const usersQuery = `
-query {
-    users {
-        id
-        firstName
-        lastName
-        displayName
-        email
-    }
-}`;
-
-const userQuery = `
-query getUserById($id: String!) {
-    user(id: $id) {
-        id
-        firstName
-        lastName
-        displayName
-        email
-    }
-}`;
-
-const RegisterUserOp = `
-mutation RegisterUser($userData: RegisterUserInput!) {
-    registerUser(userData: $userData) {
-        id
-        firstName
-        lastName
-        displayName
-        email
-    }
-}`;
-
-const meQuery = `
-query {
-    me {
-        id
-        firstName
-        lastName
-        displayName
-        email
-    }
-}`;
 @Module({
     imports: [
         ConfigModule.forRoot(),
