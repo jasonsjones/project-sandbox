@@ -1,0 +1,6 @@
+# This is a sample file to document the expected env variables tha need
+# to be defined in a .env file for the API to work as expected
+# WARNING: Do not include the .env file in source control
+
+JWT_SECRET="the jwt signature secret"
+
