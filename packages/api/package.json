@@ -47,9 +47,9 @@
         "typeorm": "0.2.37"
     },
     "devDependencies": {
-        "@nestjs/cli": "8.1.1",
-        "@nestjs/schematics": "8.0.3",
-        "@nestjs/testing": "8.0.6",
+        "@nestjs/cli": "8.2.4",
+        "@nestjs/schematics": "8.0.8",
+        "@nestjs/testing": "8.4.2",
         "@types/bcryptjs": "2.4.2",
         "@types/cli-color": "2.0.1",
         "@types/cookie-parser": "1.4.2",
