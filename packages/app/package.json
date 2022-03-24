@@ -7,8 +7,8 @@
         "build:css": "postcss src/styles/tailwind.css -o src/styles/main.css",
         "clean": "rm -rf build",
         "dev": "vite --open",
-        "lint": "echo \"Eslint not yet setup...\"",
-        "lint:ci": "echo \"Eslint not yet setup...\"",
+        "lint": "eslint \"src/**/*.{ts,tsx}\" --fix",
+        "lint:ci": "eslint src/**/*.tsx",
         "start": "PORT=4200 serve -s build",
         "test": "jest --colors --runInBand"
     },
