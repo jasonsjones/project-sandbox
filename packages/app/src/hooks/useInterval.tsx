@@ -29,7 +29,7 @@ export function useInterval(
         }
 
         if (delay !== null) {
-            let id = setInterval(tick, delay);
+            const id = setInterval(tick, delay);
             return () => clearInterval(id);
         }
     }, [delay, executeImmediate]);

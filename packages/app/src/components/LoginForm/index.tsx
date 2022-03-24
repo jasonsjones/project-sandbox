@@ -103,7 +103,13 @@ function LoginForm(): JSX.Element {
                     changeHandler={updateField}
                 />
                 <div className="flex justify-end">
-                    <Button className="my-4 mr-6" variant="secondary" clickAction={() => {}}>
+                    <Button
+                        className="my-4 mr-6"
+                        variant="secondary"
+                        clickAction={() => {
+                            /* empty */
+                        }}
+                    >
                         Cancel
                     </Button>
                     <Button type="submit" className="my-4" variant="primary">

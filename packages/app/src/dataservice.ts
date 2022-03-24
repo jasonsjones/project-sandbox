@@ -18,7 +18,7 @@ export function makeGraphQLQuery({
     queryKey
 }: QueryFunctionContext<[string, QueryPayload]>): Promise<GraphQLResponse> {
     const [, { query, variables = {}, token }] = queryKey;
-    let fetchHeaders: Record<string, string> = {
+    const fetchHeaders: Record<string, string> = {
         'Content-Type': 'application/json'
     };
 
