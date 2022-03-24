@@ -4,7 +4,9 @@ import Toggle from './Toggle';
 
 const generalProps = {
     label: 'Test label',
-    changeHandler: () => {}
+    changeHandler: () => {
+        /* empty */
+    }
 };
 
 describe('Toggle component', () => {
@@ -27,7 +29,7 @@ describe('Toggle component', () => {
             <Toggle label={generalProps.label} changeHandler={handleChange} />
         );
         const input = getByLabelText(generalProps.label);
-        await user.click(input);
+        user.click(input);
         expect(handleChange).toHaveBeenCalledTimes(1);
     });
 });

@@ -6,7 +6,9 @@ const generalProps = {
     id: 'test',
     value: 'test value',
     label: 'Test label',
-    changeHandler: () => {}
+    changeHandler: () => {
+        /* empty */
+    }
 };
 
 describe('InputField component', () => {
@@ -39,7 +41,7 @@ describe('InputField component', () => {
             <InputField {...generalProps} changeHandler={handleChange} />
         );
         const input = getByLabelText(generalProps.label);
-        await user.type(input, 'oliver@');
+        user.type(input, 'oliver@');
         expect(handleChange).toHaveBeenCalled();
     });
 });
