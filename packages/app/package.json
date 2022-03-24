@@ -10,9 +10,7 @@
         "lint": "echo \"Eslint not yet setup...\"",
         "lint:ci": "echo \"Eslint not yet setup...\"",
         "start": "PORT=4200 serve -s build",
-        "test:dev": "jest --colors",
-        "test": "echo \"Jest not yet setup...\"",
-        "test:watch": "echo \"Jest watch not yet setup...\""
+        "test": "jest --colors --runInBand"
     },
     "dependencies": {
         "react": "17.0.2",
@@ -42,13 +40,13 @@
         "testMatch": ["**/__tests__/**/*.+(ts|tsx|js)", "**/?(*.)+(spec|test).+(ts|tsx|js)"],
         "transform": {
             "^.+\\.(ts|tsx)$": "ts-jest",
-            "^.+\\.svg$": "<rootDir>/src/svgTransform.js"
+            "^.+\\.svg$": "<rootDir>/test/__mocks__/fileTransform.js"
         },
         "transformIgnorePatterns": ["[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|cjs|ts|tsx)$"],
         "moduleDirectories": ["node_modules", "<rootDir>/src"],
         "resetMocks": true,
-        "testEnvironment": "jsdom"
-
+        "testEnvironment": "jsdom",
+        "verbose": true
     },
     "browserslist": {
         "production": [

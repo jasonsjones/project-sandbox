@@ -1,5 +1,5 @@
 import { render, waitFor } from '@testing-library/react';
-import { mocked } from 'ts-jest/utils';
+import { mocked } from 'jest-mock';
 import '@testing-library/jest-dom/extend-expect';
 import App from './App';
 import { makeGraphQLQuery } from './dataservice';
