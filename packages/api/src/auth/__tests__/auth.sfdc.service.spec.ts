@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { ConfigModule } from '@nestjs/config';
-import { mocked } from 'ts-jest/utils';
+import { mocked } from 'jest-mock';
 import { getToken } from 'sf-jwt-token';
 import { SFDCAuthService } from '../auth.sfdc.service';
 import { TokenOutput } from 'sf-jwt-token/dist/Interfaces';

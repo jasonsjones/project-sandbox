@@ -1,44 +1,54 @@
 {
     "name": "@orion/app",
     "version": "1.0.0",
+    "scripts": {
+        "prebuild": "yarn build:css",
+        "build": "vite build",
+        "build:css": "postcss src/styles/tailwind.css -o src/styles/main.css",
+        "clean": "rm -rf build",
+        "dev": "vite --open",
+        "lint": "echo \"Eslint not yet setup...\"",
+        "lint:ci": "echo \"Eslint not yet setup...\"",
+        "start": "PORT=4200 serve -s build",
+        "test:dev": "jest --colors",
+        "test": "echo \"Jest not yet setup...\"",
+        "test:watch": "echo \"Jest watch not yet setup...\""
+    },
     "dependencies": {
-        "react": "^17.0.2",
-        "react-dom": "^17.0.2",
-        "react-query": "^3.21.0",
-        "react-router-dom": "^5.2.1",
-        "react-scripts": "^4.0.3",
-        "serve": "^12.0.0"
+        "react": "17.0.2",
+        "react-dom": "17.0.2",
+        "react-query": "3.21.0",
+        "react-router-dom": "5.2.1",
+        "serve": "12.0.0"
     },
     "devDependencies": {
         "@orion/shared": "1.0.0",
-        "@testing-library/jest-dom": "^5.14.1",
-        "@testing-library/react": "^12.0.0",
-        "@testing-library/user-event": "^13.2.1",
-        "@types/react": "^17.0.19",
-        "@types/react-dom": "^17.0.9",
-        "@types/react-query": "^1.2.9",
-        "@types/react-router-dom": "^5.1.8",
-        "autoprefixer": "^10.3.3",
-        "eslint-config-react-app": "^6.0.0",
-        "postcss": "^8.3.6",
-        "postcss-cli": "^8.3.1",
-        "tailwindcss": "^2.2.8"
+        "@testing-library/jest-dom": "5.14.1",
+        "@testing-library/react": "12.0.0",
+        "@testing-library/user-event": "13.2.1",
+        "@types/react": "17.0.19",
+        "@types/react-dom": "17.0.9",
+        "@types/react-query": "1.2.9",
+        "@types/react-router-dom": "5.1.8",
+        "@vitejs/plugin-react": "1.2.0",
+        "autoprefixer": "10.3.3",
+        "postcss": "8.3.6",
+        "postcss-cli": "8.3.1",
+        "tailwindcss": "2.2.8",
+        "vite": "2.8.6"
     },
-    "scripts": {
-        "prebuild": "yarn build:css",
-        "build": "react-scripts build",
-        "build:css": "postcss src/styles/tailwind.css -o src/styles/main.css",
-        "clean": "rm -rf build",
-        "dev": "PORT=4200 CI=true react-scripts start",
-        "lint": "eslint src/**/*.tsx --fix",
-        "lint:ci": "eslint src/**/*.tsx",
-        "start": "PORT=4200 serve -s build",
-        "test": "react-scripts test --color --watchAll=false --runInBand",
-        "test:watch": "react-scripts test --color",
-        "eject": "react-scripts eject"
-    },
-    "eslintConfig": {
-        "extends": "react-app"
+    "jest": {
+        "roots": ["<rootDir>/src"],
+        "testMatch": ["**/__tests__/**/*.+(ts|tsx|js)", "**/?(*.)+(spec|test).+(ts|tsx|js)"],
+        "transform": {
+            "^.+\\.(ts|tsx)$": "ts-jest",
+            "^.+\\.svg$": "<rootDir>/src/svgTransform.js"
+        },
+        "transformIgnorePatterns": ["[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|cjs|ts|tsx)$"],
+        "moduleDirectories": ["node_modules", "<rootDir>/src"],
+        "resetMocks": true,
+        "testEnvironment": "jsdom"
+
     },
     "browserslist": {
         "production": [
