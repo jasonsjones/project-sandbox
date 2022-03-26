@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthContext } from '../../context/AuthContext';
 import { GraphQLResponse } from '../../dataservice';
 import useLogin from '../../hooks/useLogin';
@@ -13,17 +13,18 @@ mutation Login($email: String!, $password: String!) {
 }
 `;
 
-interface LocationState {
-    from: { pathname: string };
-}
+// interface LocationState extends Location {
+//     from: { pathname: string };
+// }
 
 function LoginForm(): JSX.Element {
-    const history = useHistory();
-    const location = useLocation<LocationState>();
+    const navigate = useNavigate();
+    const location = useLocation();
+
     const [authError, setAuthError] = useState('');
     const { login } = useAuthContext();
 
-    const { from } = location.state || { from: { pathname: '/' } };
+    const from = location.state || { pathname: '/' };
 
     const [formValues, setFormValues] = useState({
         email: '',
@@ -37,7 +38,7 @@ function LoginForm(): JSX.Element {
                 setAuthError('');
                 clearForm();
                 login(data.login.accessToken, () => {
-                    history.replace(from);
+                    navigate(from as string);
                 });
             }
 

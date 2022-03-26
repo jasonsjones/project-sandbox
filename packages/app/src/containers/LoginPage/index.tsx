@@ -1,4 +1,4 @@
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import LoginForm from '../../components/LoginForm';
 import { useAuthContext } from '../../context/AuthContext';
 
@@ -6,7 +6,7 @@ function LoginPage(): JSX.Element {
     const { token } = useAuthContext();
 
     if (token) {
-        return <Redirect to="/" />;
+        return <Navigate to="/" />;
     }
 
     return (

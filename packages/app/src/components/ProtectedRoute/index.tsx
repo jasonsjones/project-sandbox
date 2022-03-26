@@ -1,8 +1,12 @@
-import { Redirect, Route, RouteProps } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useAuthContext } from '../../context/AuthContext';
 import Spinner from '../Spinner';
 
-function ProtectedRoute({ children, ...rest }: RouteProps): JSX.Element {
+interface Props {
+    children: React.ReactNode;
+}
+
+function ProtectedRoute({ children }: Props): JSX.Element {
     const authCtx = useAuthContext();
     const hasToken = localStorage.getItem('hasToken') === 'true';
 
@@ -12,18 +16,7 @@ function ProtectedRoute({ children, ...rest }: RouteProps): JSX.Element {
         return <Spinner />;
     }
 
-    return (
-        <Route
-            {...rest}
-            render={({ location }) =>
-                authCtx.token ? (
-                    children
-                ) : (
-                    <Redirect to={{ pathname: '/login', state: { from: location } }} />
-                )
-            }
-        />
-    );
+    return authCtx.token ? <>{children}</> : <Navigate to="/login" />;
 }
 
 export default ProtectedRoute;

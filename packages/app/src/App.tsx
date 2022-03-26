@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import LoginPage from './containers/LoginPage';
@@ -16,23 +16,27 @@ function App(): JSX.Element {
         <BrowserRouter>
             <QueryClientProvider client={queryClient}>
                 <Layout>
-                    <Switch>
-                        <Route exact path="/">
-                            <Home />
-                        </Route>
-                        <Route exact path="/login">
-                            <LoginPage />
-                        </Route>
-                        <Route exact path="/register">
-                            <UserRegisterPage />
-                        </Route>
-                        <ProtectedRoute exact path="/users/:id">
-                            <UserDetailPage />
-                        </ProtectedRoute>
-                        <ProtectedRoute exact path="/users">
-                            <UserListPage />
-                        </ProtectedRoute>
-                    </Switch>
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/register" element={<UserRegisterPage />} />
+                        <Route
+                            path="/users/:id"
+                            element={
+                                <ProtectedRoute>
+                                    <UserDetailPage />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/users"
+                            element={
+                                <ProtectedRoute>
+                                    <UserListPage />
+                                </ProtectedRoute>
+                            }
+                        />
+                    </Routes>
                     <ReactQueryDevtools initialIsOpen={false} />
                 </Layout>
             </QueryClientProvider>

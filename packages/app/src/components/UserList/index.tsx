@@ -4,7 +4,7 @@ import { User } from '../../types';
 type UserRecordProps = { className?: string; user: User };
 function UserRecord({ className, user }: UserRecordProps): JSX.Element {
     return (
-        <Link to={`users/${user.id}`} className={className}>
+        <Link to={`/users/${user.id}`} className={className}>
             <span className="w-1/2 px-2 text-sm text-purple-900 md:text-xl">{user.id}</span>
             <span className="w-1/2 px-2 text-sm text-gray-800 md:text-xl">{user.displayName}</span>
             <span className="w-1/2 px-2 text-sm text-gray-800 md:text-xl">{user.email}</span>

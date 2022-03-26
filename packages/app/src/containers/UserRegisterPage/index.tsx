@@ -1,11 +1,11 @@
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import UserRegisterForm from '../../components/UserRegisterForm';
 
 function UserRegisterPage(): JSX.Element {
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const handleRegister = () => {
-        history.push('/');
+        navigate('/');
     };
 
     return (
