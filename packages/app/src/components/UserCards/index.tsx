@@ -5,7 +5,7 @@ type UserCardProps = { user: User };
 function UserCard({ user }: UserCardProps): JSX.Element {
     return (
         <Link
-            to={`users/${user.id}`}
+            to={`/users/${user.id}`}
             className="flex p-4 min-w-max text-base md:text-xl transition duration-200 ease-in-out border-l-4 border-purple-600 bg-gray-100 shadow-md transform hover:shadow-lg cursor-pointer"
         >
             <img

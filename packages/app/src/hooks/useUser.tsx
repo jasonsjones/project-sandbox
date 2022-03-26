@@ -2,7 +2,7 @@ import { useQuery } from 'react-query';
 import { useAuthContext } from '../context/AuthContext';
 import { makeGraphQLQuery } from '../dataservice';
 
-export default function useUsers(id: string) {
+export default function useUsers(id: string | undefined) {
     const { token } = useAuthContext();
 
     const usersQuery = `

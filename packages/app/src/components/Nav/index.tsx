@@ -4,6 +4,13 @@ import { useAuthContext } from '../../context/AuthContext';
 import NavLogo from './NavLogo';
 
 function Nav(): JSX.Element {
+    const desktopNavLinkClasses = 'p-2 hover:text-white';
+    const desktopActiveNavLinkClasses = 'border-purple-400 border-b-2 text-white font-semibold';
+
+    const mobileNavLinkClasses =
+        'block px-2 py-1 font-semibold rounded hover:bg-purple-800 hover:text-gray-100';
+    const mobileActiveNavLinkClasses = 'bg-purple-800 text-gray-100';
+
     const [isMobileLinksOpen, setIsMobileLinksOpen] = useState(false);
 
     const { token, isFetchingToken, logout } = useAuthContext();
@@ -51,8 +58,11 @@ function Nav(): JSX.Element {
                             <>
                                 <NavLink
                                     to="/login"
-                                    className="mr-6 p-2 hover:text-white"
-                                    activeClassName="border-purple-400 border-b-2 text-white font-semibold"
+                                    className={({ isActive }) =>
+                                        `mr-6 ${desktopNavLinkClasses} ${
+                                            isActive ? desktopActiveNavLinkClasses : ''
+                                        }`
+                                    }
                                     data-testid="desktop-login"
                                 >
                                     Login
@@ -60,8 +70,11 @@ function Nav(): JSX.Element {
 
                                 <NavLink
                                     to="/register"
-                                    className="p-2 hover:text-white"
-                                    activeClassName="border-purple-400 border-b-2 text-white font-semibold"
+                                    className={({ isActive }) =>
+                                        `${desktopNavLinkClasses} ${
+                                            isActive ? desktopActiveNavLinkClasses : ''
+                                        }`
+                                    }
                                     data-testid="desktop-register"
                                 >
                                     Signup
@@ -87,15 +100,21 @@ function Nav(): JSX.Element {
                         <>
                             <NavLink
                                 to="/login"
-                                activeClassName="bg-purple-800 text-gray-100"
-                                className="block px-2 py-1 font-semibold rounded hover:bg-purple-800 hover:text-gray-100"
+                                className={({ isActive }) =>
+                                    `${mobileNavLinkClasses} ${
+                                        isActive ? mobileActiveNavLinkClasses : ''
+                                    }`
+                                }
                             >
                                 Login
                             </NavLink>
                             <NavLink
                                 to="/register"
-                                activeClassName="bg-purple-800 text-gray-100"
-                                className="block px-2 py-1 mt-1 font-semibold rounded hover:bg-purple-800 hover:text-gray-100"
+                                className={({ isActive }) =>
+                                    `mt-1 ${mobileNavLinkClasses} ${
+                                        isActive ? mobileActiveNavLinkClasses : ''
+                                    }`
+                                }
                             >
                                 Signup
                             </NavLink>
