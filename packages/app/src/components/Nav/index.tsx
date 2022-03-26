@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useAuthContext } from '../../context/AuthContext';
+import MobileMenuButton from './MobileMenuButton';
 import NavLogo from './NavLogo';
 
 function Nav(): JSX.Element {
@@ -24,34 +25,13 @@ function Nav(): JSX.Element {
                             <NavLogo />
                         </Link>
                     </div>
+
                     {/* The button svg (menu or 'x') that is displayed on small screens */}
-                    <button
-                        className="focus:text-gray-100 focus:outline-none hover:text-gray-100 sm:hidden"
-                        type="button"
-                        onClick={() => setIsMobileLinksOpen(!isMobileLinksOpen)}
-                    >
-                        <svg
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                            className="w-8 h-8 fill-current"
-                        >
-                            {isMobileLinksOpen ? (
-                                // The 'X' svg
-                                <path
-                                    fillRule="evenodd"
-                                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                    clipRule="evenodd"
-                                ></path>
-                            ) : (
-                                // The 'menu' svg
-                                <path
-                                    fillRule="evenodd"
-                                    d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                                    clipRule="evenodd"
-                                ></path>
-                            )}
-                        </svg>
-                    </button>
+                    <MobileMenuButton
+                        isTriggered={isMobileLinksOpen}
+                        clickAction={() => setIsMobileLinksOpen(!isMobileLinksOpen)}
+                    />
+
                     {/* The nav links that are displayed on larger screens */}
                     <div className="hidden sm:block items-center text-xl">
                         {!isFetchingToken && !token && (
