@@ -5,7 +5,6 @@ import { AuthResolver } from '../auth.resolver';
 import { UserService } from '../../user/user.service';
 import { JwtModule } from '@nestjs/jwt';
 import { CreateUserDto } from '../../user/create-user.dto';
-import { UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -87,10 +86,13 @@ describe('Auth resolver', () => {
             jest.spyOn(authService, 'generateAccessToken').mockReturnValue(fakeToken);
             jest.spyOn(authService, 'generateRefreshToken').mockReturnValue(fakeToken);
 
-            const result = await authResolver.login(oliver.email, oliver.password, {
-                req,
-                res
-            });
+            const result = await authResolver.login(
+                { email: oliver.email, password: oliver.password },
+                {
+                    req,
+                    res
+                }
+            );
 
             expect(result).toEqual(
                 expect.objectContaining({
@@ -99,29 +101,6 @@ describe('Auth resolver', () => {
             );
 
             expect(res.cookie).toHaveBeenCalledWith('qid', fakeToken, { httpOnly: true });
-        });
-
-        it('returns an Unauthorized exception if user is not authenticated', async () => {
-            const req = {} as Request;
-            const res: any = {
-                cookie: jest.fn()
-            };
-
-            jest.spyOn(authService, 'authenticateUser').mockResolvedValue(null);
-
-            const error = (await authResolver.login('unknown-user@example.com', 'orion', {
-                req,
-                res
-            })) as UnauthorizedException;
-
-            expect(error instanceof UnauthorizedException).toBe(true);
-            expect(error.getStatus()).toBe(401);
-            expect(error.getResponse()).toEqual(
-                expect.objectContaining({
-                    message: 'Unauthorized',
-                    statusCode: 401
-                })
-            );
         });
     });
 
@@ -132,17 +111,6 @@ describe('Auth resolver', () => {
                 cookie: jest.fn(),
                 clearCookie: jest.fn()
             };
-
-            // const ollie = await userService.create(oliver);
-
-            // jest.spyOn(authService, 'authenticateUser').mockResolvedValue(mockSavedOliver);
-            // jest.spyOn(authService, 'authenticateUser').mockResolvedValue(ollie);
-            // jest.spyOn(authService, 'generateAccessToken').mockImplementation(() => fakeToken);
-
-            // await authResolver.login(oliver.email, oliver.password, {
-            //     req,
-            //     res
-            // });
 
             const result = authResolver.logout({ req, res });
 

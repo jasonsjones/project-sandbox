@@ -49,8 +49,8 @@ query {
 }`;
 
 export const loginOp = `
-mutation Login($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
+mutation Login($loginInput: LoginInput!) {
+    login(loginInput: $loginInput) {
         accessToken
     }
 }`;
