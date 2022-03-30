@@ -1,17 +1,17 @@
 import { Request, Response } from 'express';
-import { Logger, UnauthorizedException } from '@nestjs/common';
-import { Args, Context, Field, Mutation, ObjectType, Resolver } from '@nestjs/graphql';
+import { Logger, UseGuards } from '@nestjs/common';
+import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
+import { LoginInput } from './dto/login-input.dto';
+import { LoginResponse } from './dto/login-response.dto';
+import { GqlAuthGuard } from './auth-gql.guard';
+import { User } from 'src/user/user.entity';
 
 interface GraphQLContext {
     req: Request;
     res: Response;
-}
-@ObjectType()
-class LoginResponse {
-    @Field({ nullable: true })
-    accessToken: string;
+    user?: User;
 }
 
 @Resolver()
@@ -21,20 +21,18 @@ export class AuthResolver {
     constructor(private authService: AuthService, private userService: UserService) {}
 
     @Mutation(() => LoginResponse)
+    @UseGuards(GqlAuthGuard)
     async login(
-        @Args('email') email: string,
-        @Args('password') password: string,
-        @Context() { res }: GraphQLContext
-    ): Promise<LoginResponse | UnauthorizedException> {
-        this.logger.log('Attempting to login user');
+        @Args('loginInput') _loginInput: LoginInput,
+        @Context() ctx: GraphQLContext
+    ): Promise<LoginResponse> {
+        this.logger.log('login mutation: user authenticated');
+        // if we get here, then the user was successfully authenticated via
+        // the auth guard (local strategy), so we can get the user from context
+        const { res, user } = ctx;
 
-        const authUser = await this.authService.authenticateUser(email, password);
-        if (!authUser) {
-            return new UnauthorizedException();
-        }
-
-        const accessToken = this.authService.generateAccessToken(authUser);
-        const refreshToken = this.authService.generateRefreshToken(authUser);
+        const accessToken = this.authService.generateAccessToken(user);
+        const refreshToken = this.authService.generateRefreshToken(user);
         res.cookie('qid', refreshToken, { httpOnly: true });
         return {
             accessToken
@@ -50,12 +48,14 @@ export class AuthResolver {
     }
 
     @Mutation(() => LoginResponse)
-    async refreshAccessToken(@Context() { req, res }: GraphQLContext): Promise<LoginResponse> {
+    async refreshAccessToken(
+        @Context() { req, res }: GraphQLContext
+    ): Promise<{ accessToken: string }> {
         this.logger.log('Attempting to refresh access token');
 
         const refreshToken = req.cookies['qid'];
         if (refreshToken) {
-            let payload;
+            let payload: Record<string, string | number>;
 
             try {
                 payload = this.authService.verifyToken(req.cookies.qid);

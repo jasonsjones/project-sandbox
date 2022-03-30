@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+// import { Request, Response } from 'express';
 import { Logger, ParseUUIDPipe, UseGuards } from '@nestjs/common';
 import {
     Query,
@@ -8,17 +8,16 @@ import {
     Mutation,
     Args,
     ResolveField,
-    Parent,
-    Context
+    Parent
 } from '@nestjs/graphql';
 import { AuthGuard } from '../auth/auth.guard';
 import { User } from './user.entity';
 import { UserService } from './user.service';
 
-interface GraphQLContext {
-    req: Request;
-    res: Response;
-}
+// interface GraphQLContext {
+//     req: Request;
+//     res: Response;
+// }
 
 @InputType()
 class RegisterUserInput {
@@ -67,6 +66,7 @@ export class UserResolver {
         return newUser;
     }
 
+    /*
     @Query(() => User, { nullable: true })
     me(@Context() { req }: GraphQLContext): User | null {
         if (req.user) {
@@ -75,4 +75,5 @@ export class UserResolver {
         }
         return null;
     }
+    */
 }
