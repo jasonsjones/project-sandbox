@@ -6,6 +6,7 @@ import { UserModule } from '../user/user.module';
 import { AuthResolver } from './auth.resolver';
 import { AuthService } from './auth.service';
 import { SFDCAuthService } from './auth.sfdc.service';
+import { JwtStrategy } from './jwt.strategy';
 import { LocalStrategy } from './local.strategy';
 
 @Module({
@@ -21,7 +22,7 @@ import { LocalStrategy } from './local.strategy';
             inject: [ConfigService]
         })
     ],
-    providers: [AuthService, SFDCAuthService, AuthResolver, LocalStrategy],
+    providers: [AuthService, SFDCAuthService, AuthResolver, LocalStrategy, JwtStrategy],
     exports: [AuthService, SFDCAuthService]
 })
 export class AuthModule {}

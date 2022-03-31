@@ -11,7 +11,6 @@ import { User } from 'src/user/user.entity';
 interface GraphQLContext {
     req: Request;
     res: Response;
-    user?: User;
 }
 
 @Resolver()
@@ -24,12 +23,12 @@ export class AuthResolver {
     @UseGuards(GqlAuthGuard)
     async login(
         @Args('loginInput') _loginInput: LoginInput,
-        @Context() ctx: GraphQLContext
+        @Context() { req, res }: GraphQLContext
     ): Promise<LoginResponse> {
         this.logger.log('login mutation: user authenticated');
         // if we get here, then the user was successfully authenticated via
         // the auth guard (local strategy), so we can get the user from context
-        const { res, user } = ctx;
+        const user = req.user as User;
 
         const accessToken = this.authService.generateAccessToken(user);
         const refreshToken = this.authService.generateRefreshToken(user);
