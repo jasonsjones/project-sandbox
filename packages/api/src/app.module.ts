@@ -15,7 +15,6 @@ import { StatusModule } from './status/status.module';
 import { UserModule } from './user/user.module';
 import { AvatarModule } from './avatar/avatar.module';
 import { AuthModule } from './auth/auth.module';
-import { AuthMiddleware } from './common/auth.middleware';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import dbConfig from '../ormconfig';
 import { Connection } from 'typeorm';
@@ -50,7 +49,7 @@ export class AppModule implements NestModule, OnApplicationBootstrap {
         // to address lagging dependency versions which caused a
         // `RangeError: Maximum call stack size exceeded` (Issue #78)
         consumer.apply(graphqlUploadExpress()).forRoutes('graphql');
-        consumer.apply(LoggerMiddleware, AuthMiddleware).forRoutes('*');
+        consumer.apply(LoggerMiddleware).forRoutes('*');
     }
 
     async onApplicationBootstrap() {

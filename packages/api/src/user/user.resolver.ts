@@ -1,4 +1,4 @@
-// import { Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { Logger, ParseUUIDPipe, UseGuards } from '@nestjs/common';
 import {
     Query,
@@ -8,16 +8,17 @@ import {
     Mutation,
     Args,
     ResolveField,
-    Parent
+    Parent,
+    Context
 } from '@nestjs/graphql';
-import { AuthGuard } from '../auth/auth.guard';
+import { JwtAuthGuard } from '../auth/auth-jwt.guard';
 import { User } from './user.entity';
 import { UserService } from './user.service';
 
-// interface GraphQLContext {
-//     req: Request;
-//     res: Response;
-// }
+interface GraphQLContext {
+    req: Request;
+    res: Response;
+}
 
 @InputType()
 class RegisterUserInput {
@@ -40,14 +41,14 @@ export class UserResolver {
     constructor(private readonly userService: UserService) {}
 
     @Query(() => [User], { name: 'users' })
-    @UseGuards(AuthGuard)
+    @UseGuards(JwtAuthGuard)
     getUsers(): Promise<User[]> {
         this.logger.log('Fetching all users');
         return this.userService.getAllUsers();
     }
 
     @Query(() => User, { name: 'user' })
-    @UseGuards(AuthGuard)
+    @UseGuards(JwtAuthGuard)
     getUser(@Args('id', ParseUUIDPipe) id: string): Promise<User> {
         this.logger.log('Fetching user by id');
         return this.userService.findById(id);
@@ -66,14 +67,10 @@ export class UserResolver {
         return newUser;
     }
 
-    /*
     @Query(() => User, { nullable: true })
+    @UseGuards(JwtAuthGuard)
     me(@Context() { req }: GraphQLContext): User | null {
-        if (req.user) {
-            this.logger.log('Fetching context (authenticated) user');
-            return req.user;
-        }
-        return null;
+        this.logger.log('Fetching context (authenticated) user');
+        return <User>req.user;
     }
-    */
 }
