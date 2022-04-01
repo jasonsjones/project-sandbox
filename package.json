@@ -17,6 +17,7 @@
         "lint": "lerna run lint --stream",
         "lint:ci": "lerna run lint:ci --stream",
         "postinstall": "yarn bootstrap",
+        "prepare": "husky install",
         "prettier:verify": "prettier --list-different \"**/*.{css,html,js,json,md,ts,yaml,yml}\"",
         "test": "lerna run test --stream",
         "test:api:unit": "lerna run test --stream --scope @orion/api",
@@ -47,7 +48,8 @@
     },
     "lint-staged": {
         "*.{ts,tsx}": [
-            "eslint --fix"
+            "eslint",
+            "prettier"
         ]
     },
     "license": "MIT"
