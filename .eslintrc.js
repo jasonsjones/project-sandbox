@@ -14,9 +14,8 @@ module.exports = {
         es6: true
     },
     rules: {
-        'prettier/prettier': ['warn'],
-        'no-console': 'off',
         semi: 'warn',
+        'no-console': 'off',
         '@typescript-eslint/interface-name-prefix': 'off',
         '@typescript-eslint/explicit-function-return-type': 'off',
         '@typescript-eslint/explicit-module-boundary-types': 'off',
