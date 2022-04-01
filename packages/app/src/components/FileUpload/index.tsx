@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import useFileUpload from '../../hooks/useFIleUpload';
+import useFileUpload from '../../hooks/useFileUpload';
 import { Button } from '../common';
 
 const AvatarUploadOp = `
