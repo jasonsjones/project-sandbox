@@ -6,16 +6,12 @@ import useLogin from '../../hooks/useLogin';
 import { Button, InputField } from '../common';
 
 const loginOp = `
-mutation Login($email: String!, $password: String!) {
-  login(email: $email, password: $password) {
+mutation Login($loginInput: LoginInput!) {
+  login(loginInput: $loginInput) {
     accessToken
   }
 }
 `;
-
-// interface LocationState extends Location {
-//     from: { pathname: string };
-// }
 
 function LoginForm(): JSX.Element {
     const navigate = useNavigate();
@@ -76,7 +72,9 @@ function LoginForm(): JSX.Element {
         if (formValues.email.length > 0 && formValues.password.length > 0) {
             loginMutation.mutate({
                 query: loginOp,
-                variables: { email: formValues.email, password: formValues.password }
+                variables: {
+                    loginInput: { email: formValues.email, password: formValues.password }
+                }
             });
         }
     };
