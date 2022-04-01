@@ -1,4 +1,4 @@
-// import { Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { Test } from '@nestjs/testing';
 import { UserService } from '../user.service';
 import { UserResolver } from '../user.resolver';
@@ -82,13 +82,12 @@ describe('User resolver', () => {
         });
     });
 
-    describe.skip('me query', () => {
-        /*
-        it.skip('returns null if user is not logged in', () => {
+    describe('me query', () => {
+        it('returns undefined if user is not logged in', () => {
             const req = {} as Request;
             const res = {} as Response;
             const result = userResolver.me({ req, res });
-            expect(result).toBeNull();
+            expect(result).toBeUndefined();
         });
 
         it('returns the currently logged in user', () => {
@@ -107,7 +106,6 @@ describe('User resolver', () => {
             const result = userResolver.me({ req, res });
             expect(result).toBe(ollie);
         });
-        */
     });
 
     describe('displayName field resolver', () => {

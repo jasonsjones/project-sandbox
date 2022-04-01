@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { INestApplication, Module } from '@nestjs/common';
 import request from 'supertest';
 import { CreateUserDto } from '../src/user/create-user.dto';
 import { UserService } from '../src/user/user.service';
@@ -8,7 +8,6 @@ import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { AuthModule } from '../src/auth/auth.module';
 import { UserModule } from '../src/user/user.module';
-import { AuthMiddleware } from '../src/common/auth.middleware';
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
 import { getConnection, Repository } from 'typeorm';
 import { User } from '../src/user/user.entity';
@@ -50,11 +49,7 @@ const barry: CreateUserDto = {
         UserModule
     ]
 })
-class AppTestModule implements NestModule {
-    configure(consumer: MiddlewareConsumer) {
-        consumer.apply(AuthMiddleware).forRoutes('*');
-    }
-}
+class AppTestModule {}
 
 describe('User resolver (e2e)', () => {
     let app: INestApplication;
@@ -143,7 +138,7 @@ describe('User resolver (e2e)', () => {
                 .expect(({ body }) => {
                     expect(body.errors).toEqual(
                         expect.arrayContaining([
-                            expect.objectContaining({ message: 'Forbidden resource' })
+                            expect.objectContaining({ message: 'Unauthorized' })
                         ])
                     );
                     expect(body.data).toBeNull();
@@ -162,7 +157,7 @@ describe('User resolver (e2e)', () => {
                 .expect(({ body }) => {
                     expect(body.errors).toEqual(
                         expect.arrayContaining([
-                            expect.objectContaining({ message: 'Forbidden resource' })
+                            expect.objectContaining({ message: 'Unauthorized' })
                         ])
                     );
                     expect(body.data).toBeNull();
@@ -206,7 +201,7 @@ describe('User resolver (e2e)', () => {
                 .expect(({ body }) => {
                     expect(body.errors).toEqual(
                         expect.arrayContaining([
-                            expect.objectContaining({ message: 'Forbidden resource' })
+                            expect.objectContaining({ message: 'Unauthorized' })
                         ])
                     );
                     expect(body.data).toBeNull();
@@ -228,7 +223,7 @@ describe('User resolver (e2e)', () => {
                 .expect(({ body }) => {
                     expect(body.errors).toEqual(
                         expect.arrayContaining([
-                            expect.objectContaining({ message: 'Forbidden resource' })
+                            expect.objectContaining({ message: 'Unauthorized' })
                         ])
                     );
                     expect(body.data).toBeNull();
@@ -236,7 +231,7 @@ describe('User resolver (e2e)', () => {
         });
     });
 
-    describe.skip('me query', () => {
+    describe('me query', () => {
         it('returns the user represented in the jwt access token', async () => {
             const user = await userService.create(barry);
             const accessToken = authService.generateAccessToken(user);

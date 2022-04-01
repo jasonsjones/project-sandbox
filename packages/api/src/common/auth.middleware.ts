@@ -4,9 +4,16 @@ import clc from 'cli-color';
 import { AuthService } from '../auth/auth.service';
 import { UserService } from '../user/user.service';
 
+/**********************************************************************
+ * This middleware is no longer wired up in the app request pipeline.  It was
+ * replaced with (and rightly so) passportjs jwt strategy and auth guard.
+ * Leaving this here for the time being as an implementation reference.
+ **********************************************************************/
+
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
     private readonly logger = new Logger(AuthMiddleware.name);
+
     constructor(private authService: AuthService, private userService: UserService) {}
 
     async use(req: Request, _: Response, next: NextFunction) {
