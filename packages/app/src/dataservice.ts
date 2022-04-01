@@ -49,8 +49,14 @@ export const makeGraphQLMutation: MutationFunction<GraphQLResponse, QueryPayload
 export const makeGraphQLFileUpload: MutationFunction<GraphQLResponse, QueryPayload> = ({
     query,
     variables = {},
-    file
+    file,
+    token
 }: QueryPayload): Promise<GraphQLResponse> => {
+    const fetchHeaders: Record<string, string> = {};
+
+    if (token) {
+        fetchHeaders.Authorization = `Bearer ${token}`;
+    }
     const data = new FormData();
 
     if (Object.keys(variables).length > 0) {
@@ -74,6 +80,7 @@ export const makeGraphQLFileUpload: MutationFunction<GraphQLResponse, QueryPaylo
     return fetch(graphqlEndpoint, {
         method: 'POST',
         credentials: 'include',
+        headers: fetchHeaders,
         body: data
     }).then((res) => res.json());
 };

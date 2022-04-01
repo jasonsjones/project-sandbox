@@ -14,7 +14,7 @@ function FileUpload(): JSX.Element {
     const [image, setImage] = useState<File | null>(null);
     const [error, setError] = useState('');
 
-    const { mutate: upload } = useFileUpload({
+    const { fileUpload } = useFileUpload({
         onSuccess: () => {
             clearFile();
         }
@@ -48,7 +48,7 @@ function FileUpload(): JSX.Element {
     const handleFileUpload = () => {
         const variables = { image: null, operationName: 'UploadAvatar' };
 
-        upload({ query: AvatarUploadOp, variables, file: image as File });
+        fileUpload({ query: AvatarUploadOp, variables, file: image as File });
     };
 
     const processFile = (file: File): void => {
