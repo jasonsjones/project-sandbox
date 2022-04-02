@@ -72,7 +72,7 @@ describe('Auth resolver (e2e)', () => {
                 .set('Content-Type', 'application/json')
                 .send({
                     query: loginOp,
-                    variables: {loginInput: { email: oliver.email, password: oliver.password }}
+                    variables: { loginInput: { email: oliver.email, password: oliver.password } }
                 })
                 .expect(({ body }) => {
                     const { accessToken } = body.data.login;
@@ -88,7 +88,9 @@ describe('Auth resolver (e2e)', () => {
                 .set('Content-Type', 'application/json')
                 .send({
                     query: loginOp,
-                    variables: {loginInput: { email: 'unknown-email@qc.com', password: oliver.password }}
+                    variables: {
+                        loginInput: { email: 'unknown-email@qc.com', password: oliver.password }
+                    }
                 })
                 .expect(({ body }) => {
                     expect(body.data).toBeNull();
@@ -105,7 +107,7 @@ describe('Auth resolver (e2e)', () => {
                 .set('Content-Type', 'application/json')
                 .send({
                     query: loginOp,
-                    variables: { loginInput: { email: oliver.email, password: 'wrong-password' }}
+                    variables: { loginInput: { email: oliver.email, password: 'wrong-password' } }
                 })
                 .expect(({ body }) => {
                     expect(body.data).toBeNull();
