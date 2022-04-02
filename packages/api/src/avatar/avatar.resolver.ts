@@ -1,12 +1,19 @@
 import { Writable, WritableOptions } from 'stream';
-import { Logger } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Request, Response } from 'express';
+import { Logger, UseGuards } from '@nestjs/common';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { GraphQLUpload, FileUpload } from 'graphql-upload';
 import Avatar from './avatar.entity';
+import { JwtAuthGuard } from 'src/auth/auth-jwt.guard';
 
 interface ImageType {
     mimeType?: string;
     data: Buffer;
+}
+
+interface GraphQLContext {
+    req: Request;
+    res: Response;
 }
 
 class ImageStore {
@@ -19,7 +26,7 @@ class ImageStore {
 
     writeChunk(key: string, buffer: Buffer) {
         if (!this.memStore[key]) {
-            this.memStore[key] = {data: buffer};
+            this.memStore[key] = { data: buffer };
         } else {
             this.memStore[key].data = Buffer.concat([this.memStore[key].data, buffer]);
         }
@@ -70,19 +77,20 @@ export class AvatarResolver {
     private readonly logger = new Logger(AvatarResolver.name);
     private store = ImageStore.getInstance();
 
-    // stub top-level query to make avatar e2e tests happy
-    @Query((_returns) => String)
-    avatar(@Args('key') key:string): string {
+    @Query((_returns) => String, { nullable: true })
+    avatar(@Args('key') key: string): string {
         const image = this.store.getImage(key);
         if (image?.data instanceof Buffer) {
             return `data:${image.mimeType};base64, ${image.data.toString('base64')}`;
         }
-        return `Data for the key, '${key}', is not a Buffer`;
+        return null;
     }
 
     @Mutation(() => Boolean)
+    @UseGuards(JwtAuthGuard)
     async avatarUpload(
-        @Args({ name: 'image', type: () => GraphQLUpload }) image: FileUpload
+        @Args({ name: 'image', type: () => GraphQLUpload }) image: FileUpload,
+        @Context() { req }: GraphQLContext
     ): Promise<boolean> {
         // For time being, do nothing with the data 'chunk'.
         // Eventually, this function will be replaced with the cloudinary upload_stream API
@@ -96,8 +104,8 @@ export class AvatarResolver {
         //     }
         // });
         //
-        //
-        const avatarKey = 'oliver';
+
+        const avatarKey = req.user.id;
 
         const imageStream = new ImageStream(avatarKey)
             .on('finish', () => {
