@@ -5,7 +5,7 @@ interface Props {
     clickAction: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }
 
-function MobileMenuButton({isTriggered, clickAction}: Props): JSX.Element {
+function MobileMenuButton({ isTriggered, clickAction }: Props): JSX.Element {
     return (
         <button
             className="focus:text-gray-100 focus:outline-none hover:text-gray-100 sm:hidden"

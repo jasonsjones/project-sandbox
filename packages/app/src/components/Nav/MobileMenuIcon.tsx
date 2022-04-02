@@ -26,8 +26,8 @@ interface Props {
 
 function MobileMenuIcon({ isOpen }: Props): JSX.Element {
     return (
-        <svg  viewBox="0 0 20 20" fill="currentColor" className="w-8 h-8 fill-current">
-            <title>{`${isOpen ? "Close" : "Open Menu"}`}</title>
+        <svg viewBox="0 0 20 20" fill="currentColor" className="w-8 h-8 fill-current">
+            <title>{`${isOpen ? 'Close' : 'Open Menu'}`}</title>
             {isOpen ? <CloseIcon /> : <MenuIcon />}
         </svg>
     );
