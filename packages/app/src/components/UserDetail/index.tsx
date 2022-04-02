@@ -1,15 +1,21 @@
+import useAvatar from '../../hooks/useAvatar';
 import { User } from '../../types';
 
+const DEFAULT_PIC = 'http://localhost:3000/default/avatar.png';
 type UserRecordProps = { className?: string; user: User };
+
 function UserDetail({ user }: UserRecordProps): JSX.Element {
-    // const profileNumber = Math.floor(Math.random() * 90) + 1;
-    // const profileImgSrc = `https://randomuser.me/api/portraits/men/${profileNumber}.jpg`;
-    const profileImgSrc = 'http://localhost:3000/default/avatar.png';
+    let profilePic = DEFAULT_PIC;
+    const { data: response } = useAvatar(user.id);
+
+    if (response?.data.avatar) {
+        profilePic = response.data.avatar;
+    }
 
     return (
         <div className="flex gap-x-8 mt-12">
             <img
-                src={profileImgSrc}
+                src={profilePic}
                 alt="default avatar"
                 className="w-48 rounded-full border-4 border-purple-300"
             />
