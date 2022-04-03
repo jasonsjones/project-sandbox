@@ -1,26 +1,18 @@
 import { Link } from 'react-router-dom';
-import useAvatar from '../../hooks/useAvatar';
 import { User } from '../../types';
+import ProfilePic from '../ProfilePic';
 
-const DEFAULT_PIC = 'http://localhost:3000/default/avatar.png';
-type UserCardProps = { user: User };
+type UserCardProps = {
+    user: User;
+};
+
 function UserCard({ user }: UserCardProps): JSX.Element {
-    let profilePic = DEFAULT_PIC;
-    const { data: response } = useAvatar(user.id);
-
-    if (response?.data.avatar) {
-        profilePic = response.data.avatar;
-    }
     return (
         <Link
             to={`/users/${user.id}`}
             className="flex p-4 min-w-max text-base md:text-xl transition duration-200 ease-in-out border-l-4 border-purple-600 bg-gray-100 shadow-md transform hover:shadow-lg cursor-pointer"
         >
-            <img
-                src={profilePic}
-                alt="default avatar"
-                className="w-24 rounded-full border-2 border-purple-300"
-            />
+            <ProfilePic id={user.id} size="medium" />
             <div className="flex flex-col justify-center ml-4 text-purple-900">
                 <span>{user.displayName}</span>
                 <span>{user.email}</span>
