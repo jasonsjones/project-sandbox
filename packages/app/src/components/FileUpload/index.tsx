@@ -81,7 +81,8 @@ function FileUpload(): JSX.Element {
         <div className="text-gray-700">
             <h3 className="text-center text-2xl mb-2">Upload Image</h3>
             <p className="italic text-center mb-2">
-                Note: Currently, the API drops this on the floor...
+                Note: Uploaded images are stored in-memory only. They will not persist between
+                server starts.
             </p>
             {!image && (
                 <div>
