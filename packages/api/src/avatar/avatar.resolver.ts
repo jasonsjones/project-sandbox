@@ -1,10 +1,10 @@
-import { Writable, WritableOptions } from 'stream';
-import { Request, Response } from 'express';
 import { Logger, UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { GraphQLUpload, FileUpload } from 'graphql-upload';
+import { Request, Response } from 'express';
+import { FileUpload, GraphQLUpload } from 'graphql-upload';
+import { Writable, WritableOptions } from 'stream';
+import { JwtAuthGuard } from '../auth/auth-jwt.guard';
 import Avatar from './avatar.entity';
-import { JwtAuthGuard } from 'src/auth/auth-jwt.guard';
 
 interface ImageType {
     mimeType?: string;
