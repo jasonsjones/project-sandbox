@@ -10,6 +10,7 @@ mutation AvatarUpload ($image: Upload!) {
 
 function FileUpload(): JSX.Element {
     const imgRef = useRef<HTMLImageElement>(null);
+    const fileRef = useRef<HTMLInputElement>(null);
     const [highlight, setHighlight] = useState(false);
     const [image, setImage] = useState<File | null>(null);
     const [error, setError] = useState('');
@@ -23,9 +24,11 @@ function FileUpload(): JSX.Element {
     const handleDragEnter: React.DragEventHandler<HTMLDivElement> = () => {
         setHighlight(true);
     };
+
     const handleDragLeave: React.DragEventHandler<HTMLDivElement> = () => {
         setHighlight(false);
     };
+
     const handleDragOver: React.DragEventHandler<HTMLDivElement> = (e) => {
         e.preventDefault();
     };
@@ -36,6 +39,12 @@ function FileUpload(): JSX.Element {
         const file = e.dataTransfer.files[0];
         if (file) {
             processFile(file);
+        }
+    };
+
+    const handleKeyPressOnChoosFile: React.KeyboardEventHandler<HTMLSpanElement> = (e) => {
+        if (e.code === 'Enter') {
+            fileRef.current?.click();
         }
     };
 
@@ -78,14 +87,14 @@ function FileUpload(): JSX.Element {
     };
 
     return (
-        <div className="text-gray-700">
+        <div className="text-gray-700 p-12">
             <h3 className="text-center text-2xl mb-2">Upload Image</h3>
             <p className="italic text-center mb-2">
                 Note: Uploaded images are stored in-memory only. They will not persist between
                 server starts.
             </p>
             {!image && (
-                <div>
+                <>
                     <div
                         className={`p-6 border-2 border-dashed rounded-lg text-center ${
                             highlight ? 'border-green-600 bg-green-100' : 'border-gray-400'
@@ -98,22 +107,28 @@ function FileUpload(): JSX.Element {
                         Drop Zone <em>(.png only)</em>
                     </div>
                     {error && <p className="mt-2 text-red-700">Error: {error}</p>}
-                    <div className="mt-8">
-                        <label
-                            htmlFor="file-upload"
-                            className="border-2 rounded-lg p-4 cursor-pointer"
-                        >
-                            Choose File
+                    <form className="mt-8 flex justify-end">
+                        <label htmlFor="fileupload">
+                            <span
+                                role="button"
+                                aria-controls="fileupload"
+                                tabIndex={0}
+                                className="text-white bg-purple-800 rounded-lg px-4 py-3 cursor-pointer"
+                                onKeyUp={handleKeyPressOnChoosFile}
+                            >
+                                Choose File
+                            </span>
                         </label>
                         <input
                             type="file"
-                            id="file-upload"
+                            id="fileupload"
                             className="hidden"
                             accept="image/png"
+                            ref={fileRef}
                             onChange={handleChooseFile}
                         />
-                    </div>
-                </div>
+                    </form>
+                </>
             )}
             {image && (
                 <div>
