@@ -4,7 +4,7 @@ import { Request, Response } from 'express';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { Writable, WritableOptions } from 'stream';
 import { JwtAuthGuard } from '../auth/auth-jwt.guard';
-import Avatar from './avatar.entity';
+import { Avatar } from './avatar.entity';
 
 interface ImageType {
     mimeType?: string;

@@ -1,7 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 
 @ObjectType({ description: 'The avatar model' })
-class Avatar {
+export class Avatar {
     @Field(() => ID, { description: 'The unique id of the avatar' })
     id!: string;
 
@@ -11,5 +11,3 @@ class Avatar {
     @Field(() => String)
     filename!: string;
 }
-
-export default Avatar;
