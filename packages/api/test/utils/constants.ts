@@ -73,3 +73,8 @@ mutation AvatarUpload ($image: Upload!) {
     avatarUpload(image: $image)
 }
 `;
+
+export const avatarQuery = `
+query fetchAvatar($key: String!) {
+     avatar (key: $key)
+}`;
