@@ -3,12 +3,16 @@ import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Request, Response } from 'express';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { Writable, WritableOptions } from 'stream';
+import { v4 } from 'uuid';
 import { JwtAuthGuard } from '../auth/auth-jwt.guard';
 import { Avatar } from './avatar.entity';
 
-interface ImageType {
-    mimeType?: string;
-    data: Buffer;
+interface StreamData {
+    streamId: string;
+    imageData: {
+        mimeType?: string;
+        data: Buffer;
+    };
 }
 
 interface GraphQLContext {
@@ -18,28 +22,41 @@ interface GraphQLContext {
 
 class ImageStore {
     private static instance: ImageStore;
-    private memStore: Record<string, ImageType>;
+    private memStore: Record<string, StreamData>;
 
     private constructor() {
         this.memStore = {};
     }
 
-    writeChunk(key: string, buffer: Buffer) {
-        if (!this.memStore[key]) {
-            this.memStore[key] = { data: buffer };
+    writeChunk(streamId: string, key: string, buffer: Buffer) {
+        if (this.isNewStreamOrDoesNotExist(streamId, key)) {
+            this.memStore[key] = {
+                streamId,
+                imageData: {
+                    data: buffer
+                }
+            };
         } else {
-            this.memStore[key].data = Buffer.concat([this.memStore[key].data, buffer]);
+            this.get(key).imageData.data = Buffer.concat([this.get(key).imageData.data, buffer]);
         }
     }
 
     getImage(key: string) {
-        return this.memStore[key];
+        return this.get(key)?.imageData;
     }
 
     setMimeType(key: string, type: string) {
-        if (this.memStore[key]) {
-            this.memStore[key].mimeType = type;
+        if (this.get(key)) {
+            this.get(key).imageData.mimeType = type;
         }
+    }
+
+    private get(key: string) {
+        return this.memStore[key] ?? null;
+    }
+
+    private isNewStreamOrDoesNotExist(streamId: string, key: string) {
+        return !this.get(key) || this.get(key).streamId != streamId;
     }
 
     static getInstance(): ImageStore {
@@ -53,17 +70,19 @@ class ImageStore {
 
 class ImageStream extends Writable {
     store: ImageStore;
+    id: string;
     key: string;
 
     constructor(key: string, options?: WritableOptions) {
         super(options);
+        this.id = v4();
         this.key = key;
         this.store = ImageStore.getInstance();
     }
 
     _write(chunk: any, _enc: BufferEncoding, callback: any) {
         const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk, _enc);
-        this.store.writeChunk(this.key, buffer);
+        this.store.writeChunk(this.id, this.key, buffer);
         callback();
     }
 
@@ -79,6 +98,8 @@ export class AvatarResolver {
 
     @Query((_returns) => String, { nullable: true })
     avatar(@Args('key') key: string): string {
+        this.logger.log('Fetching user avatar image from image store');
+
         const image = this.store.getImage(key);
         if (image?.data instanceof Buffer) {
             return `data:${image.mimeType};base64, ${image.data.toString('base64')}`;
