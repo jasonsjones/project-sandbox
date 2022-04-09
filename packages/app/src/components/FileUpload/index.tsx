@@ -8,7 +8,11 @@ mutation AvatarUpload ($image: Upload!) {
 }
 `;
 
-function FileUpload(): JSX.Element {
+interface FileUploadProps {
+    onCancel?: () => void;
+}
+
+function FileUpload({ onCancel }: FileUploadProps): JSX.Element {
     const imgRef = useRef<HTMLImageElement>(null);
     const fileRef = useRef<HTMLInputElement>(null);
     const [highlight, setHighlight] = useState(false);
@@ -84,6 +88,9 @@ function FileUpload(): JSX.Element {
 
     const clearFile = (): void => {
         setImage(null);
+        if (onCancel) {
+            onCancel();
+        }
     };
 
     return (
