@@ -34,7 +34,13 @@ export class AuthResolver {
         const refreshToken = this.authService.generateRefreshToken(user);
         res.cookie('qid', refreshToken, { httpOnly: true });
         return {
-            accessToken
+            accessToken,
+            userInfo: {
+                id: user.id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                displayName: `${user.firstName} ${user.lastName}`
+            }
         };
     }
 
