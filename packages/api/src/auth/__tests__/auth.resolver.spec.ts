@@ -77,7 +77,13 @@ describe('Auth resolver', () => {
 
     describe('login mutation', () => {
         it('returns an access token if user is authenticated', async () => {
-            const req = {} as Request;
+            const req = {
+                user: {
+                    id: mockSavedOliver.id,
+                    firstName: mockSavedOliver.firstName,
+                    lastName: mockSavedOliver.lastName
+                }
+            } as Request;
             const res: any = {
                 cookie: jest.fn()
             };
@@ -96,7 +102,13 @@ describe('Auth resolver', () => {
 
             expect(result).toEqual(
                 expect.objectContaining({
-                    accessToken: fakeToken
+                    accessToken: fakeToken,
+                    userInfo: expect.objectContaining({
+                        id: mockSavedOliver.id,
+                        firstName: mockSavedOliver.firstName,
+                        lastName: mockSavedOliver.lastName,
+                        displayName: `${mockSavedOliver.firstName} ${mockSavedOliver.lastName}`
+                    })
                 })
             );
 

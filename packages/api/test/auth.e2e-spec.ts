@@ -75,8 +75,16 @@ describe('Auth resolver (e2e)', () => {
                     variables: { loginInput: { email: oliver.email, password: oliver.password } }
                 })
                 .expect(({ body }) => {
-                    const { accessToken } = body.data.login;
+                    const { accessToken, userInfo } = body.data.login;
                     expect(accessToken.length).toBeGreaterThan(0);
+                    expect(userInfo).toEqual(
+                        expect.objectContaining({
+                            id: expect.any(String),
+                            firstName: oliver.firstName,
+                            lastName: oliver.lastName,
+                            displayName: `${oliver.firstName} ${oliver.lastName}`
+                        })
+                    );
                 });
         });
 

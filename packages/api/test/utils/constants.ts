@@ -52,6 +52,12 @@ export const loginOp = `
 mutation Login($loginInput: LoginInput!) {
     login(loginInput: $loginInput) {
         accessToken
+        userInfo {
+            id
+            firstName
+            lastName
+            displayName
+        }
     }
 }`;
 
