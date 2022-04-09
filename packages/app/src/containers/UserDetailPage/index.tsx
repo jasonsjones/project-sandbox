@@ -14,6 +14,8 @@ function UserDetailPage(): JSX.Element {
 
     if (isLoading) return <Spinner />;
 
+    const closeModal = () => setShowModal(false);
+
     return (
         <>
             <div className="w-full md:w-3/4 mx-auto mt-12 px-4">
@@ -38,8 +40,8 @@ function UserDetailPage(): JSX.Element {
                     </svg>
                 </button>
             </div>
-            <Modal show={showModal} onClose={() => setShowModal(false)}>
-                <FileUpload />
+            <Modal show={showModal} onClose={closeModal}>
+                <FileUpload onCancel={closeModal} />
             </Modal>
         </>
     );
