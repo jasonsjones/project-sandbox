@@ -9,6 +9,12 @@ const loginOp = `
 mutation Login($loginInput: LoginInput!) {
   login(loginInput: $loginInput) {
     accessToken
+    userInfo {
+        id
+        firstName
+        lastName
+        displayName
+    }
   }
 }
 `;
@@ -33,7 +39,7 @@ function LoginForm(): JSX.Element {
             if (data) {
                 setAuthError('');
                 clearForm();
-                login(data.login.accessToken, () => {
+                login(data.login, () => {
                     navigate(from as string);
                 });
             }
@@ -44,7 +50,7 @@ function LoginForm(): JSX.Element {
                 } else {
                     setAuthError('Unexpected error. Please try again.');
                 }
-                login('');
+                login({ accessToken: '' });
             }
         },
         onError: (error) => {

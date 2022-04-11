@@ -3,6 +3,7 @@ import { GraphQLResponse } from '../../dataservice';
 import { useInterval } from '../../hooks/useInterval';
 import useLogout from '../../hooks/useLogout';
 import useRefreshAccessToken from '../../hooks/useRefreshAccessToken';
+import { ContextUserInfo, LoginResponseData } from '../../types';
 
 const refreshAccessTokenOp = `
 mutation RefresAccessToken {
@@ -20,7 +21,8 @@ mutation Logout {
 interface AuthContextProps {
     token: string;
     isFetchingToken: boolean;
-    login: (t: string, cb?: () => void) => void;
+    user: ContextUserInfo;
+    login: (data: LoginResponseData, cb?: () => void) => void;
     logout: () => void;
 }
 
@@ -28,9 +30,17 @@ interface AuthProviderProps {
     children: React.ReactNode;
 }
 
+const defaultUserInfo: ContextUserInfo = {
+    id: '',
+    firstName: '',
+    lastName: '',
+    displayName: ''
+};
+
 const AuthContext = React.createContext<AuthContextProps>({
     token: '',
     isFetchingToken: true,
+    user: defaultUserInfo,
     login: () => {
         /* empty */
     },
@@ -41,6 +51,7 @@ const AuthContext = React.createContext<AuthContextProps>({
 
 function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     const [token, setToken] = useState<string>('');
+    const [user, setUser] = useState<ContextUserInfo>(defaultUserInfo);
 
     const { mutate: doRefresh, isLoading: isFetchingToken } = useRefreshAccessToken();
     const { mutate: doLogout } = useLogout({
@@ -80,9 +91,12 @@ function AuthProvider({ children }: AuthProviderProps): JSX.Element {
         { executeImmediate: true }
     );
 
-    const login = (t: string, cb?: () => void) => {
+    const login = (data: LoginResponseData, cb?: () => void) => {
         localStorage.setItem('hasToken', 'true');
-        setToken(t);
+        setToken(data.accessToken);
+        if (data.userInfo) {
+            setUser(data.userInfo);
+        }
         if (cb) {
             cb();
         }
@@ -93,11 +107,13 @@ function AuthProvider({ children }: AuthProviderProps): JSX.Element {
             query: logoutOp,
             variables: {}
         });
+        setToken('');
+        setUser(defaultUserInfo);
         localStorage.removeItem('hasToken');
     };
 
     return (
-        <AuthContext.Provider value={{ token, isFetchingToken, login, logout }}>
+        <AuthContext.Provider value={{ token, user, isFetchingToken, login, logout }}>
             {children}
         </AuthContext.Provider>
     );
