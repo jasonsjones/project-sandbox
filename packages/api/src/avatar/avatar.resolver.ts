@@ -1,11 +1,11 @@
 import { Logger, UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Request, Response } from 'express';
-import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { Writable, WritableOptions } from 'stream';
 import { v4 } from 'uuid';
 import { JwtAuthGuard } from '../auth/auth-jwt.guard';
 import { Avatar } from './avatar.entity';
+import { AvatarUploadInput } from './dto/avatar-upload.dto';
 
 interface StreamData {
     streamId: string;
@@ -80,10 +80,10 @@ class ImageStream extends Writable {
         this.store = ImageStore.getInstance();
     }
 
-    _write(chunk: any, _enc: BufferEncoding, callback: any) {
+    _write(chunk: any, _enc: BufferEncoding, next: () => void) {
         const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk, _enc);
         this.store.writeChunk(this.id, this.key, buffer);
-        callback();
+        next();
     }
 
     getStore() {
@@ -110,27 +110,30 @@ export class AvatarResolver {
     @Mutation(() => Boolean)
     @UseGuards(JwtAuthGuard)
     async avatarUpload(
-        @Args({ name: 'image', type: () => GraphQLUpload }) image: FileUpload,
+        @Args('avatarData') avatarData: AvatarUploadInput,
         @Context() { req }: GraphQLContext
     ): Promise<boolean> {
-        // For time being, do nothing with the data 'chunk'.
-        // Eventually, this function will be replaced with the cloudinary upload_stream API
-        //
         // To save to the local file system, replace `nullStream` with `writeStream`
         // const writeStream = fs.createWriteStream(path.join(__dirname, `../../../avatars/${image.filename}`))
 
         // const nullStream = new Writable({
-        //     write(_chunk, _encoding, cb) {
-        //         cb();
+        //     write(_chunk, _encoding, next) {
+        //         next();
         //     }
         // });
-        //
 
-        const avatarKey = req.user.id;
+        const { userId, image } = avatarData;
 
-        const imageStream = new ImageStream(avatarKey)
+        if (userId != req.user.id) {
+            return Promise.resolve(false);
+        }
+
+        const { createReadStream, mimetype } = await image;
+        const stream = createReadStream();
+
+        const imageStream = new ImageStream(userId)
             .on('finish', () => {
-                imageStream.getStore().setMimeType(avatarKey, image.mimetype);
+                imageStream.getStore().setMimeType(userId, mimetype);
                 this.logger.log('Image stream received image...');
             })
             .on('error', (err) => {
@@ -139,8 +142,7 @@ export class AvatarResolver {
 
         this.logger.log('Uploading avatar');
         return new Promise((resolve, reject) => {
-            image
-                .createReadStream()
+            stream
                 .pipe(imageStream)
                 .on('finish', () => resolve(true))
                 .on('error', () => reject(false));
