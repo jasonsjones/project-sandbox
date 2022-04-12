@@ -41,7 +41,7 @@ function UserDetailPage(): JSX.Element {
                 </button>
             </div>
             <Modal show={showModal} onClose={closeModal}>
-                <FileUpload onCancel={closeModal} />
+                <FileUpload userId={id} onCancel={closeModal} />
             </Modal>
         </>
     );

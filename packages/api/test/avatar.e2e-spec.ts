@@ -90,6 +90,7 @@ describe('Avatar resolver (e2e)', () => {
             const testFile = `${__dirname}/../avatars/default/avatar.png`;
 
             const variables = {
+                userId: user.id,
                 image: null
             };
 
@@ -121,13 +122,14 @@ describe('Avatar resolver (e2e)', () => {
             const res = {} as Response;
             const testFile = `${__dirname}/../avatars/default/avatar.png`;
             const stream = fs.createReadStream(testFile);
-            const image: FileUpload = {
+            const image: Promise<FileUpload> = Promise.resolve({
                 createReadStream: () => stream,
                 filename: 'avatar.png',
                 mimetype: 'image/png',
-                encoding: 'bufffer'
-            };
-            await avatarResolver.avatarUpload(image, { req, res });
+                encoding: 'buffer'
+            });
+
+            await avatarResolver.avatarUpload({ userId: user.id, image }, { req, res });
         });
 
         it("fetches a user's avatar based on key", async () => {

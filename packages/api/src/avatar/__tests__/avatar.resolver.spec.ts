@@ -4,15 +4,15 @@ import fs from 'fs';
 import { FileUpload } from 'graphql-upload';
 import { AvatarResolver } from '../avatar.resolver';
 
-function getTestImage(path: string): FileUpload {
+function getTestImage(path: string): Promise<FileUpload> {
     const stream = fs.createReadStream(`${__dirname}/../../../avatars/${path}`);
     const file: FileUpload = {
         createReadStream: () => stream,
         filename: 'test-image.png',
         mimetype: 'image/png',
-        encoding: 'bufffer'
+        encoding: 'buffer'
     };
-    return file;
+    return Promise.resolve(file);
 }
 
 describe('Avatar resolver', () => {
@@ -36,17 +36,27 @@ describe('Avatar resolver', () => {
 
     describe('upload mutation', () => {
         it('uploads an image to the image store', async () => {
-            const file = getTestImage('default/avatar.png');
-            const result = await avatarResolver.avatarUpload(file, { req, res });
+            const image = getTestImage('default/avatar.png');
+            const result = await avatarResolver.avatarUpload({ userId, image }, { req, res });
             expect(result).toBe(true);
+        });
+
+        it('does NOT upload a file if the userId and the context user id do not match', async () => {
+            const unknownId = userId.replace('e', 'd');
+            const image = getTestImage('default/avatar.png');
+            const result = await avatarResolver.avatarUpload(
+                { userId: unknownId, image },
+                { req, res }
+            );
+            expect(result).toBe(false);
         });
 
         it('replaces initial image with second image upload', async () => {
             const firstImage = getTestImage('default/avatar.png');
-            await avatarResolver.avatarUpload(firstImage, { req, res });
+            await avatarResolver.avatarUpload({ userId, image: firstImage }, { req, res });
             const firstImageData = avatarResolver.avatar(userId).split(' ')[1].substring(0, 100);
             const secondImage = getTestImage('test/trailhead.png');
-            await avatarResolver.avatarUpload(secondImage, { req, res });
+            await avatarResolver.avatarUpload({ userId, image: secondImage }, { req, res });
             const secondImageData = avatarResolver.avatar(userId).split(' ')[1].substring(0, 100);
 
             expect(secondImageData).not.toEqual(firstImageData);
@@ -55,8 +65,8 @@ describe('Avatar resolver', () => {
 
     describe('avatar query', () => {
         it('returns the dataUrl representation of an avatar for user', async () => {
-            const file = getTestImage('default/avatar.png');
-            await avatarResolver.avatarUpload(file, { req, res });
+            const image = getTestImage('default/avatar.png');
+            await avatarResolver.avatarUpload({ userId, image }, { req, res });
             const result = avatarResolver.avatar(userId);
             expect(result.split(' ')[0]).toEqual('data:image/png;base64,');
         });

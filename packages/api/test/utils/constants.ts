@@ -75,8 +75,8 @@ mutation RefreshAccessToken {
 `;
 
 export const avatarUploadOp = `
-mutation AvatarUpload ($image: Upload!) {
-    avatarUpload(image: $image)
+mutation AvatarUpload ($userId: String!, $image: Upload!) {
+    avatarUpload(avatarData: { userId: $userId, image: $image })
 }
 `;
 

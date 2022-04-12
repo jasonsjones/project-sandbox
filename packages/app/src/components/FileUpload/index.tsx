@@ -3,16 +3,17 @@ import useFileUpload from '../../hooks/useFileUpload';
 import { Button } from '../common';
 
 const AvatarUploadOp = `
-mutation AvatarUpload ($image: Upload!) {
-    avatarUpload(image: $image)
+mutation AvatarUpload ($userId: String!, $image: Upload!) {
+    avatarUpload(avatarData: { userId: $userId, image: $image })
 }
 `;
 
 interface FileUploadProps {
+    userId: string | undefined;
     onCancel?: () => void;
 }
 
-function FileUpload({ onCancel }: FileUploadProps): JSX.Element {
+function FileUpload({ userId, onCancel }: FileUploadProps): JSX.Element {
     const imgRef = useRef<HTMLImageElement>(null);
     const fileRef = useRef<HTMLInputElement>(null);
     const [highlight, setHighlight] = useState(false);
@@ -59,7 +60,7 @@ function FileUpload({ onCancel }: FileUploadProps): JSX.Element {
     };
 
     const handleFileUpload = () => {
-        const variables = { image: null, operationName: 'UploadAvatar' };
+        const variables = { image: null, userId, operationName: 'UploadAvatar' };
 
         fileUpload({ query: AvatarUploadOp, variables, file: image as File });
     };
