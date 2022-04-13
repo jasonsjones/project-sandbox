@@ -5,12 +5,16 @@ import { useParams } from 'react-router-dom';
 import FileUpload from '../../components/FileUpload';
 import Spinner from '../../components/Spinner';
 import UserDetail from '../../components/UserDetail';
+import { useAuthContext } from '../../context/AuthContext';
 import useUser from '../../hooks/useUser';
 
 function UserDetailPage(): JSX.Element {
     const { id } = useParams<{ id: string }>();
+    const { user } = useAuthContext();
     const [showModal, setShowModal] = useState(false);
     const { data: response, isLoading } = useUser(id);
+
+    const isContextUser = user.id === id;
 
     if (isLoading) return <Spinner />;
 
@@ -21,28 +25,32 @@ function UserDetailPage(): JSX.Element {
             <div className="w-full md:w-3/4 mx-auto mt-12 px-4">
                 <h1 className="text-5xl text-gray-700">Profile Page</h1>
                 <UserDetail user={response?.data.user} />
-                <button
-                    className="text-slate-600"
-                    title="Open file upload"
-                    onClick={() => setShowModal(true)}
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
+                {isContextUser ? (
+                    <button
+                        className="text-slate-600"
+                        title="Open file upload"
+                        onClick={() => setShowModal(true)}
                     >
-                        <path
-                            fillRule="evenodd"
-                            d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z"
-                            clipRule="evenodd"
-                        />
-                    </svg>
-                </button>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                        >
+                            <path
+                                fillRule="evenodd"
+                                d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z"
+                                clipRule="evenodd"
+                            />
+                        </svg>
+                    </button>
+                ) : null}
             </div>
-            <Modal show={showModal} onClose={closeModal}>
-                <FileUpload userId={id} onCancel={closeModal} />
-            </Modal>
+            {isContextUser ? (
+                <Modal show={showModal} onClose={closeModal}>
+                    <FileUpload userId={id} onCancel={closeModal} />
+                </Modal>
+            ) : null}
         </>
     );
 }
@@ -82,7 +90,7 @@ function Modal({ children, show, onClose }: ModalProps): JSX.Element {
             <div className="relative mb-4 mx-auto w-5/6 md:w-1/2 lg:w-1/3 bg-white">
                 {children}
                 <button
-                    className="absolute -top-6 right-0 text-white"
+                    className="absolute top-2 right-2 text-gray-400 hover:text-gray-900"
                     title="close modal"
                     onClick={onClose}
                 >
