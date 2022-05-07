@@ -12,6 +12,7 @@
         "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
         "start": "nest start",
         "dev": "NODE_ENV=development nest start --preserveWatchOutput --watch",
+        "gen-lockfile": "generate-lockfile --lockfile ../../yarn.lock --package package.json --dev --write yarn.lock --force",
         "start:debug": "nest start --debug --watch",
         "start:prod": "node dist/src/main",
         "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -70,7 +71,8 @@
         "tsconfig-paths": "3.14.1"
     },
     "engines": {
-        "node": "14.19.X"
+        "node": "14.19.X",
+        "yarn": "1.X"
     },
     "jest": {
         "moduleFileExtensions": [
