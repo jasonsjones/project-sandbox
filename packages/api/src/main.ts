@@ -3,6 +3,8 @@ import cookieParser from 'cookie-parser';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
+const PORT = process.env.PORT || 3000;
+
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
     app.enableCors({
@@ -11,7 +13,7 @@ async function bootstrap() {
     });
     app.use(cookieParser());
     app.use(express.static('avatars'));
-    await app.listen(3000);
+    await app.listen(PORT);
 }
 
 bootstrap();
