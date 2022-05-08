@@ -5,6 +5,7 @@
         "build": "vite build",
         "clean": "rm -rf build",
         "dev": "vite --open",
+        "gen-lockfile": "generate-lockfile --lockfile ../../yarn.lock --package package.json --dev --write yarn.lock --force",
         "lint": "eslint \"src/**/*.{ts,tsx}\" --fix",
         "lint:ci": "eslint src/**/*.tsx",
         "start": "PORT=4200 serve -s build",
@@ -33,15 +34,29 @@
         "tailwindcss": "3.0.23",
         "vite": "2.8.6"
     },
+    "engines": {
+        "node": "14.19.X",
+        "yarn": "1.X"
+    },
     "jest": {
-        "roots": ["<rootDir>/src"],
-        "testMatch": ["**/__tests__/**/*.+(ts|tsx|js)", "**/?(*.)+(spec|test).+(ts|tsx|js)"],
+        "roots": [
+            "<rootDir>/src"
+        ],
+        "testMatch": [
+            "**/__tests__/**/*.+(ts|tsx|js)",
+            "**/?(*.)+(spec|test).+(ts|tsx|js)"
+        ],
         "transform": {
             "^.+\\.(ts|tsx)$": "ts-jest",
             "^.+\\.svg$": "<rootDir>/test/__mocks__/fileTransform.js"
         },
-        "transformIgnorePatterns": ["[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|cjs|ts|tsx)$"],
-        "moduleDirectories": ["node_modules", "<rootDir>/src"],
+        "transformIgnorePatterns": [
+            "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|cjs|ts|tsx)$"
+        ],
+        "moduleDirectories": [
+            "node_modules",
+            "<rootDir>/src"
+        ],
         "resetMocks": true,
         "testEnvironment": "jsdom",
         "verbose": true
