@@ -15,7 +15,7 @@ interface QueryPayload {
 const devEndpoint = 'http://localhost:3000/graphql';
 const prodEndpoint = 'https://orionlabs-api.herokuapp.com';
 
-const graphqlEndpoint = process.env.NODE_ENV === 'production' ? prodEndpoint : devEndpoint;
+const graphqlEndpoint = process.env.NODE_ENV === 'netlify' ? prodEndpoint : devEndpoint;
 
 export function makeGraphQLQuery({
     queryKey
