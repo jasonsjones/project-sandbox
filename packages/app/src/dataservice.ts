@@ -12,10 +12,7 @@ interface QueryPayload {
     file?: File;
 }
 
-const devEndpoint = 'http://localhost:3000/graphql';
-const prodEndpoint = 'https://orionlabs-api.herokuapp.com';
-
-const graphqlEndpoint = process.env.NODE_ENV === 'netlify' ? prodEndpoint : devEndpoint;
+const graphqlEndpoint = `${import.meta.env.VITE_API_BASEURL}/graphql`;
 
 export function makeGraphQLQuery({
     queryKey
