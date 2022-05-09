@@ -12,7 +12,7 @@ interface QueryPayload {
     file?: File;
 }
 
-const graphqlEndpoint = `${import.meta.env.VITE_API_BASEURL}/graphql`;
+const graphqlEndpoint = `${process.env.VITE_API_BASEURL}/graphql`;
 
 export function makeGraphQLQuery({
     queryKey
