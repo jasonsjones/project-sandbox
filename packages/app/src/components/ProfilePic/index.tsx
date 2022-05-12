@@ -1,6 +1,6 @@
 import useAvatar from '../../hooks/useAvatar';
 
-const DEFAULT_PIC = 'http://localhost:3000/default/avatar.png';
+const DEFAULT_PIC = `${process.env.VITE_API_BASEURL}/default/avatar.png`;
 
 type ProfilePicProps = {
     id: string;
