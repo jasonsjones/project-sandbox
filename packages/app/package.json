@@ -2,9 +2,10 @@
     "name": "@orion/app",
     "version": "1.0.0",
     "scripts": {
-        "build": "vite build",
-        "clean": "rm -rf build",
+        "build": "vite build && yarn generate:redirects",
+        "clean": "rm -rf dist",
         "dev": "vite --open",
+        "generate:redirects": "echo \"/*    /index.html    200\" > dist/_redirects",
         "lint": "eslint \"src/**/*.{ts,tsx}\" --fix",
         "lint:ci": "eslint src/**/*.tsx",
         "start": "PORT=4200 serve -s build",
