@@ -112,7 +112,10 @@ describe('Auth resolver', () => {
                 })
             );
 
-            expect(res.cookie).toHaveBeenCalledWith('qid', fakeToken, { httpOnly: true });
+            expect(res.cookie).toHaveBeenCalledWith('qid', fakeToken, {
+                httpOnly: true,
+                sameSite: 'none'
+            });
         });
     });
 
@@ -165,7 +168,10 @@ describe('Auth resolver', () => {
                 })
             );
 
-            expect(res.cookie).toHaveBeenCalledWith('qid', fakeToken, { httpOnly: true });
+            expect(res.cookie).toHaveBeenCalledWith('qid', fakeToken, {
+                httpOnly: true,
+                sameSite: 'none'
+            });
         });
 
         it('returns null access token if refresh token is undefined', async () => {
