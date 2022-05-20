@@ -20,6 +20,7 @@
     "scripts": {
         "build": "tsc --build tsconfig.json",
         "clean": "rm -rf dist",
+        "clean:full": "yarn clean && rm -rf node_modules",
         "lint": "eslint \"{src,apps,lib,test}/**/*.ts\" --fix",
         "lint:ci": "eslint \"{src,apps,lib,test}/**/*.ts\"",
         "test": "NODE_ENV=testing jest --color --runInBand"
