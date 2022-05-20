@@ -11,23 +11,19 @@
         ]
     },
     "scripts": {
-        "bootstrap": "lerna bootstrap",
-        "clean": "lerna run clean --stream && lerna clean --yes && rm -rf node_modules",
-        "dev": "yarn workspace @orion/shared build && lerna run dev --stream --no-prefix",
-        "gen-lockfile": "lerna run gen-lockfile --stream",
-        "lint": "lerna run lint --stream",
-        "lint:ci": "lerna run lint:ci --stream",
-        "postinstall": "yarn gen-lockfile && yarn bootstrap",
+        "clean": "yarn workspaces run clean:full && rm -rf node_modules",
+        "dev": "yarn workspace @orion/shared build && concurrently \"yarn workspace @orion/api dev\" \"yarn workspace @orion/app dev\" ",
+        "gen-lockfile": "yarn workspace @orion/api gen-lockfile",
+        "lint": "yarn workspaces run lint",
+        "lint:ci": "yarn workspaces run lint:ci",
+        "postinstall": "yarn gen-lockfile",
         "prepare": "husky install",
         "prettier:verify": "prettier --list-different \"**/*.{css,html,js,json,md,ts,yaml,yml}\"",
-        "test": "lerna run test --stream",
-        "test:api:unit": "lerna run test --stream --scope @orion/api",
-        "test:api:e2e": "lerna run test:e2e --stream --scope @orion/api",
-        "test:app": "lerna run test --stream --scope @orion/app",
-        "test:shared": "lerna run test --stream --scope @orion/shared"
-    },
-    "dependencies": {
-        "lerna": "4.0.0"
+        "test": "yarn workspaces run test",
+        "test:api:unit": "yarn workspace @orion/api test",
+        "test:api:e2e": "yarn workspace @orion/api test:e2e",
+        "test:app": "yarn workspace @orion/app test",
+        "test:shared": "yarn workspace @orion/shared test"
     },
     "devDependencies": {
         "@types/jest": "27.4.1",
@@ -35,6 +31,7 @@
         "@typescript-eslint/eslint-plugin": "5.16.0",
         "@typescript-eslint/parser": "5.16.0",
         "babel-eslint": "10.1.0",
+        "concurrently": "7.2.0",
         "eslint": "8.12.0",
         "eslint-config-prettier": "8.5.0",
         "eslint-plugin-import": "2.25.4",

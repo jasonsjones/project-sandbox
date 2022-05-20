@@ -4,6 +4,7 @@
     "scripts": {
         "build": "vite build && yarn generate:redirects",
         "clean": "rm -rf dist",
+        "clean:full": "yarn clean && rm -rf node_modules",
         "dev": "vite --open",
         "generate:redirects": "echo \"/*    /index.html    200\" > dist/_redirects",
         "lint": "eslint \"src/**/*.{ts,tsx}\" --fix",
