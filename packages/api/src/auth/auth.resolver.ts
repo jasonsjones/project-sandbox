@@ -32,7 +32,7 @@ export class AuthResolver {
 
         const accessToken = this.authService.generateAccessToken(user);
         const refreshToken = this.authService.generateRefreshToken(user);
-        res.cookie('qid', refreshToken, { httpOnly: true, sameSite: 'none' });
+        res.cookie('qid', refreshToken, { httpOnly: true, sameSite: 'none', secure: true });
         return {
             accessToken,
             userInfo: {
@@ -80,7 +80,11 @@ export class AuthResolver {
                     const accessToken = this.authService.generateAccessToken(user);
                     const refreshToken = this.authService.generateRefreshToken(user);
 
-                    res.cookie('qid', refreshToken, { httpOnly: true, sameSite: 'none' });
+                    res.cookie('qid', refreshToken, {
+                        httpOnly: true,
+                        sameSite: 'none',
+                        secure: true
+                    });
 
                     return {
                         accessToken
