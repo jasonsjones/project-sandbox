@@ -114,7 +114,8 @@ describe('Auth resolver', () => {
 
             expect(res.cookie).toHaveBeenCalledWith('qid', fakeToken, {
                 httpOnly: true,
-                sameSite: 'none'
+                sameSite: 'none',
+                secure: true
             });
         });
     });
@@ -170,7 +171,8 @@ describe('Auth resolver', () => {
 
             expect(res.cookie).toHaveBeenCalledWith('qid', fakeToken, {
                 httpOnly: true,
-                sameSite: 'none'
+                sameSite: 'none',
+                secure: true
             });
         });
 
