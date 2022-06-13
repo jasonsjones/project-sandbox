@@ -12,9 +12,9 @@
     },
     "scripts": {
         "clean": "yarn workspaces run clean:full && rm -rf node_modules",
-        "dev": "yarn workspace @orion/shared build && concurrently \"yarn workspace @orion/api dev\" \"yarn workspace @orion/app dev\" ",
+        "dev": "turbo run build --filter=@orion/shared build && turbo run dev",
         "gen-lockfile": "yarn workspace @orion/api gen-lockfile",
-        "lint": "yarn workspaces run lint",
+        "lint": "turbo run lint",
         "lint:ci": "yarn workspaces run lint:ci",
         "postinstall": "yarn gen-lockfile",
         "prepare": "husky install",
@@ -31,7 +31,6 @@
         "@typescript-eslint/eslint-plugin": "5.16.0",
         "@typescript-eslint/parser": "5.16.0",
         "babel-eslint": "10.1.0",
-        "concurrently": "7.2.0",
         "eslint": "8.12.0",
         "eslint-config-prettier": "8.5.0",
         "eslint-plugin-import": "2.25.4",
@@ -43,6 +42,7 @@
         "lint-staged": "12.3.7",
         "prettier": "2.6.1",
         "ts-jest": "27.1.4",
+        "turbo": "1.2.11",
         "typescript": "4.6.3"
     },
     "lint-staged": {
