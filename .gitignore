@@ -1,5 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+.DS_Store
+
 # Logs
 logs
 *.log
@@ -136,3 +138,6 @@ packages/api/avatars/*
 
 # api sqlite db file
 packages/api/data
+
+# turbo
+.turbo
