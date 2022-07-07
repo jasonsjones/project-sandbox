@@ -23,7 +23,7 @@ describe('Toggle component', () => {
         expect(getByText(generalProps.label)).toBeTruthy();
     });
 
-    it(`calls 'changeHandler' prop when value changes`, async () => {
+    it.skip(`calls 'changeHandler' prop when value changes`, async () => {
         const handleChange = jest.fn();
         const { getByLabelText } = render(
             <Toggle label={generalProps.label} changeHandler={handleChange} />
