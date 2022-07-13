@@ -1,3 +1,4 @@
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
@@ -13,13 +14,14 @@ describe('Status resolver (e2e)', () => {
     beforeEach(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [
-                GraphQLModule.forRoot({
+                GraphQLModule.forRoot<ApolloDriverConfig>({
                     autoSchemaFile: 'src/schema.gql',
                     cors: {
                         origin: ['http://localhost:4200'],
                         credentials: true
                     },
-                    context: ({ req, res }) => ({ req, res })
+                    context: ({ req, res }) => ({ req, res }),
+                    driver: ApolloDriver
                 }),
                 StatusModule
             ]

@@ -1,3 +1,4 @@
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { INestApplication } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -5,7 +6,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
 import { Request, Response } from 'express';
 import fs from 'fs';
-import { FileUpload, graphqlUploadExpress } from 'graphql-upload';
+import { FileUpload } from 'graphql-upload';
+import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.js';
 import request from 'supertest';
 import { getConnection, Repository } from 'typeorm';
 import { AuthModule } from '../src/auth/auth.module';
@@ -48,13 +50,14 @@ describe('Avatar resolver (e2e)', () => {
             imports: [
                 AuthModule,
                 ConfigModule.forRoot(),
-                GraphQLModule.forRoot({
+                GraphQLModule.forRoot<ApolloDriverConfig>({
                     autoSchemaFile: 'src/schema.gql',
                     cors: {
                         origin: ['http://localhost:4200'],
                         credentials: true
                     },
-                    context: ({ req, res }) => ({ req, res })
+                    context: ({ req, res }) => ({ req, res }),
+                    driver: ApolloDriver
                 }),
                 TypeOrmModule.forRoot({
                     type: 'sqlite',

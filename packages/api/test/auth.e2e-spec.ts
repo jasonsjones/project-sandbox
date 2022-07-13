@@ -9,6 +9,7 @@ import { UserService } from '../src/user/user.service';
 import { GraphQLModule } from '@nestjs/graphql';
 import { AuthModule } from '../src/auth/auth.module';
 import { UserModule } from '../src/user/user.module';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ConfigModule } from '@nestjs/config';
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
 import { getConnection, Repository } from 'typeorm';
@@ -32,13 +33,14 @@ describe('Auth resolver (e2e)', () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [
                 ConfigModule.forRoot(),
-                GraphQLModule.forRoot({
+                GraphQLModule.forRoot<ApolloDriverConfig>({
                     autoSchemaFile: 'src/schema.gql',
                     cors: {
                         origin: ['http://localhost:4200'],
                         credentials: true
                     },
-                    context: ({ req, res }) => ({ req, res })
+                    context: ({ req, res }) => ({ req, res }),
+                    driver: ApolloDriver
                 }),
                 TypeOrmModule.forRoot({
                     type: 'sqlite',

@@ -1,3 +1,4 @@
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import {
     Logger,
     MiddlewareConsumer,
@@ -7,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
-import { graphqlUploadExpress } from 'graphql-upload';
+import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.js';
 import { LoggerMiddleware } from './common/logger.middleware';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -22,13 +23,14 @@ import { Connection } from 'typeorm';
 @Module({
     imports: [
         ConfigModule.forRoot(),
-        GraphQLModule.forRoot({
+        GraphQLModule.forRoot<ApolloDriverConfig>({
             autoSchemaFile: 'src/schema.gql',
             cors: {
                 origin: ['http://localhost:4200'],
                 credentials: true
             },
-            context: ({ req, res }) => ({ req, res })
+            context: ({ req, res }) => ({ req, res }),
+            driver: ApolloDriver
         }),
         TypeOrmModule.forRoot(dbConfig),
         AuthModule,

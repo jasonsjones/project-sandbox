@@ -1,3 +1,4 @@
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, Module } from '@nestjs/common';
 import request from 'supertest';
@@ -30,13 +31,14 @@ const barry: CreateUserDto = {
 @Module({
     imports: [
         ConfigModule.forRoot(),
-        GraphQLModule.forRoot({
+        GraphQLModule.forRoot<ApolloDriverConfig>({
             autoSchemaFile: 'src/schema.gql',
             cors: {
                 origin: ['http://localhost:4200'],
                 credentials: true
             },
-            context: ({ req, res }) => ({ req, res })
+            context: ({ req, res }) => ({ req, res }),
+            driver: ApolloDriver
         }),
         TypeOrmModule.forRoot({
             type: 'sqlite',

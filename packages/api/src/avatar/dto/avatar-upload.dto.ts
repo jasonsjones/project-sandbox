@@ -1,5 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { FileUpload, GraphQLUpload } from 'graphql-upload';
+import { FileUpload } from 'graphql-upload';
+import GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
 
 @InputType()
 export class AvatarUploadInput {
