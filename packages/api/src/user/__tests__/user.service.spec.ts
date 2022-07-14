@@ -119,7 +119,13 @@ describe('User service', () => {
                 .mockResolvedValue(mockSavedOliver);
             await userService.findById(mockSavedBarry.id);
 
-            expect(userRepositoryFindOneSpy).toHaveBeenCalledWith(mockSavedBarry.id);
+            expect(userRepositoryFindOneSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    where: expect.objectContaining({
+                        id: mockSavedBarry.id
+                    })
+                })
+            );
         });
     });
 });

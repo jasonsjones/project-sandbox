@@ -37,6 +37,6 @@ export class UserService {
 
     findById(id: string): Promise<User | undefined> {
         this.logger.log('Fetching user by id');
-        return this.userRepository.findOne(id);
+        return this.userRepository.findOne({ where: { id } });
     }
 }

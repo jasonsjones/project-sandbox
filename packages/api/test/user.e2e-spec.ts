@@ -10,7 +10,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { AuthModule } from '../src/auth/auth.module';
 import { UserModule } from '../src/user/user.module';
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
-import { getConnection, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { User } from '../src/user/user.entity';
 import { meQuery, RegisterUserOp, userQuery, usersQuery } from './utils/constants';
 
@@ -73,7 +73,6 @@ describe('User resolver (e2e)', () => {
 
     afterEach(async () => {
         await userRepository.clear();
-        await getConnection().close();
     });
 
     describe('register user mutation', () => {

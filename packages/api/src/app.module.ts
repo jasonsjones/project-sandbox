@@ -17,8 +17,10 @@ import { UserModule } from './user/user.module';
 import { AvatarModule } from './avatar/avatar.module';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import dbConfig from '../ormconfig';
-import { Connection } from 'typeorm';
+import { devDataSourceOpts } from './app.datasource';
+import { DataSource } from 'typeorm';
+//import dbConfig from '../ormconfig';
+//import { Connection } from 'typeorm';
 
 @Module({
     imports: [
@@ -32,7 +34,7 @@ import { Connection } from 'typeorm';
             context: ({ req, res }) => ({ req, res }),
             driver: ApolloDriver
         }),
-        TypeOrmModule.forRoot(dbConfig),
+        TypeOrmModule.forRoot(devDataSourceOpts),
         AuthModule,
         AvatarModule,
         StatusModule,
@@ -44,7 +46,7 @@ import { Connection } from 'typeorm';
 export class AppModule implements NestModule, OnApplicationBootstrap {
     private readonly logger = new Logger(AppModule.name);
 
-    constructor(private connection: Connection) {}
+    constructor(private dataSource: DataSource) {}
 
     configure(consumer: MiddlewareConsumer) {
         // utilize graphql-upload middleware to handle uploads; this is required
@@ -58,7 +60,7 @@ export class AppModule implements NestModule, OnApplicationBootstrap {
         this.logger.log('App module bootstrapping complete');
         try {
             this.logger.log('Running db migrations...');
-            await this.connection.runMigrations();
+            await this.dataSource.runMigrations();
         } catch (err) {
             this.logger.error(err);
         }

@@ -12,7 +12,7 @@ import { UserModule } from '../src/user/user.module';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ConfigModule } from '@nestjs/config';
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
-import { getConnection, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { User } from '../src/user/user.entity';
 import { loginOp, logoutOp, refreshAccessTokenOp } from './utils/constants';
 
@@ -63,7 +63,6 @@ describe('Auth resolver (e2e)', () => {
 
     afterEach(async () => {
         await userRepository.clear();
-        await getConnection().close();
     });
 
     describe('login mutation', () => {

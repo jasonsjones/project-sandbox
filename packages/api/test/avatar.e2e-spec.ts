@@ -9,7 +9,7 @@ import fs from 'fs';
 import { FileUpload } from 'graphql-upload';
 import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.js';
 import request from 'supertest';
-import { getConnection, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { AuthModule } from '../src/auth/auth.module';
 import { AuthService } from '../src/auth/auth.service';
 import { AvatarModule } from '../src/avatar/avatar.module';
@@ -82,7 +82,6 @@ describe('Avatar resolver (e2e)', () => {
 
     afterEach(async () => {
         await userRepository.clear();
-        await getConnection().close();
     });
 
     describe('upload avatar mutation', () => {
