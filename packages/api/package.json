@@ -73,7 +73,7 @@
         "tsconfig-paths": "4.0.0"
     },
     "engines": {
-        "node": "14.19.X",
+        "node": "14",
         "yarn": "1.X"
     },
     "jest": {
