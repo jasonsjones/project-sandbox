@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
-import { AvatarResolver } from './avatar.resolver';
+// import { AvatarResolver } from './avatar.resolver';
 
 @Module({
-    providers: [AvatarResolver]
+    providers: [
+        /*AvatarResolver*/
+    ]
 })
 export class AvatarModule {}

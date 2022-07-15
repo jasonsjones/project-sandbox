@@ -84,7 +84,7 @@ describe('Avatar resolver (e2e)', () => {
         await userRepository.clear();
     });
 
-    describe('upload avatar mutation', () => {
+    describe.skip('upload avatar mutation', () => {
         it('uploads png image', async () => {
             const user = await userService.create(barry);
             const accessToken = authService.generateAccessToken(user);
@@ -111,7 +111,7 @@ describe('Avatar resolver (e2e)', () => {
         });
     });
 
-    describe('avatar query', () => {
+    describe.skip('avatar query', () => {
         let user: User;
 
         beforeEach(async () => {

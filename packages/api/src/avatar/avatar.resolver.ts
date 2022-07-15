@@ -5,7 +5,7 @@ import { Writable, WritableOptions } from 'stream';
 import { v4 } from 'uuid';
 import { JwtAuthGuard } from '../auth/auth-jwt.guard';
 import { Avatar } from './avatar.entity';
-import { AvatarUploadInput } from './dto/avatar-upload.dto';
+// import { AvatarUploadInput } from './dto/avatar-upload.dto';
 
 interface StreamData {
     streamId: string;
@@ -110,7 +110,7 @@ export class AvatarResolver {
     @Mutation(() => Boolean)
     @UseGuards(JwtAuthGuard)
     async avatarUpload(
-        @Args('avatarData') avatarData: AvatarUploadInput,
+        @Args('avatarData') avatarData: { userId: string; image: any } /* AvatarUploadInput */,
         @Context() { req }: GraphQLContext
     ): Promise<boolean> {
         // To save to the local file system, replace `nullStream` with `writeStream`
